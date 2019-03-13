@@ -1,0 +1,182 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: pgwatch-template
+  annotations:
+    openshift.io/display-name: "All components for pgwatch"
+    description: >-
+      "Creates all necessary components for pgwatch"
+    openshift.io/long-description: >-
+      "Creates all necessary components for pgwatch"
+    tags: "agi,gdi,pgwatch,monitoring,database"
+labels:
+  application: pgwatch
+  createdBy: pgwatch-template
+parameters:
+  - description: Name for Environment
+    name: env
+    value: test
+  - description: Version of Image
+    name: version
+    value:
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      description: Image Stream of the application
+    labels:
+      application: pw2-${env}
+    creationTimestamp: null
+    generation: 1
+    name: pw2-${env}
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      application: pw2-${env}
+      deploymentconfig: pw2-${env}
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          application: pw2-${env}
+          deploymentconfig: pw2-${env}
+      spec:
+        containers:
+        - env:
+          - name: NOTESTDB
+            value: "1"
+          image: cybertec/pgwatch2-openshift
+          imagePullPolicy: IfNotPresent
+          name: pw2-${env}
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/lib/influxdb
+            name: pw2-influxdb-${env}
+          - mountPath: /var/lib/postgresql
+            name: pw2-postgresql-${env}
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: pw2-influxdb-${env}
+          persistentVolumeClaim:
+            claimName: pw2-influxdb-${env}-claim
+        - name: pw2-postgresql-${env}
+          persistentVolumeClaim:
+            claimName: pw2-postgresql-${env}-claim 
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - pw2-${env}
+        from:
+          kind: ImageStreamTag
+          name: pw2:${version}
+          namespace: agi-infrastructure
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: pw2-gui-service-${env}
+    annotations:
+      description: http port of application
+    labels:
+      application: pw2-${env}
+  spec:
+    selector:
+      application: pw2-${env}
+    ports:
+    - protocol: TCP
+      name: "80"
+      port: 80
+      targetPort: 8080
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: pw2-grafana-service-${env}
+    annotations:
+      description: http port of application
+    labels:
+      application: pw2-${env}
+  spec:
+    selector:
+      application: pw2-${env}
+    ports:
+    - protocol: TCP
+      name: "3000"
+      port: 3000
+      targetPort: 3000
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: pw2
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: cybertec/pgwatch2-openshift:${version}
+      name: ${version}
+      importPolicy:
+        scheduled: false
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 120s
+    labels:
+      application: pw2
+      createdBy: pgwatch-template
+    name: pw2-gui-${env}
+    namespace: agi-infrastructure
+  spec:
+    host: pgwatch-gui-${env}.dev.so.ch
+    port:
+      targetPort: "80"
+    to:
+      kind: Service
+      name: pw2-gui-service-${env}
+      weight: 100
+    wildcardPolicy: None
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 120s
+    labels:
+      application: pw2
+      createdBy: pgwatch-template
+    name: pw2-grafana-${env}
+    namespace: agi-infrastructure
+  spec:
+    host: pgwatch-monitor-${env}.dev.so.ch
+    port:
+      targetPort: "3000"
+    to:
+      kind: Service
+      name: pw2-grafana-service-${env}
+      weight: 100
+    wildcardPolicy: None
