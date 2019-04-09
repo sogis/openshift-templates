@@ -17,7 +17,7 @@ git pull
 Deploy test environment (for the test environment, the default values are mostly fine):
 
 ```
-oc process -f av-datenabgabe/pgwatch.yaml \
+oc process -f av-datenabgabe/av-datenabgabe.yaml \
   -p HOSTNAME=av-datenabgabe-t.dev.so.ch \
   | oc apply -f -
 ```
@@ -25,7 +25,7 @@ oc process -f av-datenabgabe/pgwatch.yaml \
 Deploy production environment:
 
 ```
-oc process -f av-datenabgabe/pgwatch.yaml \
+oc process -f av-datenabgabe/av-datenabgabe.yaml \
   -p ENVIRONMENT=production \
   -p ENVIRONMENT_SHORT=prod \
   -p TAG=1.0.5 \
