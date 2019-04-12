@@ -5,7 +5,7 @@ Create new project:
 ```
 oc new-project agi-av-datenabgabe --display-name='AV-Datenabgabe'
 
-oc policy add-role-to-user admin ...
+oc policy add-role-to-user admin "Surname1 Name1" "Surname2 Name2" ...
 ```
 
 Checkout the openshift-templates repository:
