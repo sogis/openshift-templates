@@ -1,4 +1,12 @@
-# Install or Update AV-Datenabgabe in OpenShift
+# Install or update AV-Datenabgabe in OpenShift
+
+Create new project:
+
+```
+oc new-project agi-av-datenabgabe --display-name='AV-Datenabgabe'
+
+oc policy add-role-to-user admin ...
+```
 
 Checkout the openshift-templates repository:
 
@@ -7,7 +15,7 @@ git clone https://github.com/sogis/openshift-templates.git
 cd openshift-templates
 ```
 
-Or, if already checked out: Update the OpenShift templates repository:
+Or, if already checked out, update the OpenShift templates repository:
 
 ```
 cd openshift-templates
