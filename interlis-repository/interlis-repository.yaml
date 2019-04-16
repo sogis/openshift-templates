@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: interlis-repository
+  annotations:
+    openshift.io/display-name: "Official SO!GIS INTERLIS repository"
+    description: >-
+      "Creates all necessary components for Official SO!GIS INTERLIS repository"
+    openshift.io/long-description: >-
+      "Creates all necessary components for Official SO!GIS INTERLIS repository"
+    tags: "agi,gdi,avgbs2mtab,java"
+    iconClass: icon-java
+labels:
+  application: interlis-repository
+  env: ${env}
+  createdBy: interlis-repository-template
+parameters:
+  - description: Name for Environment
+    name: env 
+    required: true
+    value: test
+  - description: Version of Image
+    name: version
+    required: true
+    value:
+  - description: scheduled "true/false"
+    name: scheduled
+    required: true
+    value: "false"
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      description: Image Stream of the application
+    labels:
+      application: interlis-repository-${env}  
+    creationTimestamp: null
+    generation: 1
+    name: interlis-repository-${env}
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      application: interlis-repository-${env}
+      deploymentconfig: interlis-repository-${env}
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          application: interlis-repository-${env}
+          deploymentconfig: interlis-repository-${env}
+      spec:
+        containers:
+        - image: sogis/interlis-repository
+          imagePullPolicy: IfNotPresent
+          name: interlis-repository-${env}
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - interlis-repository-${env}
+        from:
+          kind: ImageStreamTag
+          name: interlis-repository:${version}
+          namespace: agi-interlis-repository
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: interlis-repository-service-${env}
+    annotations:
+      description: http port of application
+    labels:
+      application: interlis-repository-${env}
+  spec:
+    selector:
+      application: interlis-repository-${env}
+    ports:
+    - protocol: TCP
+      name: "80"
+      port: 80
+      targetPort: 8080
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: interlis-repository
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: sogis/interlis-repository:${version}
+      name: ${version}
+      importPolicy:
+        scheduled: ${{scheduled}}
