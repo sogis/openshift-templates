@@ -1,0 +1,137 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: heatdrill-template
+  annotations:
+    openshift.io/display-name: "All components for AGI Heatdrill Service"
+    description: >-
+      "Creates all necessary components for the AGI Heatdrill Service"
+    openshift.io/long-description: >-
+      "Creates all necessary components for the AGI Heatdrill Service"
+    tags: "agi,gdi,heatdrill,java"
+    iconClass: icon-java
+labels:
+  application: Heatdrill
+  createdBy: heatdrill-template
+parameters:
+  - description: DB Server
+    name: DB_SERVER
+    value:
+  - description: DB Passwort
+    name: DB_PW
+    value:
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: heatdrill
+    annotations:
+      description: Image Stream of the application
+    labels:
+      application: heatdrill
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: sogis/heatdrill:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: template-heatdrill
+      decription: Deployment Config for heatdrill-service Pod
+    creationTimestamp: null
+    generation: 1
+    labels:
+      application: heatdrill
+    name: heatdrill
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      application: heatdrill
+      deploymentconfig: heatdrill
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: template-heatdrill
+        creationTimestamp: null
+        labels:
+          application: heatdrill
+          deploymentconfig: heatdrill
+      spec:
+        containers:
+        - env:
+          - name: SPRING_APPLICATION_JSON
+            value: >-
+              {"db-connection":{"url":"jdbc:postgresql://${DB_SERVER}:5432/sogis","userName":"mswrite","password":"${DB_PW}"}}
+          image: sogis/heatdrill
+          imagePullPolicy: IfNotPresent
+          name: heatdrill
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - heatdrill
+        from:
+          kind: ImageStreamTag
+          name: heatdrill:latest
+          namespace: agi-heatdrill-integration
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: heatdrill-service
+    annotations:
+      decription: http port of application
+    labels: 
+      application: heatdrill
+  spec:
+    selector:
+      application: heatdrill
+    ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: "80"
+
