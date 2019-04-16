@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: av-datenabgabe
+labels:
+  template: av-datenabgabe
+  app: cadastral-data-disposal-${ENVIRONMENT}
+  environment: ${ENVIRONMENT}
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: cadastral-data-disposal-${ENVIRONMENT}
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: sogis/cadastral-data-disposal:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: latest
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: cadastral-data-disposal-${ENVIRONMENT}
+  spec:
+    template:
+      metadata:
+        labels:
+          app: cadastral-data-disposal-${ENVIRONMENT}
+          deploymentconfig: cadastral-data-disposal-${ENVIRONMENT}
+          environment: ${ENVIRONMENT}
+      spec:
+        containers:
+        - name: cadastral-data-disposal-${ENVIRONMENT}
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: ${ENVIRONMENT_SHORT}
+          volumeMounts:
+          - mountPath: /tmp
+            name: cadastral-data-disposal-${ENVIRONMENT}-volume-1
+        volumes:
+        - emptyDir: {}
+          name: cadastral-data-disposal-${ENVIRONMENT}-volume-1
+    replicas: ${{REPLICA_COUNT}}
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - cadastral-data-disposal-${ENVIRONMENT}
+        from:
+          kind: ImageStreamTag
+          name: cadastral-data-disposal-${ENVIRONMENT}:latest
+      type: ImageChange
+    selector:
+      app: cadastral-data-disposal-${ENVIRONMENT}
+      deploymentconfig: cadastral-data-disposal-${ENVIRONMENT}
+      environment: ${ENVIRONMENT}
+    strategy:
+      type: Rolling
+    revisionHistoryLimit: 10
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: cadastral-data-disposal-${ENVIRONMENT}
+  spec:
+    host: ${HOSTNAME}
+    port:
+      targetPort: 8080
+    to:
+      kind: Service
+      name: cadastral-data-disposal-${ENVIRONMENT}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: cadastral-data-disposal-${ENVIRONMENT}
+  spec:
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: cadastral-data-disposal-${ENVIRONMENT}
+      deploymentconfig: cadastral-data-disposal-${ENVIRONMENT}
+      environment: ${ENVIRONMENT}
+    type: ClusterIP
+parameters:
+- name: ENVIRONMENT
+  description: "The environment to create objects for (e.g. test, production)"
+  value: test
+- name: ENVIRONMENT_SHORT
+  description: "The short name of the environment to create objects for (e.g. test, prod)"
+  value: test
+- name: TAG
+  description: "The Docker image tag to use (e.g. latest, 1.0.5)"
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: "Regularly check for changed image (default: true)"
+  value: "true"
+- name: REPLICA_COUNT
+  description: "Number of replicas to run"
+  value: "1"
+- name: HOSTNAME
+  description: "Hostname to use for the route"
+  value: ""
