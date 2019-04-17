@@ -12,14 +12,16 @@ metadata:
     tags: "agi,gdi,ilivalidator,java"
     iconClass: icon-java
 labels:
-  application: Ilivalidator
+  env: ${env}
   createdBy: ilivalidator-template
 parameters:
   - description: Name for Environment
     name: env
+    required: true
     value: test
   - description: Version of Image
     name: version
+    required: true
     value:
 objects:
 - apiVersion: v1
@@ -28,24 +30,23 @@ objects:
     annotations:
       description: Image Stream of the application
     labels:
-      application: ilivalidator-web-service  
+      application: ilivalidator-web-service-${env}
     creationTimestamp: null
     generation: 1
-    name: ilivalidator-web-service
+    name: ilivalidator-web-service-${env}
   spec:
     replicas: 1
     revisionHistoryLimit: 10
     selector:
-      application: ilivalidator-web-service
-      deploymentconfig: ilivalidator-web-service
+      deploymentconfig: ilivalidator-web-service-${env}
     strategy:
       activeDeadlineSeconds: 21600
       resources: {}
       rollingParams:
         intervalSeconds: 1
-        maxSurge: 25%
-        maxUnavailable: 25%
-        timeoutSeconds: 600
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 60
         updatePeriodSeconds: 1
       type: Rolling
     template:
@@ -54,8 +55,8 @@ objects:
           openshift.io/generated-by: OpenShiftNewApp
         creationTimestamp: null
         labels:
-          application: ilivalidator-web-service
-          deploymentconfig: ilivalidator-web-service
+          application: ilivalidator-web-service-${env}
+          deploymentconfig: ilivalidator-web-service-${env}
       spec:
         containers:
         - image: sogis/ilivalidator-web-service
@@ -90,24 +91,17 @@ objects:
           name: ilivalidator-web-service:${version}
           namespace: agi-ilivalidator-web-service-${env}
       type: ImageChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
 - apiVersion: v1
   kind: Service
   metadata:
-    name: ilivalidator-service
+    name: ilivalidator-service-${env}
     annotations:
       description: http port of application
     labels:
-      application: ilivalidator-web-service
+      application: ilivalidator-web-service-${env}
   spec:
     selector:
-      application: ilivalidator-web-service
+      deploymentconfig: ilivalidator-web-service-${env}
     ports:
     - protocol: TCP
       name: "80"
@@ -125,22 +119,3 @@ objects:
       name: ${version}
       importPolicy:
         scheduled: true
-- apiVersion: v1
-  kind: Route
-  metadata:
-    annotations:
-      haproxy.router.openshift.io/timeout: 1200s
-    labels:
-      application: Ilivalidator
-      createdBy: ilivalidator-template
-    name: ilivalidator-${env}
-    namespace: agi-ilivalidator-web-service-${env}
-  spec:
-    host: ilivalidator-${env}.dev.so.ch
-    port:
-      targetPort: "80"
-    to:
-      kind: Service
-      name: ilivalidator-service
-      weight: 100
-    wildcardPolicy: None
