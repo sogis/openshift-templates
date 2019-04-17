@@ -11,7 +11,7 @@ metadata:
     tags: "agi,gdi,heatdrill,java"
     iconClass: icon-java
 labels:
-  application: Heatdrill
+  env: ${env}
   createdBy: heatdrill-template
 parameters:
   - description: DB Server
@@ -20,55 +20,56 @@ parameters:
   - description: DB Passwort
     name: DB_PW
     value:
+  - description: Name for Environment
+    name: env
+    required: true
+    value: test
+  - description: Version of Image
+    name: version
+    required: true
+    value:
+  - description: Scheduled "true/false"
+    name: scheduled
+    required: true
+    value: "false"
 objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    creationTimestamp: null
-    generation: 1
     name: heatdrill
-    annotations:
-      description: Image Stream of the application
-    labels:
-      application: heatdrill
+    application: heatdrill-${env}
   spec:
     tags:
-    - annotations: null
-      from:
+    - from:
         kind: DockerImage
-        name: sogis/heatdrill:latest
-      generation: null
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: ""
-  status:
-    dockerImageRepository: ""
+        name: sogis/heatdrill:${version}
+      importPolicy:
+        scheduled: ${{scheduled}}
+      name: ${version}
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
     annotations:
       openshift.io/generated-by: template-heatdrill
-      decription: Deployment Config for heatdrill-service Pod
+      description: Deployment Config for heatdrill-service Pod
     creationTimestamp: null
     generation: 1
     labels:
-      application: heatdrill
-    name: heatdrill
+      application: heatdrill-${env}
+    name: heatdrill-${env}
   spec:
     replicas: 1
     revisionHistoryLimit: 10
     selector:
-      application: heatdrill
-      deploymentconfig: heatdrill
+      deploymentconfig: heatdrill-${env}
     strategy:
       activeDeadlineSeconds: 21600
       resources: {}
       rollingParams:
         intervalSeconds: 1
-        maxSurge: 25%
-        maxUnavailable: 25%
-        timeoutSeconds: 600
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 60
         updatePeriodSeconds: 1
       type: Rolling
     template:
@@ -77,8 +78,8 @@ objects:
           openshift.io/generated-by: template-heatdrill
         creationTimestamp: null
         labels:
-          application: heatdrill
-          deploymentconfig: heatdrill
+          application: heatdrill-${env}
+          deploymentconfig: heatdrill-${env}
       spec:
         containers:
         - env:
@@ -87,7 +88,7 @@ objects:
               {"db-connection":{"url":"jdbc:postgresql://${DB_SERVER}:5432/sogis","userName":"mswrite","password":"${DB_PW}"}}
           image: sogis/heatdrill
           imagePullPolicy: IfNotPresent
-          name: heatdrill
+          name: heatdrill-${env}
           ports:
           - containerPort: 80
             protocol: TCP
@@ -105,30 +106,23 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - heatdrill
+        - heatdrill-${env}
         from:
           kind: ImageStreamTag
-          name: heatdrill:latest
+          name: heatdrill:${version}
           namespace: agi-heatdrill-integration
       type: ImageChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
 - apiVersion: v1
   kind: Service
   metadata:
-    name: heatdrill-service
+    name: heatdrill-service-${env}
     annotations:
-      decription: http port of application
+      description: http port of application
     labels: 
-      application: heatdrill
+      application: heatdrill-${env}
   spec:
     selector:
-      application: heatdrill
+      deploymentconfig: heatdrill-${env}
     ports:
     - protocol: TCP
       port: 80
