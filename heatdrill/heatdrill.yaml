@@ -110,7 +110,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: heatdrill:${version}
-          namespace: agi-heatdrill-integration
+          namespace: agi-heatdrill
       type: ImageChange
 - apiVersion: v1
   kind: Service
