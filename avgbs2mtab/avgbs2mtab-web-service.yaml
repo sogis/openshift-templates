@@ -12,7 +12,6 @@ metadata:
     tags: "agi,gdi,avgbs2mtab,java"
     iconClass: icon-java
 labels:
-  env: ${env}
   createdBy: avgbs2mtab-template
 parameters:
   - description: Name for Environment
@@ -30,15 +29,15 @@ objects:
     annotations:
       description: Image Stream of the application
     labels:
-      application: avgbs2mtab-web-service-${env}  
+      application: avgbs2mtab-web-service  
     creationTimestamp: null
     generation: 1
-    name: avgbs2mtab-web-service-${env}
+    name: avgbs2mtab-web-service
   spec:
     replicas: 1
     revisionHistoryLimit: 10
     selector:
-      deploymentconfig: avgbs2mtab-web-service-${env}
+      deploymentconfig: avgbs2mtab-web-service
     strategy:
       activeDeadlineSeconds: 21600
       resources: {}
@@ -55,13 +54,13 @@ objects:
           openshift.io/generated-by: OpenShiftNewApp
         creationTimestamp: null
         labels:
-          application: avgbs2mtab-web-service-${env}
-          deploymentconfig: avgbs2mtab-web-service-${env}
+          application: avgbs2mtab-web-service
+          deploymentconfig: avgbs2mtab-web-service
       spec:
         containers:
         - image: sogis/avgbs2mtab-web-service
           imagePullPolicy: IfNotPresent
-          name: avgbs2mtab-web-service-${env}
+          name: avgbs2mtab-web-service
           ports:
           - containerPort: 8878
             protocol: TCP
@@ -79,23 +78,23 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - avgbs2mtab-web-service-${env}
+        - avgbs2mtab-web-service
         from:
           kind: ImageStreamTag
           name: avgbs2mtab-web-service:${version}
-          namespace: agi-avgbs2mtab
+          namespace: agi-apps-${env}
       type: ImageChange
 - apiVersion: v1
   kind: Service
   metadata:
-    name: avgbs2mtab-service-${env}
+    name: avgbs2mtab-service
     annotations:
       description: http port of application
     labels:
-      application: avgbs2mtab-web-service-${env}
+      application: avgbs2mtab-web-service
   spec:
     selector:
-      deploymentconfig: avgbs2mtab-web-service-${env}
+      deploymentconfig: avgbs2mtab-web-service
     ports:
     - protocol: TCP
       name: "80"
@@ -105,6 +104,8 @@ objects:
   kind: ImageStream
   metadata:
     name: avgbs2mtab-web-service
+    labels:
+      application: avgbs2mtab-web-service
   spec:
     tags:
     - from:
