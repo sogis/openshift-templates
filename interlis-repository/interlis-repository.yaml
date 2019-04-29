@@ -12,7 +12,6 @@ metadata:
     tags: "agi,gdi,avgbs2mtab,java"
     iconClass: icon-java
 labels:
-  env: ${env}
   createdBy: interlis-repository-template
 parameters:
   - description: Name for Environment
@@ -34,15 +33,15 @@ objects:
     annotations:
       description: Image Stream of the application
     labels:
-      application: interlis-repository-${env}  
+      application: interlis-repository  
     creationTimestamp: null
     generation: 1
-    name: interlis-repository-${env}
+    name: interlis-repository
   spec:
     replicas: 1
     revisionHistoryLimit: 10
     selector:
-      deploymentconfig: interlis-repository-${env}
+      deploymentconfig: interlis-repository
     strategy:
       activeDeadlineSeconds: 21600
       resources: {}
@@ -59,13 +58,13 @@ objects:
           openshift.io/generated-by: OpenShiftNewApp
         creationTimestamp: null
         labels:
-          application: interlis-repository-${env}
-          deploymentconfig: interlis-repository-${env}
+          application: interlis-repository
+          deploymentconfig: interlis-repository
       spec:
         containers:
         - image: sogis/interlis-repository
           imagePullPolicy: IfNotPresent
-          name: interlis-repository-${env}
+          name: interlis-repository
           ports:
           - containerPort: 8080
             protocol: TCP
@@ -83,23 +82,23 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - interlis-repository-${env}
+        - interlis-repository
         from:
           kind: ImageStreamTag
           name: interlis-repository:${version}
-          namespace: agi-interlis-repository
+          namespace: agi-apps-${env}
       type: ImageChange
 - apiVersion: v1
   kind: Service
   metadata:
-    name: interlis-repository-service-${env}
+    name: interlis-repository-service
     annotations:
       description: http port of application
     labels:
-      application: interlis-repository-${env}
+      application: interlis-repository
   spec:
     selector:
-      deploymentconfig: interlis-repository-${env}
+      deploymentconfig: interlis-repository
     ports:
     - protocol: TCP
       name: "80"
@@ -109,6 +108,8 @@ objects:
   kind: ImageStream
   metadata:
     name: interlis-repository
+    labels:
+      application: interlis-repository
   spec:
     tags:
     - from:
