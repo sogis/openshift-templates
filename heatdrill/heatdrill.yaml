@@ -11,7 +11,6 @@ metadata:
     tags: "agi,gdi,heatdrill,java"
     iconClass: icon-java
 labels:
-  env: ${env}
   createdBy: heatdrill-template
 parameters:
   - description: DB Server
@@ -36,8 +35,9 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: heatdrill
-    application: heatdrill-${env}
+    name: heatdrill-service
+    labels:
+      application: heatdrill-service
   spec:
     tags:
     - from:
@@ -55,13 +55,13 @@ objects:
     creationTimestamp: null
     generation: 1
     labels:
-      application: heatdrill-${env}
-    name: heatdrill-${env}
+      application: heatdrill-service
+    name: heatdrill-service
   spec:
     replicas: 1
     revisionHistoryLimit: 10
     selector:
-      deploymentconfig: heatdrill-${env}
+      deploymentconfig: heatdrill-service
     strategy:
       activeDeadlineSeconds: 21600
       resources: {}
@@ -78,8 +78,8 @@ objects:
           openshift.io/generated-by: template-heatdrill
         creationTimestamp: null
         labels:
-          application: heatdrill-${env}
-          deploymentconfig: heatdrill-${env}
+          application: heatdrill-service
+          deploymentconfig: heatdrill-service
       spec:
         containers:
         - env:
@@ -88,7 +88,7 @@ objects:
               {"db-connection":{"url":"jdbc:postgresql://${DB_SERVER}:5432/sogis","userName":"mswrite","password":"${DB_PW}"}}
           image: sogis/heatdrill
           imagePullPolicy: IfNotPresent
-          name: heatdrill-${env}
+          name: heatdrill-service
           ports:
           - containerPort: 80
             protocol: TCP
@@ -106,23 +106,23 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - heatdrill-${env}
+        - heatdrill-service
         from:
           kind: ImageStreamTag
-          name: heatdrill:${version}
-          namespace: agi-heatdrill
+          name: heatdrill-service:${version}
+          namespace: agi-apps-${env}
       type: ImageChange
 - apiVersion: v1
   kind: Service
   metadata:
-    name: heatdrill-service-${env}
+    name: heatdrill-service
     annotations:
       description: http port of application
     labels: 
-      application: heatdrill-${env}
+      application: heatdrill-service
   spec:
     selector:
-      deploymentconfig: heatdrill-${env}
+      deploymentconfig: heatdrill-service
     ports:
     - protocol: TCP
       port: 80
