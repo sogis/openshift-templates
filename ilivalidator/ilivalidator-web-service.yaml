@@ -12,7 +12,6 @@ metadata:
     tags: "agi,gdi,ilivalidator,java"
     iconClass: icon-java
 labels:
-  env: ${env}
   createdBy: ilivalidator-template
 parameters:
   - description: Name for Environment
@@ -30,15 +29,15 @@ objects:
     annotations:
       description: Image Stream of the application
     labels:
-      application: ilivalidator-web-service-${env}
+      application: ilivalidator-web-service
     creationTimestamp: null
     generation: 1
-    name: ilivalidator-web-service-${env}
+    name: ilivalidator-web-service
   spec:
     replicas: 1
     revisionHistoryLimit: 10
     selector:
-      deploymentconfig: ilivalidator-web-service-${env}
+      deploymentconfig: ilivalidator-web-service
     strategy:
       activeDeadlineSeconds: 21600
       resources: {}
@@ -55,8 +54,8 @@ objects:
           openshift.io/generated-by: OpenShiftNewApp
         creationTimestamp: null
         labels:
-          application: ilivalidator-web-service-${env}
-          deploymentconfig: ilivalidator-web-service-${env}
+          application: ilivalidator-web-service
+          deploymentconfig: ilivalidator-web-service
       spec:
         containers:
         - image: sogis/ilivalidator-web-service
@@ -89,19 +88,19 @@ objects:
         from:
           kind: ImageStreamTag
           name: ilivalidator-web-service:${version}
-          namespace: agi-ilivalidator-web-service-${env}
+          namespace: agi-apps-${env}
       type: ImageChange
 - apiVersion: v1
   kind: Service
   metadata:
-    name: ilivalidator-service-${env}
+    name: ilivalidator-service
     annotations:
       description: http port of application
     labels:
-      application: ilivalidator-web-service-${env}
+      application: ilivalidator-web-service
   spec:
     selector:
-      deploymentconfig: ilivalidator-web-service-${env}
+      deploymentconfig: ilivalidator-web-service
     ports:
     - protocol: TCP
       name: "80"
@@ -111,6 +110,8 @@ objects:
   kind: ImageStream
   metadata:
     name: ilivalidator-web-service
+    labels:
+      application: ilivalidator-web-service
   spec:
     tags:
     - from:
