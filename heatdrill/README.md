@@ -4,13 +4,15 @@
 
 All necassary components of the application are configured in the template heatdrill.yaml.
 Set DB_SERVER parameter to the desired DB Connection
+Set env parameter to set environment
+Set version parameter to set Image version
 ```
-oc process -f heatdrill.yaml -p DB_SERVER=geodb-t.verw.rootso.org -p DB_PW=password | oc create -f-
+oc process -f heatdrill.yaml -p DB_SERVER=geodb-t.verw.rootso.org -p DB_PW=password -p env=test -p version=latest | oc apply -f-
 ```
 
 ## Update of app configuration in Openshift Environment
 
 Make changes to the configuration in the template heatdrill.yaml and run
 ```
-oc process -f heatdrill.yaml -p DB_SERVER=geodb-t.verw.rootso.org -p DB_PW=password | oc apply -f-
+oc process -f heatdrill.yaml -p DB_SERVER=geodb-t.verw.rootso.org -p DB_PW=password -p env=test -p version=latest | oc apply -f-
 ```
