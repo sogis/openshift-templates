@@ -21,6 +21,17 @@ oc project agi-apps-test
 oc process -f av-datenabgabe/av-datenabgabe.yaml | oc apply -f -
 ```
 
+Deploy integration environment:
+
+```
+oc project agi-apps-integration
+oc process -f av-datenabgabe/av-datenabgabe.yaml \
+  -p ENVIRONMENT_SHORT=prod \
+  -p TAG=1.0.7 \
+  -p IMPORT_POLICY_SCHEDULED=false \
+  | oc apply -f -
+```
+
 Deploy production environment:
 
 ```
