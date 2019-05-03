@@ -3,7 +3,7 @@ kind: Template
 metadata:
   name: av-datenabgabe
 labels:
-  template: av-datenabgabe
+  template: av-datenabgabe-template
   app: cadastral-data-disposal
 objects:
 - apiVersion: v1
