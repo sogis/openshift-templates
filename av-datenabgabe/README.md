@@ -1,13 +1,5 @@
 # Install or update AV-Datenabgabe in OpenShift
 
-Create new project:
-
-```
-oc new-project agi-av-datenabgabe --display-name='AV-Datenabgabe'
-
-oc policy add-role-to-user admin "Surname1 Name1" "Surname2 Name2" ...
-```
-
 Checkout the openshift-templates repository:
 
 ```
@@ -25,6 +17,7 @@ git pull
 Deploy test environment (for the test environment, the default values are mostly fine):
 
 ```
+oc project agi-apps-test
 oc process -f av-datenabgabe/av-datenabgabe.yaml \
   -p HOSTNAME=av-datenabgabe-t.dev.so.ch \
   | oc apply -f -
@@ -33,8 +26,8 @@ oc process -f av-datenabgabe/av-datenabgabe.yaml \
 Deploy production environment:
 
 ```
+oc project agi-apps-production
 oc process -f av-datenabgabe/av-datenabgabe.yaml \
-  -p ENVIRONMENT=production \
   -p ENVIRONMENT_SHORT=prod \
   -p TAG=1.0.5 \
   -p IMPORT_POLICY_SCHEDULED=false \

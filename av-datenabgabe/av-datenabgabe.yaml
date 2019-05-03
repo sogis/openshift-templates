@@ -4,13 +4,12 @@ metadata:
   name: av-datenabgabe
 labels:
   template: av-datenabgabe
-  app: cadastral-data-disposal-${ENVIRONMENT}
-  environment: ${ENVIRONMENT}
+  app: cadastral-data-disposal
 objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: cadastral-data-disposal-${ENVIRONMENT}
+    name: cadastral-data-disposal
   spec:
     tags:
     - from:
@@ -22,75 +21,69 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    name: cadastral-data-disposal-${ENVIRONMENT}
+    name: cadastral-data-disposal
   spec:
     template:
       metadata:
         labels:
-          app: cadastral-data-disposal-${ENVIRONMENT}
-          deploymentconfig: cadastral-data-disposal-${ENVIRONMENT}
-          environment: ${ENVIRONMENT}
+          app: cadastral-data-disposal
+          deploymentconfig: cadastral-data-disposal
       spec:
         containers:
-        - name: cadastral-data-disposal-${ENVIRONMENT}
+        - name: cadastral-data-disposal
           env:
           - name: SPRING_PROFILES_ACTIVE
             value: ${ENVIRONMENT_SHORT}
           volumeMounts:
           - mountPath: /tmp
-            name: cadastral-data-disposal-${ENVIRONMENT}-volume-1
+            name: cadastral-data-disposal-volume-1
         volumes:
         - emptyDir: {}
-          name: cadastral-data-disposal-${ENVIRONMENT}-volume-1
+          name: cadastral-data-disposal-volume-1
     replicas: ${{REPLICA_COUNT}}
     triggers:
     - type: ConfigChange
     - imageChangeParams:
         automatic: true
         containerNames:
-        - cadastral-data-disposal-${ENVIRONMENT}
+        - cadastral-data-disposal
         from:
           kind: ImageStreamTag
-          name: cadastral-data-disposal-${ENVIRONMENT}:latest
+          name: cadastral-data-disposal:latest
       type: ImageChange
     selector:
-      app: cadastral-data-disposal-${ENVIRONMENT}
-      deploymentconfig: cadastral-data-disposal-${ENVIRONMENT}
-      environment: ${ENVIRONMENT}
+      app: cadastral-data-disposal
+      deploymentconfig: cadastral-data-disposal
     strategy:
       type: Rolling
     revisionHistoryLimit: 10
 - apiVersion: v1
   kind: Route
   metadata:
-    name: cadastral-data-disposal-${ENVIRONMENT}
+    name: cadastral-data-disposal
   spec:
     host: ${HOSTNAME}
     port:
       targetPort: 8080
     to:
       kind: Service
-      name: cadastral-data-disposal-${ENVIRONMENT}
+      name: cadastral-data-disposal
 - apiVersion: v1
   kind: Service
   metadata:
-    name: cadastral-data-disposal-${ENVIRONMENT}
+    name: cadastral-data-disposal
   spec:
     ports:
     - port: 8080
       protocol: TCP
       targetPort: 8080
     selector:
-      app: cadastral-data-disposal-${ENVIRONMENT}
-      deploymentconfig: cadastral-data-disposal-${ENVIRONMENT}
-      environment: ${ENVIRONMENT}
+      app: cadastral-data-disposal
+      deploymentconfig: cadastral-data-disposal
     type: ClusterIP
 parameters:
-- name: ENVIRONMENT
-  description: "The environment to create objects for (e.g. test, production)"
-  value: test
 - name: ENVIRONMENT_SHORT
-  description: "The short name of the environment to create objects for (e.g. test, prod)"
+  description: "The short name of the environment the template is processed for (one of dev, test, prod)"
   value: test
 - name: TAG
   description: "The Docker image tag to use (e.g. latest, 1.0.5)"
