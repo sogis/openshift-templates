@@ -43,14 +43,14 @@ objects:
     replicas: ${{REPLICA_COUNT}}
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
+    - type: ImageChange
+      imageChangeParams:
         automatic: true
         containerNames:
         - cadastral-data-disposal
         from:
           kind: ImageStreamTag
           name: cadastral-data-disposal:latest
-      type: ImageChange
     selector:
       app: cadastral-data-disposal
       deploymentconfig: cadastral-data-disposal
