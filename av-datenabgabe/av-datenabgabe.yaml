@@ -58,17 +58,6 @@ objects:
       type: Rolling
     revisionHistoryLimit: 10
 - apiVersion: v1
-  kind: Route
-  metadata:
-    name: cadastral-data-disposal
-  spec:
-    host: ${HOSTNAME}
-    port:
-      targetPort: 8080
-    to:
-      kind: Service
-      name: cadastral-data-disposal
-- apiVersion: v1
   kind: Service
   metadata:
     name: cadastral-data-disposal
@@ -94,6 +83,3 @@ parameters:
 - name: REPLICA_COUNT
   description: "Number of replicas to run"
   value: "1"
-- name: HOSTNAME
-  description: "Hostname to use for the route"
-  value: ""

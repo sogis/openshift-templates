@@ -14,13 +14,11 @@ cd openshift-templates
 git pull
 ```
 
-Deploy test environment (for the test environment, the default values are mostly fine):
+Deploy test environment (for the test environment, the default values of the template parameters are usually fine):
 
 ```
 oc project agi-apps-test
-oc process -f av-datenabgabe/av-datenabgabe.yaml \
-  -p HOSTNAME=av-datenabgabe-t.dev.so.ch \
-  | oc apply -f -
+oc process -f av-datenabgabe/av-datenabgabe.yaml | oc apply -f -
 ```
 
 Deploy production environment:
@@ -32,6 +30,5 @@ oc process -f av-datenabgabe/av-datenabgabe.yaml \
   -p TAG=1.0.5 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p REPLICA_COUNT=2 \
-  -p HOSTNAME=av-datenabgabe.dev.so.ch \
   | oc apply -f -
 ```
