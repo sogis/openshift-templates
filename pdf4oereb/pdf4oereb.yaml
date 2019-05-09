@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: pdf4oereb
+  annotations:
+    openshift.io/display-name: "pdf4oereb Service"
+    description: >-
+      "Creates all necessary components for pdf4oereb Service"
+    openshift.io/long-description: >-
+      "Creates all necessary components for pdf4oereb Service"
+    tags: "agi,gdi,pdf4oereb,java"
+    iconClass: icon-java
+labels:
+  createdBy: pdf4oereb-template
+parameters:
+  - description: Name for Environment
+    name: env 
+    required: true
+    value: test
+  - description: Version of Image
+    name: version
+    required: true
+    value:
+  - description: scheduled "true/false"
+    name: scheduled
+    required: true
+    value: "false"
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      description: Image Stream of the application
+    labels:
+      application: pdf4oereb-service
+    creationTimestamp: null
+    generation: 1
+    name: pdf4oereb-service
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentconfig: pdf4oereb-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 60
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          application: pdf4oereb-service
+          deploymentconfig: pdf4oereb-service
+      spec:
+        containers:
+        - image: openoereb/pdf4oereb
+          imagePullPolicy: IfNotPresent
+          name: pdf4oereb-service
+          ports:
+          - containerPort: 8888
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - pdf4oereb-service
+        from:
+          kind: ImageStreamTag
+          name: pdf4oereb-service:${version}
+          namespace: agi-apps-${env}
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: pdf4oereb-service
+    annotations:
+      description: http port of application
+    labels:
+      application: pdf4oereb-service
+  spec:
+    selector:
+      deploymentconfig: pdf4oereb-service
+    ports:
+    - protocol: TCP
+      name: "80"
+      port: 80
+      targetPort: 8888
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: pdf4oereb-service
+    labels:
+      application: pdf4oereb-service
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: openoereb/pdf4oereb:${version}
+      name: ${version}
+      importPolicy:
+        scheduled: ${{scheduled}}
