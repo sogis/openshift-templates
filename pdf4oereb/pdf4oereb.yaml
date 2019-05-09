@@ -62,7 +62,7 @@ objects:
           deploymentconfig: pdf4oereb-service
       spec:
         containers:
-        - image: openoereb/pdf4oereb
+        - image: sogis/pdf4oereb-web-service
           imagePullPolicy: IfNotPresent
           name: pdf4oereb-service
           ports:
@@ -114,7 +114,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-        name: openoereb/pdf4oereb:${version}
+        name: sogis/pdf4oereb-web-service:${version}
       name: ${version}
       importPolicy:
         scheduled: ${{scheduled}}
