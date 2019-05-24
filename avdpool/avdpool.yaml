@@ -79,19 +79,6 @@ objects:
     strategy:
       type: Rolling
     revisionHistoryLimit: 10
-- apiVersion: v1
-  kind: Service
-  metadata:
-    name: avdpool
-  spec:
-    ports:
-    - port: 80
-      protocol: TCP
-      targetPort: 8888
-    selector:
-      app: avdpool
-      deploymentconfig: avdpool
-    type: ClusterIP
 parameters:
 - name: ENVIRONMENT_SHORT
   description: "The short name of the environment the template is processed for (one of dev, test, int, prod)"
