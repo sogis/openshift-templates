@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: avdpool
+labels:
+  template: avdpool-template
+  app: avdpool
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: avdpool
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: sogis/avdpool:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: latest
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: avdpool
+  spec:
+    template:
+      metadata:
+        labels:
+          app: avdpool
+          deploymentconfig: avdpool
+      spec:
+        containers:
+        - name: avdpool
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: ${ENVIRONMENT_SHORT}
+          - name: awsAccessKey
+            value: ${AWS_ACCESS_KEY}
+          - name: awsSecretKey
+            value: ${AWS_SECRET_KEY}
+          - name: emailSmtpSender
+            value: ${EMAIL_SMTP_SENDER}
+          - name: emailUserSender
+            value: ${EMAIL_USER_SENDER}
+          - name: emailPwdSender
+            value: ${EMAIL_PWD_SENDER}
+          - name: emailUserRecipient
+            value: ${EMAIL_USER_RECIPIENT}
+          - name: ftpUserInfogrips
+            value: ${FTP_USER_INFOGRIPS}
+          - name: ftpPwdInfogrips
+            value: ${FTP_PWD_INFOGRIPS}
+          - name: dbUserEdit
+            value: ${DB_USER_EDIT}
+          - name: dbPwdEdit
+            value: ${DB_PWD_EDIT}
+          - name: TZ
+            value: Europe/Amsterdam
+          volumeMounts:
+          - mountPath: /avdpool_data
+            name: avdpool-data
+        volumes:
+        - emptyDir: {}
+          name: avdpool-data
+    replicas: 1
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - avdpool
+        from:
+          kind: ImageStreamTag
+          name: avdpool:latest
+    selector:
+      app: avdpool
+      deploymentconfig: avdpool
+    strategy:
+      type: Rolling
+    revisionHistoryLimit: 10
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: avdpool
+  spec:
+    ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8888
+    selector:
+      app: avdpool
+      deploymentconfig: avdpool
+    type: ClusterIP
+parameters:
+- name: ENVIRONMENT_SHORT
+  description: "The short name of the environment the template is processed for (one of dev, test, int, prod)"
+  value: test
+- name: TAG
+  description: "The Docker image tag to use (e.g. latest, 1.0.27)"
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: "Regularly check for changed image (default: true)"
+  value: "true"
+- name: AWS_ACCESS_KEY
+  description: "The Amazon Access Key"
+  required: true
+- name: AWS_SECRET_KEY
+  description: "The Amazon Secret Key"
+  required: true
+- name: EMAIL_SMTP_SENDER
+  description: "The URI of the SMTP Server for sending e-mails (e.g. smtps://smtp.gmail.com:465, smtp://my.mailserver.net)"
+  required: true
+- name: EMAIL_USER_SENDER
+  description: "The username for authenticating against the SMTP server"
+- name: EMAIL_PWD_SENDER
+  description: "The password for authenticating against the SMTP server"
+- name: EMAIL_USER_RECIPIENT
+  description: "Comma separated list of e-mail addresses that should receive e-mails sent out by the service"
+  required: true
+- name: FTP_USER_INFOGRIPS
+  description: "The username for authenticating against the InfoGrips FTP server"
+  required: true
+- name: FTP_PWD_INFOGRIPS
+  description: "The password for authenticating against the InfoGrips FTP server"
+  required: true
+- name: DB_USER_EDIT
+  description: "The username for authenticating against the target database"
+  required: true
+- name: DB_PWD_EDIT
+  description: "The password for authenticating against the target database"
+  required: true
