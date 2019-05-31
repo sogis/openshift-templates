@@ -27,7 +27,7 @@ Deploy integration environment:
 oc project agi-apps-integration
 oc process -f av-datenabgabe/av-datenabgabe.yaml \
   -p ENVIRONMENT_SHORT=prod \
-  -p TAG=1.0.9 \
+  -p TAG=1.0.11 \
   -p IMPORT_POLICY_SCHEDULED=false \
   | oc apply -f -
 ```
@@ -38,7 +38,7 @@ Deploy production environment:
 oc project agi-apps-production
 oc process -f av-datenabgabe/av-datenabgabe.yaml \
   -p ENVIRONMENT_SHORT=prod \
-  -p TAG=1.0.9 \
+  -p TAG=1.0.11 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p REPLICA_COUNT=2 \
   | oc apply -f -
