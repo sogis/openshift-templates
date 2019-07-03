@@ -1,0 +1,183 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: zookeeper
+  annotations:
+    openshift.io/display-name: Zookeeper (Ephemeral)
+    description: Create a replicated Zookeeper server
+    iconClass: icon-database
+    tags: database,zookeeper
+  labels:
+    template: zookeeper
+    component: zookeeper
+parameters:
+- name: NAME
+  value: zookeeper
+  required: true
+- name: SOURCE_IMAGE
+  description: Container image
+  value: engapa/zookeeper
+  required: true
+- name: ZOO_VERSION
+  description: Version
+  value: "3.4.14"
+  required: true
+- name: ZOO_REPLICAS
+  description: Number of nodes
+  value: "3"
+  required: true
+- name: ZOO_TICK_TIME
+  description: The number of milliseconds of each tick
+  value: "2000"
+  required: true
+- name: ZOO_INIT_LIMIT
+  description: The number of ticks that the initial synchronization phase can take
+  value: "5"
+  required: true
+- name: ZOO_SYNC_LIMIT
+  description: The number of ticks that can pass between sending a request and getting an acknowledgement
+  value: "2"
+  required: true
+- name: ZOO_CLIENT_PORT
+  description: The port at which the clients will connect
+  value: "2181"
+  required: true
+- name: ZOO_SERVER_PORT
+  description: Server port
+  value: "2888"
+  required: true
+- name: ZOO_ELECTION_PORT
+  description: Election port
+  value: "3888"
+  required: true
+- name: ZOO_MAX_CLIENT_CNXNS
+  description: The maximum number of client connections
+  value: "60"
+  required: true
+- name: ZOO_SNAP_RETAIN_COUNT
+  description: The number of snapshots to retain in dataDir
+  value: "3"
+  required: true
+- name: ZOO_PURGE_INTERVAL
+  description: Purge task interval in hours. Set to 0 to disable auto purge feature
+  value: "1"
+  required: true
+- name: ZOO_HEAP_SIZE
+  description: JVM heap size
+  value: "-Xmx512M -Xms512M"
+  required: true
+- name: RESOURCE_MEMORY_REQ
+  description: The memory resource request.
+  value: "512M"
+  required: true
+- name: RESOURCE_MEMORY_LIMIT
+  description: The limits for memory resource.
+  value: "512M"
+  required: true
+- name: RESOURCE_CPU_REQ
+  description: The CPU resource request.
+  value: "300m"
+  required: true
+- name: RESOURCE_CPU_LIMIT
+  description: The limits for CPU resource.
+  value: "300m"
+  required: true
+
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${NAME}
+    labels:
+      zk-name: ${NAME}
+      component: zookeeper
+    annotations:
+      service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  spec:
+    ports:
+    - port: ${ZOO_CLIENT_PORT}
+      name: client
+    - port: ${ZOO_SERVER_PORT}
+      name: server
+    - port: ${ZOO_ELECTION_PORT}
+      name: election
+    clusterIP: None
+    selector:
+      zk-name: ${NAME}
+- apiVersion: apps/v1beta1
+  kind: StatefulSet
+  metadata:
+    name: ${NAME}
+    labels:
+      zk-name: ${NAME}
+      component: zookeeper
+  spec:
+    podManagementPolicy: "Parallel"
+    serviceName: ${NAME}
+    replicas: ${ZOO_REPLICAS}
+    template:
+      metadata:
+        labels:
+          zk-name: ${NAME}
+          template: zookeeper-persistent
+          component: zookeeper
+      spec:
+        containers:
+        - name: ${NAME}
+          imagePullPolicy: IfNotPresent
+          image: ${SOURCE_IMAGE}:${ZOO_VERSION}
+          resources:
+            requests:
+              memory: ${RESOURCE_MEMORY_REQ}
+              cpu: ${RESOURCE_CPU_REQ}
+            limits:
+              memory: ${RESOURCE_MEMORY_LIMIT}
+              cpu: ${RESOURCE_CPU_LIMIT}
+          ports:
+          - containerPort: ${ZOO_CLIENT_PORT}
+            name: client
+          - containerPort: ${ZOO_SERVER_PORT}
+            name: server
+          - containerPort: ${ZOO_ELECTION_PORT}
+            name: election
+          env:
+          - name : SETUP_DEBUG
+            value: "true"
+          - name : ZOO_REPLICAS
+            value: ${ZOO_REPLICAS}
+          - name : ZK_HEAP_SIZE
+            value: ${ZOO_HEAP_SIZE}
+          - name : ZK_tickTime
+            value: ${ZOO_TICK_TIME}
+          - name : ZK_initLimit
+            value: ${ZOO_INIT_LIMIT}
+          - name : ZK_syncLimit
+            value: ${ZOO_SYNC_LIMIT}
+          - name : ZK_maxClientCnxns
+            value: ${ZOO_MAX_CLIENT_CNXNS}
+          - name : ZK_autopurge_snapRetainCount
+            value: ${ZOO_SNAP_RETAIN_COUNT}
+          - name : ZK_autopurge_purgeInterval
+            value: ${ZOO_PURGE_INTERVAL}
+          - name : ZK_clientPort
+            value: ${ZOO_CLIENT_PORT}
+          - name : ZOO_SERVER_PORT
+            value: ${ZOO_SERVER_PORT}
+          - name : ZOO_ELECTION_PORT
+            value: ${ZOO_ELECTION_PORT}
+          - name : JAVA_ZK_JVMFLAG
+            value: "\"${ZOO_HEAP_SIZE}\""
+          readinessProbe:
+            exec:
+              command:
+              - zk_status.sh
+            initialDelaySeconds: 15
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+              - zk_status.sh
+            initialDelaySeconds: 15
+            timeoutSeconds: 5
+          securityContext:
+            runAsUser: 1001

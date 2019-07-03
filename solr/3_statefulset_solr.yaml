@@ -1,0 +1,202 @@
+---
+# Source: solr/templates/solr-xml-configmap.yaml
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: solr
+  annotations:
+    openshift.io/display-name: Solr Cloud
+    description: Create a Solr Cloud
+    iconClass: icon-database
+    tags: database,solr
+  labels:
+    template: solr
+    component: solr
+parameters:
+- name: ENV
+  value: "test"
+  required: true
+- name: SOLR_JAVA_MEM
+  value: "-Xms512m -Xmx512m"
+  required: true
+- name: MEMORY_LIMIT
+  value: "256MB"
+  required: true
+- name: CPU_LIMIT
+  value: "100m"
+  required: true
+- name: MEMORY_REQUEST
+  value: "64MB"
+  required: true
+- name: CPU_REQUEST
+  value: "50m"
+  required: true
+- name: LOGGING_LEVEL
+  value: "INFO"
+  required: true
+
+objects:
+- apiVersion: "v1"
+  kind: "ConfigMap"
+  metadata:
+    name: "solr-config-map"
+    labels:
+      app: solr
+      release: solr
+  data:
+    solr.xml: |
+      <?xml version="1.0" encoding="UTF-8" ?>
+      <solr>
+        <solrcloud>
+          <str name="host">${host:}</str>
+          <int name="hostPort">${jetty.port:8983}</int>
+          <str name="hostContext">${hostContext:solr}</str>
+          <bool name="genericCoreNodeNames">${genericCoreNodeNames:true}</bool>
+          <int name="zkClientTimeout">${zkClientTimeout:30000}</int>
+          <int name="distribUpdateSoTimeout">${distribUpdateSoTimeout:600000}</int>
+          <int name="distribUpdateConnTimeout">${distribUpdateConnTimeout:60000}</int>
+          <str name="zkCredentialsProvider">${zkCredentialsProvider:org.apache.solr.common.cloud.DefaultZkCredentialsProvider}</str>
+          <str name="zkACLProvider">${zkACLProvider:org.apache.solr.common.cloud.DefaultZkACLProvider}</str>
+        </solrcloud>
+        <shardHandlerFactory name="shardHandlerFactory"
+          class="HttpShardHandlerFactory">
+          <int name="socketTimeout">${socketTimeout:600000}</int>
+          <int name="connTimeout">${connTimeout:60000}</int>
+        </shardHandlerFactory>
+      </solr>
+- apiVersion: apps/v1beta1
+  kind: StatefulSet
+  metadata:
+    name: solr
+    labels:
+      app: solr
+      release: solr
+      component: server
+  spec:
+    selector:
+      matchLabels:
+        app: "solr"
+        release: "solr"
+        component: "server"
+    serviceName: solr-headless
+    replicas: 2
+    updateStrategy:
+          type: OnDelete
+
+    template:
+      metadata:
+        labels:
+          app: "solr"
+          release: "solr"
+          component: "server"
+        annotations:
+          {}
+
+      spec:
+        securityContext:
+          fsGroup: 8983
+        affinity:
+          {}
+
+        terminationGracePeriodSeconds: 180
+        volumes:
+          - name: solr-xml
+            configMap:
+              name: solr-config-map
+              items:
+              - key: solr.xml
+                path: solr.xml
+        initContainers:
+          - name: check-zookeeper
+            image: busybox:latest
+            command:
+              - 'sh'
+              - '-c'
+              - |
+                COUNTER=0;
+                while [  $COUNTER -lt 120 ]; do
+                  for i in "zookeeper-0.zookeeper" "zookeeper-1.zookeeper" "zookeeper-2.zookeeper" ;
+                    do mode=$(echo srvr | nc $i 2181 | grep "Mode");
+                      if [ "$mode" == "Mode: leader" ] || [ "$mode" == "Mode: standalone" ]; then
+                        exit 0;
+                      fi;
+                    done;
+                  let COUNTER=COUNTER+1;
+                  sleep 2;
+                done;
+                echo "Did NOT see a ZOOKEEPER leader after 240 secs!";
+                exit 1;
+          - name: "cp-solr-xml"
+            image: busybox:latest
+            command: ['sh', '-c', 'cp /tmp/solr.xml /tmp-config/solr.xml']
+            volumeMounts:
+            - name: "solr-xml"
+              mountPath: "/tmp"
+            - name: "solr-claim"
+              mountPath: "/tmp-config"
+        containers:
+          - name: solr
+            image: "solr:7.7.1"
+            imagePullPolicy: IfNotPresent
+            resources:
+              limits:
+                cpu: ${CPU_LIMIT}
+                memory: ${MEMORY_LIMIT}
+              requests:
+                cpu: ${CPU_REQUEST}
+                memory: ${MEMORY_REQUEST}
+
+            ports:
+            - containerPort: 8983
+              name: solr-client
+            env:
+              - name: "SOLR_JAVA_MEM"
+                value: ${SOLR_JAVA_MEM}
+              - name: "SOLR_HOME"
+                value: "/opt/solr/server/home"
+              - name: "SOLR_PORT"
+                value: "8983"
+              - name: "POD_HOSTNAME"
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.name
+              - name: "SOLR_HOST"
+                value: "$(POD_HOSTNAME).solr-headless"
+              - name: "ZK_HOST"
+                value: "zookeeper.solr-cloud-${ENV}.svc:2181"
+              - name: "SOLR_LOG_LEVEL"
+                value: ${LOGGING_LEVEL}
+
+            livenessProbe:
+              initialDelaySeconds: 70
+              periodSeconds: 10
+              httpGet:
+                scheme: "HTTP"
+                path: /solr/admin/info/system
+                port: 8983
+            readinessProbe:
+              initialDelaySeconds: 70
+              periodSeconds: 5
+              httpGet:
+                scheme: "HTTP"
+                path: /solr/admin/info/system
+                port: 8983
+            volumeMounts:
+              - name: solr-claim
+                mountPath: /opt/solr/server/home
+
+    volumeClaimTemplates:
+      - metadata:
+          name: solr-claim
+          annotations:
+            pv.beta.kubernetes.io/gid: "8983"
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          storageClassName: "nfs"
+
+          resources:
+            requests:
+              storage: 25Gi
+

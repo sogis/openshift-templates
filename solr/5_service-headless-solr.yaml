@@ -1,0 +1,59 @@
+---
+# Source: solr/templates/service-headless.yaml
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: zookeeper
+  annotations:
+    openshift.io/display-name: Zookeeper (Ephemeral)
+    description: Create a replicated Zookeeper server
+    iconClass: icon-database
+    tags: database,zookeeper
+  labels:
+    template: zookeeper
+    component: zookeeper
+parameters:
+- name: ENV
+  value: "test"
+  required: true
+
+objects:
+- apiVersion: "v1"
+  kind: "Service"
+  metadata:
+    name: "solr-headless"
+    labels:
+      app: solr
+      release: solr
+  spec:
+    clusterIP: "None"
+    ports:
+    - port: 8983
+      name: "solr-headless"
+    selector:
+      app: "solr"
+      release: "solr"
+      component: "server"
+
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: 'true'
+    creationTimestamp: '2019-06-05T12:00:08Z'
+    labels:
+      app: solr
+      chart: solr-1.0.0
+      heritage: Tiller
+      release: solr
+    name: solr-headless
+  spec:
+    host: solr-headless-solr-cloud-${ENV}.dev.so.ch
+    port:
+      targetPort: solr-headless
+    to:
+      kind: Service
+      name: solr-headless
+      weight: 100
+    wildcardPolicy: None

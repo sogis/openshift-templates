@@ -1,0 +1,17 @@
+---
+# Source: solr/templates/poddisruptionbudget.yaml
+---
+apiVersion: "policy/v1beta1"
+kind: "PodDisruptionBudget"
+metadata:
+  name: "solr"
+  labels:
+    app: solr
+    release: solr
+spec:
+  selector:
+    matchLabels:
+      app: "solr"
+      release: "solr"
+      component: "server"
+  maxUnavailable: 1

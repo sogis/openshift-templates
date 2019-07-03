@@ -1,0 +1,15 @@
+# Source: solr/charts/zookeeper/templates/poddisruptionbudget.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: solr-zookeeper
+  labels:
+    app: zookeeper
+    release: solr
+    component: server
+spec:
+  selector:
+    matchLabels:
+      component: zookeeper
+  maxUnavailable: 1
+

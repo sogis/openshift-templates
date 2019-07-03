@@ -1,0 +1,36 @@
+kube-dns
+total 92K
+drwxr-xr-x   1 root root 4.0K Jul  2 13:14 .
+drwxr-xr-x   1 root root 4.0K Jul  2 13:14 ..
+-rwxr-xr-x   1 root root    0 Jul  2 13:14 .dockerenv
+-rw-r--r--   1 root root  12K Mar  5 17:36 anaconda-post.log
+lrwxrwxrwx   1 root root    7 Mar  5 17:34 bin -> usr/bin
+drwxr-xr-x  17 root root 4.2K Jul  2 13:14 dev
+drwxr-xr-x   1 root root 4.0K Jul  2 13:14 etc
+drwxr-xr-x   2 root root 4.0K Apr 11  2018 home
+-rwxr-xr-x   1 root root  857 Jan  1  1970 install.sh
+-rw-r--r--   1 root root 2.1K Jan  1  1970 install.yaml
+-rw-r--r--   1 root root 5.6K Jan  1  1970 kubeconfig.kubeconfig
+lrwxrwxrwx   1 root root    7 Mar  5 17:34 lib -> usr/lib
+lrwxrwxrwx   1 root root    9 Mar  5 17:34 lib64 -> usr/lib64
+drwxr-xr-x   2 root root 4.0K Apr 11  2018 media
+drwxr-xr-x   2 root root 4.0K Apr 11  2018 mnt
+-rw-r--r--   1 root root    8 Jan  1  1970 namespace-file
+-rw-r--r--   1 root root  157 Jan  1  1970 namespace.yaml
+drwxr-xr-x   2 root root 4.0K Apr 11  2018 opt
+-rw-r--r--   1 root root  720 Jan  1  1970 param-file.txt
+-rw-r--r--   1 root root    0 Jan  1  1970 privileged-sa-list.txt
+dr-xr-xr-x 351 root root    0 Jul  1 10:24 proc
+-rw-r--r--   1 root root    0 Jan  1  1970 rbac.yaml
+dr-xr-x---   1 root root 4.0K May  2 11:46 root
+drwxr-xr-x   1 root root 4.0K May  2 12:17 run
+lrwxrwxrwx   1 root root    8 Mar  5 17:34 sbin -> usr/sbin
+drwxr-xr-x   2 root root 4.0K Apr 11  2018 srv
+dr-xr-xr-x  13 root root    0 Jul  2 13:14 sys
+drwxrwxrwt   1 root root 4.0K May  2 12:17 tmp
+drwxr-xr-x   1 root root 4.0K Mar  5 17:34 usr
+drwxr-xr-x   1 root root 4.0K Mar  5 17:34 var
+namespace/kube-dns created
+daemonset.extensions/kube-dns created
+serviceaccount/kube-dns created
+service/kube-dns created
