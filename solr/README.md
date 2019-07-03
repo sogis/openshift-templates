@@ -23,7 +23,7 @@ Es sollte etwas in der Art
 INFO  - 2019-06-25 17:34:40.825; org.apache.solr.common.cloud.ConnectionManager; zkClient has connected
 ```
 erscheinen
-# Collection erstellen mit 2 solr Pods (solr-headless-solr-cloud-integration.dev.so.ch ist zu ersetzen mit der Url der Solr Cloud)
+### Collection erstellen mit 2 solr Pods (solr-headless-solr-cloud-integration.dev.so.ch ist zu ersetzen mit der Url der Solr Cloud)
 ```
 curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=CREATE&name=gdi&numShards=1&replicationFactor=2"
 ```
@@ -48,7 +48,7 @@ Sollte etwas in der Art
 ```
 zurückliefern
 
-# Dokument mit id dummy hinzufügen. Url auf Umgebung anpassen
+### Dokument mit id dummy hinzufügen. Url auf Umgebung anpassen
 ```
 curl -X POST -H 'Content-Type: application/json' 'http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/update/json/docs?commit=true' --data-binary '{ "id": "dummy" }'
 ```
@@ -62,12 +62,12 @@ Sollte etwas in der Art
 ```
 zurückliefern
 
-# Liveness Probe anpassen
+### Liveness Probe anpassen
 ```
 oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","livenessProbe":{"httpGet":{"path":"http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/select?q=id%3Adummy&rows=1","port":"80"}}}]}}}}'
 ```
 Anschliessend beide solr Pods deleten
-# Readiness Probe anpassen
+### Readiness Probe anpassen
 ```
 oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","readinessProbe":{"httpGet":{"path":"http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/select?q=id%3Adummy&rows=1","port":"80"}}}]}}}}'
 ```
