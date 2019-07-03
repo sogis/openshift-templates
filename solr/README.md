@@ -48,7 +48,7 @@ Sollte etwas in der Art
 ```
 zurückliefern
 
-### Dokument mit id dummy hinzufügen. Url auf Umgebung anpassen
+### Dokument mit id dummy hinzufügen. (Bitte die Url auf Umgebung anpassen)
 ```
 curl -X POST -H 'Content-Type: application/json' 'http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/update/json/docs?commit=true' --data-binary '{ "id": "dummy" }'
 ```
