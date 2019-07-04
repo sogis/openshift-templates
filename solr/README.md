@@ -48,7 +48,7 @@ Sollte etwas in der Art
 ```
 zurückliefern
 
-### Dokument mit id dummy hinzufügen. Url auf Umgebung anpassen
+### Dokument mit id dummy hinzufügen. (Bitte die Url auf Umgebung anpassen)
 ```
 curl -X POST -H 'Content-Type: application/json' 'http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/update/json/docs?commit=true' --data-binary '{ "id": "dummy" }'
 ```
@@ -75,8 +75,4 @@ Anschliessend zunächst den solr-1 Pod deleten, warten bis er wieder läuft und 
 
 ## Update of app configuration in Openshift Environment
 
-Make changes to the configuration in the template ilivalidator-web-service.yaml and run
-Set environment and desirde version of the image
-```
-oc process -p env=test -p version=latest -f ilivalidator-web-service.yaml  | oc apply -f-
-```
+tbd
