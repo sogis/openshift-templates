@@ -1,4 +1,4 @@
-# ilivalidator-web-service
+# Solr Cloud
 
 ## First install in an Openshift Environment
 
@@ -10,6 +10,7 @@ oc process -p ENV="test" -p SOLR_JAVA_MEM="-Xms1024m -Xmx1024m" -p MEMORY_LIMIT=
 oc create -f 4_poddisruptionbudget_solr.yaml
 oc process -p ENV="test" -f 5_service-headless-solr.yaml | oc apply -f-
 ```
+Je nach Umgebung muss darauf geachtet werden die Ressource Limits korrekt zu setzen. In der Testumgebung braucht es gar keine (nachträglich aus dem Statefulset entfernen), auf der Integration sollten die Requested Resources tiefer sein als die Limits auf der Produktion identisch. Nach Anpassung der Statefulsets müssen die Zookeeper Pods gelöscht werden. Die Solr Pods werden später ohenhin noch gelöscht.
 Anschliessend von der Konsole in einen solr Pod einloggen
 ```
 oc rsh podname /bin/bash
