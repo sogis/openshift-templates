@@ -64,12 +64,12 @@ zurückliefern
 
 ### Liveness Probe anpassen
 ```
-oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","livenessProbe":{"httpGet":{"path":"http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/select?q=id%3Adummy&rows=1","port":"80"}}}]}}}}'
+oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","livenessProbe":{"httpGet":{"path":"http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/select?q=id%3Adummy&rows=1","port":8983}}}]}}}}'
 ```
 Anschliessend beide solr Pods deleten
 ### Readiness Probe anpassen
 ```
-oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","readinessProbe":{"httpGet":{"path":"http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/select?q=id%3Adummy&rows=1","port":"80"}}}]}}}}'
+oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","readinessProbe":{"httpGet":{"path":"http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/select?q=id%3Adummy&rows=1","port":8983}}}]}}}}'
 ```
 Anschliessend zunächst den solr-1 Pod deleten, warten bis er wieder läuft und dann den solr-0 Pod deleten.
 
