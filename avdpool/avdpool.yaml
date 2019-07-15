@@ -99,9 +99,10 @@ parameters:
   description: "The URI of the SMTP Server for sending e-mails (e.g. smtps://smtp.gmail.com:465, smtp://my.mailserver.net)"
   required: true
 - name: EMAIL_USER_SENDER
-  description: "The username for authenticating against the SMTP server"
+  description: "The username for authenticating against the SMTP server; this will also be used as the 'From' e-mail address in e-mails sent by the service (example: AV-Import Test <avimport-t@agi.so.ch>)"
+  required: true
 - name: EMAIL_PWD_SENDER
-  description: "The password for authenticating against the SMTP server"
+  description: "The password for authenticating against the SMTP server; dont'set if the server doesn't require authentication"
 - name: EMAIL_USER_RECIPIENT
   description: "Comma separated list of e-mail addresses that should receive e-mails sent out by the service"
   required: true

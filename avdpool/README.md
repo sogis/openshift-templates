@@ -25,6 +25,7 @@ oc process -f avdpool/avdpool.yaml \
   -p AWS_ACCESS_KEY=xy \
   -p AWS_SECRET_KEY=xy \
   -p EMAIL_SMTP_SENDER=xy \
+  -p EMAIL_USER_SENDER='AV-Import Test <avimport-t@agi.so.ch>' \
   -p EMAIL_USER_RECIPIENT=xy \
   -p FTP_USER_INFOGRIPS=xy \
   -p FTP_PWD_INFOGRIPS=xy \
@@ -44,6 +45,7 @@ oc process -f avdpool/avdpool.yaml \
   -p AWS_ACCESS_KEY=xy \
   -p AWS_SECRET_KEY=xy \
   -p EMAIL_SMTP_SENDER=xy \
+  -p EMAIL_USER_SENDER='AV-Import Integration <avimport-i@agi.so.ch>' \
   -p EMAIL_USER_RECIPIENT=xy \
   -p FTP_USER_INFOGRIPS=xy \
   -p FTP_PWD_INFOGRIPS=xy \
@@ -63,6 +65,7 @@ oc process -f avdpool/avdpool.yaml \
   -p AWS_ACCESS_KEY=xy \
   -p AWS_SECRET_KEY=xy \
   -p EMAIL_SMTP_SENDER=xy \
+  -p EMAIL_USER_SENDER='AV-Import <avimport@agi.so.ch>' \
   -p EMAIL_USER_RECIPIENT=xy \
   -p FTP_USER_INFOGRIPS=xy \
   -p FTP_PWD_INFOGRIPS=xy \
