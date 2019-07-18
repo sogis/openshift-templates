@@ -2,11 +2,19 @@
 
 ## First install in an Openshift Environment
 
+First create the necessary secret dbcredentials
+Lokal eine Datei user.txt erstellen mit dem Usernamen sogis_service.
+Ausserdem eine Datei password.txt mit dem Passwort des Users erstellen (im keepass)
+Achtung die Dateien müssen genau so heissen.
+Dann das Secret erstellen
+```
+oc create secret generic dbcredentials --from-file user.txt --from-file password.txt
+```
 The necessary components of the application are configured with the following steps
 ```
 oc create -f 1_poddisruptionbudget.yaml
 oc process -f 2_zk.yaml | oc apply -f-
-oc process -p ENV="test" -p SOLR_JAVA_MEM="-Xms1024m -Xmx1024m" -p MEMORY_LIMIT="2048M" -p CPU_LIMIT="200m" -p MEMORY_REQUEST="2048M" -p CPU_REQUEST="200m" -p LOGGING_LEVEL="INFO" -f 3_statefulset_solr.yaml | oc apply -f-
+oc process -p ENV="test" -p SOLR_JAVA_MEM="-Xms1024m -Xmx1024m" -p MEMORY_LIMIT="2048M" -p CPU_LIMIT="200m" -p MEMORY_REQUEST="2048M" -p CPU_REQUEST="200m" -p LOGGING_LEVEL="INFO" -p DBSERVER='geoweb-t.rootso.org' -f 3_statefulset_solr.yaml | oc apply -f-
 oc create -f 4_poddisruptionbudget_solr.yaml
 oc process -p ENV="test" -f 5_service-headless-solr.yaml | oc apply -f-
 ```
@@ -73,6 +81,23 @@ Anschliessend beide solr Pods deleten
 oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","readinessProbe":{"httpGet":{"path":"/solr/gdi/select?q=id%3Adummy&rows=1","port":8983}}}]}}}}'
 ```
 Anschliessend zunächst den solr-1 Pod deleten, warten bis er wieder läuft und dann den solr-0 Pod deleten.
+
+### AGI Config hochladen
+```
+git clone https://github.com/sogis/searchservice.git
+cd solr/configsets/
+oc rsync gdi solr-0:/opt/solr/server/home
+oc rsync gdi solr-1:/opt/solr/server/home
+```
+In einen solr Pod (solr-0 oder solr-1) einloggen und configset gdi updaten
+```
+oc rsh solr-0 /bin/bash
+/opt/solr/server/scripts/cloud-scripts/zkcli.sh -z zookeeper.solr-cloud-test.svc:2181 -cmd upconfig -confdir /opt/solr/server/home/gdi/conf -confname gdi
+```
+### Update des gdi configsets
+```
+curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=MODIFYCOLLECTION&collection=gdi&collection.configName=gdi"
+```
 
 ## Update of app configuration in Openshift Environment
 
