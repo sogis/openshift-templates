@@ -17,7 +17,7 @@ objects:
         name: sogis/avdpool:${TAG}
       importPolicy:
         scheduled: ${{IMPORT_POLICY_SCHEDULED}}
-      name: latest
+      name: ${TAG}
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -72,7 +72,7 @@ objects:
         - avdpool
         from:
           kind: ImageStreamTag
-          name: avdpool:latest
+          name: avdpool:${TAG}
     selector:
       app: avdpool
       deploymentconfig: avdpool
