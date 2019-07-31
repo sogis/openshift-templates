@@ -12,7 +12,7 @@ objects:
     creationTimestamp: null
     labels:
       build: qwc-service
-    name: qwc-service
+    #name: qwc-service
   spec:
     failedBuildsHistoryLimit: 5
     nodeSelector: null
