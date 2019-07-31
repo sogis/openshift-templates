@@ -1,0 +1,68 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: buildconfig
+objects:
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewBuild
+    creationTimestamp: null
+    labels:
+      build: qwc-service
+    name: qwc-service
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: qwc-service:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: docker/qwc-service
+      git:
+        ref: release_so
+        uri: https://git.sourcepole.ch/ktso/somap.git
+      sourceSecret:
+        name: deployso-at-gitlab-token
+      type: Git
+    strategy:
+      dockerStrategy:
+        buildArgs:
+        - name: QWC2_VERSION
+          value: 1.5.4
+        - name: GIT_VERSION
+          value: v1.5.4
+        env:
+        - name: GIT_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: deployso-at-gitlab-token
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: deployso-at-gitlab-token
+        from:
+          kind: ImageStreamTag
+          name: ubuntu:16.04
+      type: Docker
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+    - github:
+        secret: XAkkp3Z_FiW9eXHbfnPI
+      type: GitHub
+    - generic:
+        secret: Gx7tSo7dn-pEGsMZB8cA
+      type: Generic
+  status:
+    lastVersion: 0

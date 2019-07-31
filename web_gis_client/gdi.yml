@@ -1,0 +1,3743 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: gdi-template
+  annotations:
+    openshift.io/display-name: "All components for AGI GDI"
+    description: >-
+      "Creates all necessary components for the AGI GDI"
+    openshift.io/long-description: >-
+      "Creates all necessary components for the AGI GDI"
+    tags: "agi,gdi,python,web gis client, agdi"
+    iconClass: icon-python
+parameters:
+  - description: URL for GDI Environment
+    name: URL
+    value:
+  - description: URL for WMTS
+    name: WMTS_URL
+    value:
+  - description: URL for SES IDP
+    name: IDP_URL
+    value:  
+  - description: DB Server
+    name: DB_SERVER
+    value: 
+  - description: Geo DB Server
+    name: GEO_DB_SERVER
+    value: geodb-t.verw.rootso.org
+  - description: Password DB User ogc_server
+    name: PW_OGC_SERVER
+    value:
+  - description: Password DB User report_server
+    name: PW_REPORT_SERVER
+    value:
+  - description: Password DB User sogis_service
+    name: PW_SOGIS_SERVICE
+    value:
+  - description: Password DB User sogis_service_write
+    name: PW_SOGIS_SERVICE_WRITE
+    value:
+  - description: Password DB User mswrite
+    name: PW_MSWRITE
+    value:
+  - description: Datasource 1 for Jasperserver
+    name: JASPER_DATASOURCE_1
+    value:
+  - description: Namespace
+    name: NAMESPACE
+    value: gdi-test
+  - description: Environment (test,integration,production)
+    name: ENVIRONMENT
+    value:
+labels:
+  application: GDI-Test
+  createdBy: template-GDI
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: agdi
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/agdi:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/image.dockerRepositoryCheck: 2018-03-16T16:02:22Z
+    creationTimestamp: null
+    generation: 2
+    labels:
+      io.kompose.service: api-gateway
+    name: api-gateway
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/api-gateway:latest
+      generation: 2
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: Source
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: auth-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/auth-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: ccc-config-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/ccc-config-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: data-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/data-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: document-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/document-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: elevation-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/elevation-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: featureinfo-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/featureinfo-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: jasper-reporting-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/jasper-reporting-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: landreg-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/landreg-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: legend-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/legend-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: mapinfo-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/mapinfo-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: ogc-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/ogc-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: permalink-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/permalink-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: permission-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/permission-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: print-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/print-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: qgis-server
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/qgis-server:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: qwc-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/qwc-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    name: search-service
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/gdi/search-service:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+    creationTimestamp: null
+    labels:
+      io.kompose.service: qgis-server-claim1
+    name: datensogispicmir-claim1
+  spec:
+    accessModes:
+    - ReadOnlyMany
+    resources:
+      requests:
+        storage: 3000Gi
+    volumeName: datensogispicmir01
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+    creationTimestamp: null
+    name: jasper-config-claim
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    volumeName: netapp-gdi-jasper-config
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+    creationTimestamp: null
+    name: nginx-config-claim
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    volumeName: netapp-gdi-nginx-config
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+    creationTimestamp: null
+    name: qgs-resources-claim
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+    volumeName: netapp-gdi-qgs-resources
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+    creationTimestamp: null
+    name: qwc-assets-claim
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 2Gi
+    volumeName: netapp-gdi-qwc-assets
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+    creationTimestamp: null
+    name: reports-claim
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 5Gi
+    volumeName: netapp-gdi-reports
+  status: {}
+
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: agdi
+    name: agdi
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: agdi
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: agdi
+      spec:
+        containers:
+        - env:
+          - name: JASPER_REPORTS_DIR
+            value: /jasper/reports
+          - name: PROJECT_OUTPUT_DIR
+            value: /qgs-resources
+          - name: QWC_ASSETS_DIR
+            value: /qwc-assets
+          - name: SELECTION_COLOR
+            value: 255,255,0,119
+          - name: SOLR_UPDATE_URL
+            value: http://indexupdater-${ENVIRONMENT}.dev.so.ch/queue?ds=dataproduct&dih=solr/gdi/dih_metadata
+          image: docker-registry.default.svc:5000/gdi/agdi@sha256:e4a9e39b88d458ad00ba9a8927b67de0618f1beaa8634496873d3a5b5e07895d
+          imagePullPolicy: IfNotPresent
+          name: sogis-agdi
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+          - mountPath: /qgs-resources
+            name: qgs-resources
+          - mountPath: /qwc-assets
+            name: qwc-assets
+          - mountPath: /geodata
+            name: datensogispicmir
+            readOnly: true
+          - mountPath: /jasper/reports
+            name: reports
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+        - name: qgs-resources
+          persistentVolumeClaim:
+            claimName: qgs-resources-claim
+        - name: qwc-assets
+          persistentVolumeClaim:
+            claimName: qwc-assets-claim
+        - name: datensogispicmir
+          persistentVolumeClaim:
+            claimName: datensogispicmir-claim1
+            readOnly: true
+        - name: reports
+          persistentVolumeClaim:
+            claimName: reports-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-agdi
+        from:
+          kind: ImageStreamTag
+          name: agdi:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: api-gateway
+    name: api-gateway
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: api-gateway
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: api-gateway
+      spec:
+        containers:
+        - image: docker-registry.default.svc:5000/gdi/api-gateway@sha256:c3345e4c72cb147464b0c88e6f425bff34a8fd1faeff05ba51d972b1974b3cb3
+          imagePullPolicy: IfNotPresent
+          name: sogis-api-gateway
+          ports:
+          - containerPort: 8081
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /etc/nginx/conf.d
+            name: nginx-config-claim
+          - mountPath: /geodata
+            name: datensogispicmir
+          - mountPath: /etc/nginx/certs
+            name: nginx-cert-volume
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: nginx_os.conf
+              path: nginx.conf
+            name: nginx-config
+          name: nginx-config-claim
+        - name: nginx-cert-volume
+          secret:
+            defaultMode: 420
+            secretName: api-gateway-cert
+        - name: datensogispicmir
+          persistentVolumeClaim:
+            claimName: datensogispicmir-claim1
+            readOnly: true
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-api-gateway
+        from:
+          kind: ImageStreamTag
+          name: api-gateway:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: auth-service
+    name: auth-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: auth-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: auth-service
+      spec:
+        containers:
+        - env:
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          image: docker-registry.default.svc:5000/gdi/auth-service@sha256:3a06606b99bf0f23c6bb85f38381a966179af32241bc1e46400db1b916d63e97
+          imagePullPolicy: IfNotPresent
+          name: sogis-auth-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+          - mountPath: /srv/somap/auth/auth_saml/saml
+            name: auth-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: settings.json
+              path: settings.json
+            - key: advanced_settings.json
+              path: advanced_settings.json
+            name: auth-service-config
+          name: auth-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-auth-service
+        from:
+          kind: ImageStreamTag
+          name: auth-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: '2018-08-24T14:27:47Z'
+    generation: 1
+    labels:
+      io.kompose.service: ccc-config-service
+    name: ccc-config-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: ccc-config-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftWebConsole
+        creationTimestamp: null
+        labels:
+          io.kompose.service: ccc-config-service
+      spec:
+        containers:
+          - env:
+            - name: CCC_CLIENT_CONFIG
+              value: >-
+                {
+                  "baugk": {
+                    "cccServer": "wss://${URL}/ccc-service",
+                    "title": "BauGK - GIS",
+                    "initialLayers": [
+                      "ch.so.afu.baugk.ccccache",
+                      "ch.so.afu.ews_erdwaermesonde",
+                      "ch.so.afu.altlasten.standorte",
+                      "ch.so.afu.fliessgewaesser.netz",
+                      "ch.so.afu.gewaesserschutz.zonen_areale",
+                      "ch.so.afu.gewaesserschutz.zonen_umliegend",
+                      "ch.so.afu.pruefperimeter_bodenabtrag.bodenbelastungsgebiet",
+                      "ch.so.afu.pruefperimeter_bodenabtrag.verdachtsflaechen",
+                      "ch.so.afu.grundwasser.hoechststand",
+                      "ch.so.afu.gefahrenhinweiskarte_stfv",
+                      "ch.so.afu.gewaesserschutz.bereiche"
+                    ],
+                    "editGeomType": "Point",
+                    "notifyLayers": [
+                      {
+                        "layer": "ch.so.afu.baugk.ccccache",
+                        "mapping": {
+                          "laufnummer": "geschaeft_laufnr"
+                        }
+                      }
+                    ],
+                    "notifyLinkTitle": "In Axioma anzeigen"
+                  },
+                  "uplus_anlage": {
+                    "cccServer": "wss://${URL}/ccc-service",
+                    "title": "Umweltplus - GIS",
+                    "initialLayers": [
+                      "ch.so.afu.erdwaerme.uplus.anlage",
+                      "ch.so.afu.erdwaerme.uplus.bohrung"
+                    ],
+                    "editGeomType": "Point",
+                    "notifyLayers": [
+                      {
+                        "layer": "ch.so.afu.erdwaerme.uplus.anlage",
+                        "mapping": {
+                          "anlage_uuid": "uplus_anlage"
+                        }
+                      }
+                    ],
+                    "notifyLinkTitle": "In Umweltplus anzeigen"
+                  }
+                }
+            - name: CCC_ZOOMTO_DATA_SERVICE_URL
+              value: 'http://data-service.${NAMESPACE}.svc'
+            - name: CCC_ZOOMTO_CONFIG
+              value: >-
+                { "PriorityLocator": [{ "dataset": "ch.so.agi.av.grundstuecke.rechtskraeftig",
+                "filter": [["nbident", "=", "{grundbuch_nbident}"], "and", ["nummer", "=", "{parzelle_nr}"]] },
+                { "dataset": "ch.so.agi.gemeindegrenzen",
+                "filter": [["bfs_gemeindenummer", "=", "{bfs}"]] }] }
+            image: >-
+              docker-registry.default.svc:5000/gdi/ccc-config-service@sha256:a7a95b9e343057ca9f8a19cc2f5d25f7e47a243da5df443fc6575c47cce58d0a
+            imagePullPolicy: Always
+            name: sogis-ccc-config-service
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+      - type: ConfigChange
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+            - ccc-config-service
+          from:
+            kind: ImageStreamTag
+            name: 'ccc-config-service:latest'
+            namespace: gdi
+          lastTriggeredImage: >-
+            docker-registry.default.svc:5000/gdi/ccc-config-service@sha256:a7a95b9e343057ca9f8a19cc2f5d25f7e47a243da5df443fc6575c47cce58d0a
+        type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    readyReplicas: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: data-service
+    name: data-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: data-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: data-service
+      spec:
+        containers:
+        - env:
+          - name: PERMISSION_SERVICE_URL
+            value: http://permission-service.${NAMESPACE}.svc
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          image: docker-registry.default.svc:5000/gdi/data-service@sha256:d90598c75f4ed44bcad442daba3da349c1c2265da26931efa6e8b8f5fe9e871f
+          imagePullPolicy: IfNotPresent
+          name: sogis-data-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-data-service
+        from:
+          kind: ImageStreamTag
+          name: data-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: document-service
+    name: document-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: document-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: document-service
+      spec:
+        containers:
+        - env:
+          - name: JASPER_SERVICE_URL
+            value: http://jasper-reporting-service.${NAMESPACE}.svc/reports
+          - name: PERMISSION_SERVICE_URL
+            value: http://permission-service.${NAMESPACE}.svc
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          - name: JASPER_TIMEOUT
+            value: 1200
+          image: docker-registry.default.svc:5000/gdi/document-service@sha256:f54a1711e704ac84b22b5423de1747297ca33e933ad3f4add27ce5620bcbfac9
+          imagePullPolicy: IfNotPresent
+          name: sogis-document-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-document-service
+        from:
+          kind: ImageStreamTag
+          name: document-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: elevation-service
+    name: elevation-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: elevation-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: elevation-service
+      spec:
+        containers:
+        - env:
+          - name: ELEVATION_DATASET
+            value: /data/daten_aktuell/agi/hoehenmodelle/lidar/2014/dtm/50cm/lidar_2014_dtm_50cm.vrt
+          image: docker-registry.default.svc:5000/gdi/elevation-service@sha256:7a602a273178d61ee5e17a6d931178780952832e4eaf62e63b9af74895ffd932
+          imagePullPolicy: IfNotPresent
+          name: sogis-elevation-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /data
+            name: datensogispicmir
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: datensogispicmir
+          persistentVolumeClaim:
+            claimName: datensogispicmir-claim1
+            readOnly: true
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-elevation-service
+        from:
+          kind: ImageStreamTag
+          name: elevation-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: featureinfo-service
+    name: featureinfo-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: featureinfo-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: featureinfo-service
+      spec:
+        containers:
+        - env:
+          - name: PERMISSION_SERVICE_URL
+            value: http://permission-service.${NAMESPACE}.svc/
+          - name: QGIS_SERVER_URL
+            value: http://qgis-server.${NAMESPACE}.svc/ows
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          - name: LANG
+            value: de_ch.utf-8
+          image: docker-registry.default.svc:5000/gdi/featureinfo-service@sha256:2f98d91bce0919f8edf424d7710d278cec300a374c823b370dc4972e1b1778bf
+          imagePullPolicy: IfNotPresent
+          name: sogis-featureinfo-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-featureinfo-service
+        from:
+          kind: ImageStreamTag
+          name: featureinfo-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: jasper-reporting-service
+    name: jasper-reporting-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: jasper-reporting-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: jasper-reporting-service
+      spec:
+        containers:
+        - env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: JASPER_REPORTING_SERVICE
+              value: 0.5.1
+          image: docker-registry.default.svc:5000/gdi/jasper-reporting-service@sha256:45a778c52f8f70cf00f65567d51cbf2c107b9e0c40f9370630b118877183bb00
+          imagePullPolicy: IfNotPresent
+          name: sogis-jasper-reporting-service
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /srv/jasper/reports
+            name: reports
+            readOnly: true
+          - mountPath: /srv/jasper/config
+            name: jasper-config-claim
+            readOnly: true
+          - mountPath: /etc/postgresql-common
+            name: jasper-reporting-service-config-claim
+          - mountPath: /srv/jasper/fonts
+            name: volume-5uvwt
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: pg_service.conf
+            name: jasper-reporting-service-pg-config
+          name: jasper-reporting-service-config-claim
+        - name: reports
+          persistentVolumeClaim:
+            claimName: reports-claim
+            readOnly: true
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: application.properties
+              path: application.properties
+            name: jasper-config
+          name: jasper-config-claim
+        - configMap:
+            defaultMode: 420
+            name: jasper-font-extensions
+          name: volume-5uvwt
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-jasper-reporting-service
+        from:
+          kind: ImageStreamTag
+          name: jasper-reporting-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: landreg-service
+    name: landreg-service
+  spec:
+    replicas: 2
+    selector:
+      app: landreg-service
+      deploymentconfig: landreg-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftWebConsole
+        creationTimestamp: null
+        labels:
+          app: landreg-service
+          deploymentconfig: landreg-service
+      spec:
+        containers:
+        - env:
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          - name: PERMISSION_SERVICE_URL
+            value: http://permission-service.${NAMESPACE}.svc
+          - name: QGIS_SERVER_URL
+            value: http://qgis-server.${NAMESPACE}.svc/ows/
+          - name: LANDREG_PRINT_LAYERS
+            value: mopublic_fixpunkt.geometrie,mopublic_hoheitsgrenzpunkt.geometrie,liegenschaften_grenzpunkt,mopublic_gemeindegrenze_proj,mopublic_gemeindegrenze,liegenschaften_grundstueckpos.pos,mopublic_grundstueck_proj.pos,liegenschaften_grundstueckpos.hilfslinie,liegenschaften_liegenschaft,mopublic_grundstueck_proj.geometrie,mopublic_grundstueck.geometrie,mopublic_grundstueck_proj.geometrie,mopublic_ortsname.pos,mopublic_gelaendename,mopublic_flurname.pos,mopublic_gebaeudeadresse.pos,mopublic_strassenname_pos,mopublic_rohrleitung,mopublic_einzelobjekt_punkt,mopublic_einzelobjekt_linie,mopublic_einzelobjekt_flaeche,mopublic_bodenbedeckung_proj,bodenbedeckung_boflaechesymbol,mopublic_ortsname.pos,mopublic_bodenbedeckung,mopublic_einzelobjekt_flaeche
+          - name: LANDREG_PROJECT
+            value: grundbuchplanauszug
+          - name: LANDREG_PRINTINFO_TABLE
+            value: agi_av_nachfuehrung_pub.angaben_grundbuchplanauszug
+          - name: DEFAULT_LANDREG_LAYOUT
+            value: A4-Hoch
+          image: docker-registry.default.svc:5000/gdi/landreg-service@sha256:b886c8b8eb8fc61e17d3c1b6f9e91a06acf6fa11aa9ce47765bd0b5d7a5104fd
+          imagePullPolicy: Always
+          name: sogis-landreg-service
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+            - mountPath: /var/www
+              name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: pg_service.conf
+                path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - landreg-service
+        from:
+          kind: ImageStreamTag
+          name: landreg-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: legend-service
+    name: legend-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: legend-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: legend-service
+      spec:
+        containers:
+        - env:
+          - name: PERMISSION_SERVICE_URL
+            value: http://permission-service.${NAMESPACE}.svc
+          - name: QGIS_SERVER_URL
+            value: http://qgis-server.${NAMESPACE}.svc/ows/
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          image: docker-registry.default.svc:5000/gdi/legend-service@sha256:71d8ebf9292bc758c079b0db3c684c9fe47cb61dc54974b7760b24d45e16200c
+          imagePullPolicy: IfNotPresent
+          name: sogis-legend-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-legend-service
+        from:
+          kind: ImageStreamTag
+          name: legend-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: mapinfo-service
+    name: mapinfo-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: mapinfo-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: mapinfo-service
+      spec:
+        containers:
+        - env:
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          image: docker-registry.default.svc:5000/gdi/mapinfo-service@sha256:4f5bfa76c47caf05973cd68986f679f6db251302f98b678a53a6aa24929678cc
+          imagePullPolicy: IfNotPresent
+          name: sogis-mapinfo-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-mapinfo-service
+        from:
+          kind: ImageStreamTag
+          name: mapinfo-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: ogc-service
+    name: ogc-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: ogc-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: ogc-service
+      spec:
+        containers:
+        - env:
+          - name: PERMISSION_SERVICE_URL
+            value: http://permission-service.${NAMESPACE}.svc
+          - name: QGIS_SERVER_URL
+            value: http://qgis-server.${NAMESPACE}.svc/ows/
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          - name: PRECACHE_WMS_NAMES
+            value: somap
+          - name: WMS_SERVICE_URL
+            value: https://geo-t.so.ch/api/wms
+          - name: WFS_SERVICE_URL
+            value: https://geo-t.so.ch/api/wfs
+          image: docker-registry.default.svc:5000/gdi/ogc-service@sha256:d5bebbfa5c9bbbc1310e78e8513bfb7ddb32ef84d7242bc2980c69bf3eed9764
+          imagePullPolicy: IfNotPresent
+          name: sogis-ogc-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-ogc-service
+        from:
+          kind: ImageStreamTag
+          name: ogc-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: permalink-service
+    name: permalink-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: permalink-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: permalink-service
+      spec:
+        containers:
+        - image: docker-registry.default.svc:5000/gdi/permalink-service@sha256:9cda2f5848db15a8acd094ed27248605f1708010719d1bc3c886a2b3e714b112
+          imagePullPolicy: IfNotPresent
+          name: sogis-permalink-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-permalink-service
+        from:
+          kind: ImageStreamTag
+          name: permalink-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: permission-service
+    name: permission-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: permission-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: permission-service
+      spec:
+        containers:
+        - env:
+          - name: SERVICE
+            value: rest_services/permission_service
+          - name: DEFAULT_PRINT_GRID
+            value: [{"s": 100000000, "x": 10000000, "y": 10000000},{"s": 50000000, "x": 5000000, "y": 5000000},{"s": 10000000, "x": 2500000, "y": 2500000},{"s": 5000000, "x": 250000, "y": 250000},{"s": 1000000, "x": 100000, "y": 100000},{"s": 500000, "x": 50000, "y": 50000},{"s": 100000, "x": 10000, "y": 10000},{"s": 50000, "x": 5000, "y": 5000},{"s": 25000, "x": 2000, "y": 2000},{"s": 12000, "x": 2000, "y": 2000},{"s": 5000, "x": 1000, "y": 1000},{"s": 2500, "x": 500, "y": 500},{"s": 1000, "x": 200, "y": 200},{"s": 500, "x": 100, "y": 100},{"s": 250, "x": 50, "y": 50},{"s": 100, "x": 25, "y": 25}]
+          - name: DEFAULT_PRINT_LAYOUT
+            value: A4 hoch
+          - name: JWT_SESSION_COOKIE
+            value: False
+          - name: DEFAULT_PRINT_RESOLUTION
+            value: [200]
+          image: docker-registry.default.svc:5000/gdi/permission-service@sha256:6f550e1ec3d27d6235aabe3ab7877290a7a774a18ffb7c221fed3b05ad69e922
+          imagePullPolicy: IfNotPresent
+          name: sogis-permission-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-permission-service
+        from:
+          kind: ImageStreamTag
+          name: permission-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: print-service
+    name: print-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: print-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: print-service
+      spec:
+        containers:
+        - env:
+          - name: PERMISSION_SERVICE_URL
+            value: http://permission-service.${NAMESPACE}.svc
+          - name: QGIS_SERVER_URL
+            value: http://qgis-server.${NAMESPACE}.svc/ows/
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          image: docker-registry.default.svc:5000/gdi/print-service@sha256:eb70b6b52d0ff603552b10d446d5d662a287fd8389cdcad1197e9887b8d1ff2e
+          imagePullPolicy: IfNotPresent
+          name: sogis-print-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-print-service
+        from:
+          kind: ImageStreamTag
+          name: print-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: qgis-server
+    name: qgis-server
+  spec:
+    replicas: 2
+    selector:
+      app: qgis-server
+      deploymentconfig: qgis-server
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftWebConsole
+        creationTimestamp: null
+        labels:
+          app: qgis-server
+          deploymentconfig: qgis-server
+      spec:
+        containers:
+        - env:
+          - name: LOG_LEVEL
+            value: 2
+          - name: QGIS_FCGI_MIN_PROCESSES
+            value: 2
+          - name: QGIS_FCGI_MAX_PROCESSES
+            value: 2
+          image: docker-registry.default.svc:5000/gdi/qgis-server@sha256:c81d1144821dee7580c1c9b21a108b22fbc3b195c1a5fab9c46a78b36e9999cf
+          imagePullPolicy: Always
+          name: sogis-qgis-server
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 1750m
+              memory: 3Gi
+            reuqests:
+              cpu: 500m
+              memory: 3Mi
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /data
+            name: qgs-resources
+          - mountPath: /geodata
+            name: datensogispicmir
+          - mountPath: /etc/postgresql-common
+            name: qgis-server-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: pg_service.conf
+            name: qgis-server-pg-config
+          name: qgis-server-config-claim
+        - name: qgs-resources
+          persistentVolumeClaim:
+            claimName: qgs-resources-claim
+        - name: datensogispicmir
+          persistentVolumeClaim:
+            claimName: datensogispicmir-claim1
+            readOnly: true
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - qgis-server
+        from:
+          kind: ImageStreamTag
+          name: qgis-server:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: qwc-service
+    name: qwc-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: qwc-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: qwc-service
+      spec:
+        containers:
+        - env:
+          - name: AUTH_SERVICE_URL
+            value: /auth/
+          - name: DATA_SERVICE_URL
+            value: /api/v1/data/
+          - name: ELEVATION_SERVICE_URL
+            value: /elevation/
+          - name: INFO_SERVICE_URL
+            value: /api/v1/featureinfo/
+          - name: LEGEND_SERVICE_URL
+            value: /api/v1/legend/
+          - name: MAPINFO_SERVICE_URL
+            value: /api/v1/mapinfo/
+          - name: FEATURE_REPORT_SERVICE_URL
+            value: /api/v1/document/
+          - name: PERMALINK_SERVICE_URL
+            value: /api/v1/permalink/
+          - name: PERMISSION_SERVICE_URL
+            value: http://permission-service.${NAMESPACE}.svc
+          - name: PRINT_SERVICE_URL
+            value: /api/v1/print/
+          - name: QGIS_SERVER_URL
+            value: /ows/
+          - name: SEARCH_SERVICE_URL
+            value: /api/search/v2/
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          - name: WMS_DPI
+            value: "96"
+          - name: DATAPRODUCT_SERVICE_URL
+            value: /api/dataproduct/v1/
+          - name: MIN_RESULTS_EXANDED
+            value: 100
+          image: docker-registry.default.svc:5000/gdi/qwc-service@sha256:9d987dde6d28cfdeccdacf9237670b6596597f62a2a05d1d2ee6b5628c1e1481
+          imagePullPolicy: IfNotPresent
+          name: sogis-qwc-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /srv/somap/qwc_service/templates
+            name: config-json-claim
+          - mountPath: /var/www
+            name: qwc-service-config-claim
+          - mountPath: /srv/somap/qwc_service/qwc2/assets/img/custommapthumbs
+            name: qwc-assets
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: qwc-service-pg-config
+          name: qwc-service-config-claim
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: config.json
+                path: config.json
+            name: config-json
+          name: config-json-claim
+        - name: qwc-assets
+          persistentVolumeClaim:
+            claimName: qwc-assets-claim
+            readOnly: true
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-qwc-service
+        from:
+          kind: ImageStreamTag
+          name: qwc-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        convert
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    generation: 1
+    labels:
+      io.kompose.service: search-service
+    name: search-service
+  spec:
+    replicas: 2
+    selector:
+      io.kompose.service: search-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: search-service
+      spec:
+        containers:
+        - env:
+          - name: PERMISSION_SERVICE_URL
+            value: http://permission-service.${NAMESPACE}.svc/
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          - name: SEARCH_RESULT_LIMIT
+            value: '25'
+          - name: SOLR_SERVICE_URL
+            value: http://solr-headless-solr-cloud-${ENVIRONMENT}.dev.so.ch/solr/gdi/select
+          image: docker-registry.default.svc:5000/gdi/search-service@sha256:1c758f5bbdfff077226f78d0812a40ee8aaedeb8d9b715ce631012c2718d7001
+          imagePullPolicy: IfNotPresent
+          name: sogis-search-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www
+            name: wsgi-service-config-claim
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: pg_service.conf
+              path: .pg_service.conf
+            name: wsgi-service-pg-config
+          name: wsgi-service-config-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sogis-search-service
+        from:
+          kind: ImageStreamTag
+          name: search-service:latest
+          namespace: gdi
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f ../docker-compose-k8s.yml
+      kompose.version: 1.16.0 (0c01309)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: dataproduct-service
+      service: dataproduct
+    name: dataproduct-service
+  spec:
+    replicas: 1
+    selector:
+      service: dataproduct
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10% 
+        maxUnavailable: 10% 
+        timeoutSeconds: 120 
+        updatePeriodSeconds: 1
+      type: Rolling 
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: dataproduct-service
+          service: dataproduct
+      spec:
+        containers:
+        - env:
+          - name: ALLOW_BASIC_AUTH_USER
+            value: "True"
+          - name: JWT_SECRET_KEY
+            value: fce9dd0cc67ae26c7b2fb912e31a4657e99014e50ccb90bd
+          - name: PERMISSION_SERVICE_URL
+            value: http://permission-service.${NAMESPACE}.svc/
+          - name: WMS_SERVICE_URL
+            value: https://geo-t.so.ch/api/wms
+          image: docker-registry.default.svc:5000/gdi/dataproduct-service:latest
+          imagePullPolicy: IfNotPresent
+          name: sogis-dataproduct-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP 
+          resources: {}
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationPeriodSeconds: 30
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - sogis-dataproduct-service
+      from:
+        kind: ImageStreamTag
+        name: dataproduct-service:latest
+        namespace: gdi 
+    type: ImageChange
+  status: {}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f ../docker-compose-k8s.yml
+      kompose.version: 1.16.0 (0c01309)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: plotinfo-service
+      service: plotinfo
+    name: plotinfo-service
+  spec:
+    replicas: 1
+    selector:
+      service: plotinfo
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 120
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: plotinfo-service
+          service: plotinfo
+      spec:
+        containers:
+        - env:
+          - name: OEREB_JSON_URL
+            value: https://geoview.bl.ch/main/oereb/extract/reduced/json/geometry/{egrid}
+          - name: OEREB_XML_URL
+            value: https://geoview.bl.ch/main/oereb/extract/reduced/xml/geometry/{egrid}
+          - name: OEREB_PDF_TOKEN
+            value: $OEREB_PDF_TOKEN
+          image: docker-registry.default.svc:5000/gdi/plotinfo-service:latest
+          imagePullPolicy: IfNotPresent
+          name: sogis-plotinfo-service
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          resources: {}
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationPeriodSeconds: 30
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - sogis-plotinfo-service
+      from:
+        kind: ImageStreamTag
+        name: plotinfo-service:latest
+        namespace: gdi
+    type: ImageChange
+  status: {}
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 1200s
+    creationTimestamp: null
+    name: api-gateway
+  spec:
+    host: ${URL}
+    port:
+      targetPort: 443-tcp
+    tls:
+    destinationCACertificate: |
+      -----BEGIN COMMENT-----
+      This is an empty PEM file created to provide backwards compatibility
+      for reencrypt routes that have no destinationCACertificate. This 
+      content will only appear for routes accessed via /oapi/v1/routes.
+      -----END COMMENT-----
+    insecureEdgeTerminationPolicy: Redirect
+    termination: reencrypt
+    to:
+      kind: Service
+      name: api-gateway
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-04-10T15:46:23Z
+        status: "True"
+        type: Admitted
+      host: ${URL}
+      routerName: router
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: agdi
+    name: agdi
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: agdi
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+      service.alpha.openshift.io/serving-cert-secret-name: api-gateway-cert
+    creationTimestamp: null
+    labels:
+      io.kompose.service: api-gateway
+    name: api-gateway
+  spec:
+    ports:
+    - name: 443-tcp
+      port: 443
+      protocol: TCP
+      targetPort: 443
+    selector:
+      io.kompose.service: api-gateway
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: auth-service
+    name: auth-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: auth-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: ccc-config-service
+    name: ccc-config-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: ccc-config-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: data-service
+    name: data-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: data-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: document-service
+    name: document-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: document-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: elevation-service
+    name: elevation-service
+  spec:
+    ports:
+    - name: web
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: elevation-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: featureinfo-service
+    name: featureinfo-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: featureinfo-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: jasper-reporting-service
+    name: jasper-reporting-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      io.kompose.service: jasper-reporting-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: landreg-service
+    name: landreg-service
+  spec:
+    ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: landreg-service
+      deploymentconfig: landreg-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: legend-service
+    name: legend-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: legend-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: mapinfo-service
+    name: mapinfo-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: mapinfo-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: ogc-service
+    name: ogc-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: ogc-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: permalink-service
+    name: permalink-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: permalink-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: permission-service
+    name: permission-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: permission-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: print-service
+    name: print-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: print-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftWebConsole
+    creationTimestamp: null
+    labels:
+      app: qgis-server
+    name: qgis-server
+  spec:
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      deploymentconfig: qgis-server
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: qwc-service
+    name: qwc-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: qwc-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
+        up
+      kompose.version: 1.10.0 (8bb0907)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: search-service
+    name: search-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      io.kompose.service: search-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f ../docker-compose-k8s.yml
+      kompose.version: 1.16.0 (0c01309)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: dataproduct-service
+      service: dataproduct
+    name: dataproduct-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      targetPort: 9090
+    selector:
+      io.kompose.service: dataproduct-service
+      service: dataproduct
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f ../docker-compose-k8s.yml
+      kompose.version: 1.16.0 (0c01309)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: plotinfo-service
+      service: plotinfo
+    name: plotinfo-service
+  spec:
+    ports:
+    - name: "80"
+      port: 80
+      targetPort: 9090
+    selector:
+      io.kompose.service: plotinfo-service
+      service: plotinfo
+  status:
+    loadBalancer: {}
+
+- apiVersion: v1
+  data:
+    pg_service.conf: |
+      [sogis_webmapping]
+      host=${DB_SERVER}
+      port=5432
+      dbname=pub
+      user=ogc_server
+      password=${PW_OGC_SERVER}
+      sslmode=require
+
+      [sogis_geodb]
+      host=${GEO_DB_SERVER}
+      port=5432
+      dbname=sogis
+      user=mspublic
+      password=agi-mspublic
+      sslmode=require
+      
+      [sogis_edit]
+      host=${DB_SERVER}
+      port=5432
+      dbname=edit
+      user=ogc_server
+      password=${PW_OGC_SERVER}
+      sslmode=require
+  kind: ConfigMap
+  metadata:
+    name: qgis-server-pg-config
+    namespace: ${NAMESPACE}
+- apiVersion: v1
+  data:
+    advanced_settings.json: |-
+      {
+        "security": {
+            "nameIdEncrypted": false,
+            "authnRequestsSigned": false,
+            "logoutRequestSigned": false,
+            "logoutResponseSigned": false,
+            "signMetadata": false,
+            "wantMessagesSigned": false,
+            "wantAssertionsSigned": false,
+            "wantNameId" : true,
+            "wantNameIdEncrypted": false,
+            "wantAssertionsEncrypted": false,
+            "metadataValidUntil": "2030-06-01T06:00:00Z",
+            "signatureAlgorithm": "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
+            "digestAlgorithm": "http://www.w3.org/2000/09/xmldsig#sha1"
+        },
+        "contactPerson": {
+            "technical": {
+                "givenName": "technical_name",
+                "emailAddress": "technical@example.com"
+            },
+            "support": {
+                "givenName": "support_name",
+                "emailAddress": "support@example.com"
+            }
+        },
+        "organization": {
+            "en-US": {
+                "name": "sp_test",
+                "displayname": "SP test",
+                "url": "http://sp.example.com"
+            }
+        }
+      }
+    settings.json: |
+      {
+        "strict": false,
+        "debug": true,
+        "sp": {
+            "entityId": "https://${URL}/auth/metadata/",
+            "assertionConsumerService": {
+                "url": "https://${URL}/auth/acs",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            },
+            "singleLogoutService": {
+                "url": "https://${URL}/auth/sls",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            },
+            "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+            "x509cert": "",
+            "privateKey": ""
+        },
+        "idp": {
+            "entityId": "https://${IDP_URL}:443/login/sls",
+            "singleSignOnService": {
+                "url": "https://${IDP_URL}:443/login/sls/auth",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            },
+            "singleLogoutService": {
+                "url": "https://${IDP_URL}:443/login/sls/slo",
+                "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+            },
+            "x509certMulti": {
+                "signing":[ "MIIDmTCCAoGgAwIBAgIHAO0r2XNOhjANBgkqhkiG9w0BAQUFADCBjDEdMBsGA1UEAwwUU2VjdXJlIExvZ2luIFNlcnZpY2UxHDAaBgNVBAsME1NlY3VyZSBFbnRyeSBTZXJ2ZXIxIjAgBgNVBAoMGVVuaXRlZCBTZWN1cml0eSBQcm92aWRlcnMxDzANBgNVBAcMBlp1cmljaDELMAkGA1UECAwCWkgxCzAJBgNVBAYTAkNIMB4XDTE3MDIxNDExMjk0OFoXDTI4MDIxMjExMjk0OFowgYwxHTAbBgNVBAMMFFNlY3VyZSBMb2dpbiBTZXJ2aWNlMRwwGgYDVQQLDBNTZWN1cmUgRW50cnkgU2VydmVyMSIwIAYDVQQKDBlVbml0ZWQgU2VjdXJpdHkgUHJvdmlkZXJzMQ8wDQYDVQQHDAZadXJpY2gxCzAJBgNVBAgMAlpIMQswCQYDVQQGEwJDSDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANi4AYe3SrvCVUAxoTqRus17L9ZiTuFzNTbUL7uHraTCfPt4uwhMo3+cGdC0c4g9ZmpwCIUt4Vx6H4PLThta1foI/O1WFrXsME1LorARYovPTIninHoTx4MUGG+lORs58oF3U7nEi/sgrKe7bCjI47xCllrwQ6UqZlUGb628dmhVW5KoxrCJ6Hm1tp2XFF/ihdEQOYJkH5Pd68DRr+p68/GFypR6deRlSJ2miDrY8AM8Fmvqsba+P8eH9OhR2xpBCJceU42FJfy6dikZAFXMUEt4X4vKUs/yufor7G1iGfJKrlCxyq8vo1snGIL/8BcKN6fn/hADWneaLuUFOdwk1e0CAwEAATANBgkqhkiG9w0BAQUFAAOCAQEAnrEI3Jp0PbJdNgp7Yd0H0+VftGE21BexsWMrUoOyz7PDnB4GzsHe2NPR1W90XrDHffBoB0RcLtpCrt6Qb1wgav0I+4N+xjhzfNp9hiqPRmSopq/Xa73mIx3dF6vV3NtPYDjhecpJYghLytPoddfQl2deeag6OLYBYEtv3HTYYldeqAJ7e6rO0K78ikz2s2N4F9J4M9ZGW0wC4j2l8q1Z/yqx6dqfDTCMxcQVYq5dnX2ucVddZMgd1EZMjYqGFuC4HlESlOpWCmMKMQg9KbWiMP+Fc6iZmHGv3se4Wk5d5oAsysNkAPOtw9ZQsB3XE+e9NBdbbV1i8NZwJvqR0GXwZA==",
+                    "MIICkTCCAfqgAwIBAgIETa6dvjANBgkqhkiG9w0BAQUFADCBjDELMAkGA1UEBhMCQ0gxCzAJBgNVBAgTAlpIMQ8wDQYDVQQHEwZadXJpY2gxIjAgBgNVBAoTGVVuaXRlZCBTZWN1cml0eSBQcm92aWRlcnMxHDAaBgNVBAsTE1NlY3VyZSBFbnRyeSBTZXJ2ZXIxHTAbBgNVBAMTFFNlY3VyZSBMb2dpbiBTZXJ2aWNlMB4XDTExMDQyMDA4NDc1OFoXDTIxMDQxNzA4NDc1OFowgYwxCzAJBgNVBAYTAkNIMQswCQYDVQQIEwJaSDEPMA0GA1UEBxMGWnVyaWNoMSIwIAYDVQQKExlVbml0ZWQgU2VjdXJpdHkgUHJvdmlkZXJzMRwwGgYDVQQLExNTZWN1cmUgRW50cnkgU2VydmVyMR0wGwYDVQQDExRTZWN1cmUgTG9naW4gU2VydmljZTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAql3AFsYb6uJTSHWzjMgqbH6EZFG4UcBfg3lgadQXGo3C7lE2NUPCbj2nGHEEk0NWLnnYS7mmLu2Nxse1KJ0PBNRtfDMHN0Kp4NX5pDmcmd/0WQ+e4vu1AZGT6TEt/k03AZWalrazkgP7w0MvbqVGr825+6f2Eu9O8xDpVZbHdKsCAwEAATANBgkqhkiG9w0BAQUFAAOBgQBdrLGvbj8CejgSrWY1HULwB8oQsd8PSszxiGUOOK+S7IdcADnDmWWVtWlHduxBc48fj7/NlWfxxvjmXCmYXHCP66d3ipFK5D0brUkG2P0uaVy2+lI4FAynsgzMGAj/SSIRK/guIFX7NRrsLdzakJvMcL4/ntf7P2KtSlzI+V9KXA=="
+                ]
+          }
+        }
+      }
+  kind: ConfigMap
+  metadata:
+    name: auth-service-config
+    namespace: ${NAMESPACE}
+
+- apiVersion: v1
+  data:
+    application.properties: |
+      # H2
+      spring.h2.console.enabled=false
+      # Datasource
+      spring.datasource0.url=jdbc:postgresql://${DB_SERVER}/pub?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory
+
+      spring.datasource0.username=report_server
+
+      spring.datasource0.password=${PW_REPORT_SERVER}
+
+      spring.datasource0.driver-class-name=org.postgresql.Driver
+      
+      spring.datasource1.url=jdbc:postgresql://${JASPER_DATASOURCE_1}/sogis?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory
+
+      spring.datasource1.username=mswrite
+
+      spring.datasource1.password=${PW_MSWRITE}
+
+      spring.datasource1.driver-class-name=org.postgresql.Driver
+
+      spring.datasource2.url=jdbc:sqlserver://srsofaioi18943.verw.rootso.org:1433;DatabaseName=imdaspro
+
+      spring.datasource2.username=imdaspro_gis
+
+      spring.datasource2.password=ku22pro1_5
+
+      spring.datasource2.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+      # Custom Parameters
+      reports.directory=/reports/
+
+      reports.locale=de_CH
+  kind: ConfigMap
+  metadata:
+    name: jasper-config
+    namespace: ${NAMESPACE}
+- apiVersion: v1
+  data:
+    pg_service.conf: |
+      [sogis_webmapping]
+      host=${DB_SERVER}
+      port=5432
+      dbname=pub
+      user=report_server
+      password=${PW_REPORT_SERVER}
+      sslmode=require
+  kind: ConfigMap
+  metadata:
+    name: jasper-reporting-service-pg-config
+    namespace: ${NAMESPACE}
+- apiVersion: v1
+  data:
+    nginx_os.conf: |
+      server {
+        listen       443;
+        server_name  localhost;
+        ssl on;
+        ssl_certificate /etc/nginx/certs/tls.crt;      
+        ssl_certificate_key /etc/nginx/certs/tls.key;
+
+        proxy_redirect     off;
+        proxy_set_header   Host              $http_host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_connect_timeout       1200;
+        proxy_send_timeout          1200;
+        proxy_read_timeout          1200;
+        send_timeout                1200;
+
+        proxy_buffer_size 512k;
+        proxy_buffers 8 512k;
+        proxy_busy_buffers_size 512k;
+        proxy_temp_file_write_size 512k;
+        client_max_body_size 50M;
+
+        add_header 'Access-Control-Allow-Origin' '*';
+
+        location / {
+            # Rewrite st to hc for coordinates
+            if ($args ~ ^(.+&|)st(=[0-9%C,]+)(.*)$) {
+              return 301 "$uri?$1hc$2$3";
+            }
+            proxy_pass http://qwc-service.${NAMESPACE}.svc;
+        }
+
+        location ~ /map/kbs {
+            rewrite ^/map/kbs$ /map?k=1c6ede3b7 break;
+            proxy_pass http://qwc-service.${NAMESPACE}.svc;
+        }  
+
+        location ~ /map/([a-z]+) {
+            rewrite ^/map/([a-z]+)$ /map?t=$1 break;
+            proxy_pass http://qwc-service.${NAMESPACE}.svc;
+        }
+
+        location ~ /docs/(ch.so.arp.nutzungsvereinbarungen|ch.so.afu.altlasten) {
+            alias /geodata/documents/$1;
+            autoindex off;
+        }
+        
+        location /docs {
+            alias /geodata/documents;
+            autoindex on;
+        }
+
+        location ~ /geodata/ch.swisstopo.lk(.*) {
+            allow 193.135.87.0/24;
+            deny all;
+        }
+      
+        location /geodata {
+            alias /geodata/geodata;
+            autoindex on;
+        }
+
+        location /auth/ {
+            proxy_pass http://auth-service.${NAMESPACE}.svc;
+        }
+
+        location /ows {
+            proxy_pass http://ogc-service.${NAMESPACE}.svc;
+        }
+
+        location /wms {
+            proxy_pass http://ogc-service.${NAMESPACE}.svc/ows/somap;
+        }
+
+        location /api/wms {
+            proxy_pass http://ogc-service.${NAMESPACE}.svc/ows/somap;
+        }
+
+        location /api/wmsauth {
+            proxy_pass http://ogc-service.${NAMESPACE}.svc/ows/somap;
+            proxy_set_header Authorization "Basic d21zYXV0aDpwYXNzd29yZAo=";
+        }
+        
+        location /wfs {
+            proxy_pass http://ogc-service.${NAMESPACE}.svc/ows/somap;
+        }
+
+        location /api/wfs {
+            proxy_pass http://ogc-service.${NAMESPACE}.svc/ows/somap;
+        }
+
+        location /api/v1/permalink {
+            proxy_pass http://permalink-service.${NAMESPACE}.svc;
+        }
+
+        location /elevation {
+            proxy_pass http://elevation-service.${NAMESPACE}.svc;
+        }
+
+        location /api/search/v2 {
+            proxy_pass http://search-service.${NAMESPACE}.svc;
+        }
+
+        
+        location /api/v1/search {
+            proxy_pass http://search-service-v1.${NAMESPACE}.svc;
+        }
+
+        location /api/v1/data {
+            proxy_pass http://data-service.${NAMESPACE}.svc;
+        }
+
+        location /api/dataproduct/v1 {
+            proxy_pass http://dataproduct-service.${NAMESPACE}.svc;
+        }
+
+        location /api/v1/mapinfo {
+            proxy_pass http://mapinfo-service.${NAMESPACE}.svc;
+        }
+
+        location /api/v1/plotinfo {
+            proxy_pass http://plotinfo-service.${NAMESPACE}.svc;
+        }
+
+        location /api/v1/print {
+            proxy_pass http://print-service.${NAMESPACE}.svc;
+        }
+
+        location /api/v1/legend {
+            proxy_pass http://legend-service.${NAMESPACE}.svc;
+        }
+
+        location /api/v1/featureinfo {
+            proxy_pass http://featureinfo-service.${NAMESPACE}.svc;
+        }
+ 
+        location /api/v1/ccc {
+            proxy_pass http://ccc-config-service.${NAMESPACE}.svc/api/v1/ccc;
+        }
+
+        location /api/v1/document {
+            proxy_pass http://document-service.${NAMESPACE}.svc;
+        }
+
+        location /agdi {
+            proxy_pass http://agdi.${NAMESPACE}.svc/agdi;
+        }
+        
+        location /api/v1/landreg {
+            proxy_pass http://landreg-service.${NAMESPACE}.svc;
+        }
+
+        location /api/wms-cache/ {
+            proxy_pass https://${URL_WMTS}.so.ch/mapcache/;
+            proxy_set_header Host       $proxy_host;
+        }
+
+        location /api/wmts/ {
+            proxy_pass https://${URL_WMTS}.so.ch/mapcache/wmts/;
+            proxy_set_header Host       $proxy_host;
+        }
+
+        location /ilivalidator {
+            proxy_pass http://ilivalidator-service.agi-apps-${ENVIRONMENT}.svc/ilivalidator/; 
+        }
+
+        location /av_datenabgabe/ {
+            proxy_pass http://cadastral-data-disposal.agi-apps-${ENVIRONMENT}.svc;
+        }
+
+        location /avgbs2mtab {
+            proxy_pass http://avgbs2mtab-service.agi-apps-${ENVIRONMENT}.svc/avgbs2mtab/;
+        }
+      
+        location /ews {
+            proxy_pass http://heatdrill-service.agi-apps-${ENVIRONMENT}.svc/service/;
+        }
+
+        location /models {
+            proxy_pass http://interlis-repository-service.agi-apps-${ENVIRONMENT}.svc/;
+        }
+        
+        location /apidoc.html {
+            root   /usr/share/nginx/html;
+        }   
+
+        #error_page  404   /404.html;
+        #location = /404.html {
+        #    root   /usr/share/nginx/html;
+        #}
+
+        # redirect server error pages to the static page /50x.html
+        #
+        #error_page   500 502 503 504  /maintenance.html;
+        error_page   500 502 503 504  /50x.html;
+        #location = /maintenance.html {
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+      }
+  kind: ConfigMap
+  metadata:
+    name: nginx-config
+    namespace: ${NAMESPACE}
+- apiVersion: v1
+  data:
+    pg_service.conf: |
+      [sogis_services]
+      host=${DB_SERVER}
+      port=5432
+      dbname=pub
+      user=sogis_service
+      password=${PW_SOGIS_SERVICE}
+      sslmode=require
+
+      [soconfig_services]
+      host=${DB_SERVER}
+      port=5432
+      dbname=soconfig
+      user=sogis_service
+      password=${PW_SOGIS_SERVICE}
+      sslmode=require
+
+      [sogis_geodb]
+      host=${GEO_DB_SERVER}
+      port=5432
+      dbname=sogis
+      user=mspublic
+      password=agi-mspublic
+      sslmode=require
+
+      [sogis_edit]
+      host=${DB_SERVER}
+      port=5432
+      dbname=edit
+      user=sogis_service
+      password=${PW_SOGIS_SERVICE}
+      sslmode=require
+  kind: ConfigMap
+  metadata:
+    name: qwc-service-pg-config
+    namespace: ${NAMESPACE}
+- apiVersion: v1
+  data:
+    pg_service.conf: |
+      [sogis_services]
+      host=${DB_SERVER}
+      port=5432
+      dbname=pub
+      user=sogis_service
+      password=${PW_SOGIS_SERVICE}
+      sslmode=require
+
+      [sogis_services_write]
+      host=${DB_SERVER}
+      port=5432
+      dbname=pub
+      user=sogis_service_write
+      password=${PW_SOGIS_SERVICE_WRITE}
+      sslmode=require
+
+      [soconfig_services]
+      host=${DB_SERVER}
+      port=5432
+      dbname=soconfig
+      user=sogis_service
+      password=${PW_SOGIS_SERVICE}
+      sslmode=require
+
+      [sogis_geodb]
+      host=${GEO_DB_SERVER}
+      port=5432
+      dbname=sogis
+      user=mspublic
+      password=agi-mspublic
+      sslmode=require
+
+      [sogis_edit]
+      host=${DB_SERVER}
+      port=5432
+      dbname=edit
+      user=sogis_service
+      password=${PW_SOGIS_SERVICE}
+      sslmode=require
+
+      [sogis_edit_write]
+      host=${DB_SERVER}
+      port=5432
+      dbname=edit
+      user=sogis_service_write
+      password=${PW_SOGIS_SERVICE_WRITE}
+      sslmode=require
+  kind: ConfigMap
+  metadata:
+    name: wsgi-service-pg-config
+    namespace: ${NAMESPACE}
+- apiVersion: v1
+  data:
+    config.json: |
+      {
+        "permalinkServiceUrl": "{{ permalink_service_url }}",
+        "elevationServiceUrl": "{{ elevation_service_url }}",
+        "editServiceUrl": "{{ data_service_url }}",
+        "dataproductServiceUrl": "{{ dataproduct_service_url }}",
+        "searchServiceUrl": "{{ search_service_url }}",
+        "authServiceUrl": "{{ auth_service_url }}",
+        "mapInfoService": "{{ mapinfo_service_url }}",
+        "featureReportService": "{{ feature_report_service_url }}",
+        "landRegisterService": "/api/v1/landreg",
+        "cccConfigService": "/api/v1/ccc/",
+        "plotInfoService": "/api/v1/plotinfo/",
+        "translationsPath": "/map/translations",
+        "assetsPath": "/map/assets",
+        "urlPositionFormat": "centerAndZoom",
+        "urlPositionCrs": "",
+        "preserveExtentOnThemeSwitch": true,
+        "preserveBackgroundOnThemeSwitch": true,
+        "preserveNonThemeLayersOnThemeSwitch": true,
+        "allowReorderingLayers": true,
+        "allowRemovingThemeLayers": true,
+        "wmsDpi": {{ wms_dpi }},
+        "defaultFeatureStyle": {
+          "strokeColor": [255, 128, 0, 1],
+          "strokeWidth": 2,
+          "strokeDash": [],
+          "fillColor": [255, 255, 64, 0.33],
+          "circleRadius": 10,
+          "circleBorder": 2,
+          "textFill": "black",
+          "textStroke": "white"
+        },
+        "plugins": {
+            "mobile": [
+              {
+                "name": "Map"
+              },
+              {
+                "name": "HomeButton"
+                ,
+                "cfg": {
+                  "position": 2
+                }
+              },
+              {
+                "name": "LocateButton",
+                "cfg": {
+                  "position": 1
+                }
+              },
+              {
+                "name": "BackgroundSwitcher",
+                "cfg": {
+                  "position": 0
+                }
+              },
+              {
+                  "name": "TopBar",
+                  "cfg": {
+                    "logoFormat": "jpg",
+                    "menuItems": [
+                      {"key": "LayerTree", "icon": "layers", "identifyEnabled": true},
+                      {"key": "PlotInfoTool", "icon": "plot_info", "comment": true},
+                      {"key": "Share", "icon": "share", "identifyEnabled": true},
+                      {"key": "Tools", "icon": "tools", "subitems": [
+                        {"key": "Measure", "icon": "measure"},
+                        {"key": "Redlining", "icon": "draw"},
+                        {"key": "Editing",{{ editing_theme_whitelist }} "icon": "editing"},
+                        {"key": "RasterExport", "icon": "rasterexport"}
+                      ]},
+                      {"key": "Print", "icon": "print"},
+                      {"key": "LandRegisterExtract", "icon": "print"},
+                      {"key": "Help", "icon": "info", "identifyEnabled": true},
+                      {{ login_logout_item }}
+                    ],
+                    "searchOptions": {
+                      "minScale": 100,
+                      "showProviderSelection": true,
+                      "providerSelectionAllowAll": true,
+                      "zoomToLayers": false
+                    },
+                    "appMenuClearsTask": true,
+                    "logoClickResetsTheme": true,
+                    "logoUrl": "/map"
+                  }
+              },
+              {
+                "name": "ThemeSwitcher"
+              },
+              {
+                "name": "Measure",
+                "cfg": {
+                  "showMeasureModeSwitcher": true
+                }
+              },
+              {
+                "name": "Identify",
+                "cfg": {
+                  "params": {
+                    "FI_POINT_TOLERANCE": 32,
+                    "FI_LINE_TOLERANCE": 16,
+                    "FI_POLYGON_TOLERANCE": 8,
+                    "feature_count": 20
+                  },
+                  "exportFormat": null,
+                  "longAttributesDisplay": "wrap",
+                  "displayResultTree": false
+                }
+              },
+              {
+              "name": "Share",
+                "cfg": {
+                  "showSocials": true,
+                  "showLink": true,
+                  "showQRCode": true
+                }
+              },
+              {
+                "name": "Print",
+                "cfg": {
+                  "printExternalLayers": true
+                }
+              },
+              {
+                "name": "Help"
+              },
+              {
+                "name": "MapCopyright"
+              },
+              {
+                "name": "LayerTree",
+                "cfg": {
+                  "width": "30em",
+                  "allowMapTips": false,
+                  "showLegendIcons": false,
+                  "showRootEntry": true,
+                  "showQueryableIcon": false,
+                  "groupTogglesSublayers": false,
+                  "grayUnchecked": true,
+                  "flattenGroups": true,
+                  "legendThumbnail": "legend_thumbnail.svg",
+                  "layerInfoWindowSize": {"width": 480, "height": 400}
+                }
+              },
+              {
+                "name": "RasterExport",
+                "cfg": {
+                  "dpis": [96, 300]
+                }
+              },
+              {
+                "name": "Redlining",
+                "cfg": {
+                  "allowGeometryLabels": false
+                }
+              },
+              {
+                "name": "Editing"
+              },
+              {
+                "name": "MapCompare"
+              },
+              {
+                "name": "HeightProfile"
+              },
+              {
+                "name": "MapInfoTooltip"
+              },
+              {
+                "name": "Authentication"
+              },
+              {
+                "name": "LandRegisterExtract"
+              },
+              {
+                "name": "CCCInterface"
+              },
+              {
+                "name": "PlotInfoTool"
+              }
+            ],
+            "desktop": [
+              {
+                "name": "Map"
+              },
+              {
+                "name": "HomeButton"
+                ,
+                "cfg": {
+                  "position": 4
+                }
+              },
+              {
+                "name": "LocateButton"
+                ,
+                "cfg": {
+                  "position": 3
+                }
+              },
+              {
+                "name": "ZoomIn",
+                "cfg": {
+                  "position": 2
+                }
+              },
+              {
+                "name": "ZoomOut",
+                "cfg": {
+                  "position": 1
+                }
+              },
+              {
+                "name": "BackgroundSwitcher",
+                "cfg": {
+                  "position": 0
+                }
+              },
+              {
+                  "name": "TopBar",
+                  "cfg": {
+                    "logoFormat": "png",
+                    "menuItems": [
+                      {"key": "LayerTree", "icon": "layers", "identifyEnabled": true},
+                      {"key": "PlotInfoTool", "icon": "plot_info", "comment": true},
+                      {"key": "Share", "icon": "share", "identifyEnabled": true},
+                      {"key": "Tools", "icon": "tools", "subitems": [
+                      {"key": "Measure", "icon": "measure"},
+                      {"key": "Redlining", "icon": "draw"},
+                      {"key": "Editing",{{ editing_theme_whitelist }} "icon": "editing"},
+                      {"key": "RasterExport", "icon": "rasterexport"}
+                    ]},
+                      {"key": "Print", "icon": "print"},
+                      {"key": "LandRegisterExtract", "icon": "print"},
+                      {"key": "Help", "icon": "info", "identifyEnabled": true},
+                      {{ login_logout_item }}
+                    ],
+                    "searchOptions": {
+                      "minScale": 100,
+                      "showProviderSelection": true,
+                      "providerSelectionAllowAll": true,
+                      "zoomToLayers": false
+                    },
+                    "appMenuClearsTask": true,
+                    "logoClickResetsTheme": true,
+                    "logoUrl": "/map"
+                  }
+              },
+              {
+                "name": "BottomBar",
+                "cfg": {
+                  "viewertitleUrl": "https://www.so.ch/verwaltung/bau-und-justizdepartement/amt-fuer-geoinformation/geoportal/",
+                  "termsUrl":  "https://www.so.ch/rechtliches/"
+  
+                }
+              },
+              {
+                "name": "Measure",
+                "cfg": {
+                  "showMeasureModeSwitcher": true
+                }
+              },
+              {
+                "name": "ThemeSwitcher"
+              },
+              {
+                "name": "LayerTree",
+                "cfg": {
+                  "width": "30em",
+                  "allowMapTips": false,
+                  "showLegendIcons": false,
+                  "showRootEntry": true,
+                  "showQueryableIcon": false,
+                  "groupTogglesSublayers": false,
+                  "grayUnchecked": true,
+                  "flattenGroups": true,
+                  "legendThumbnail": "legend_thumbnail.svg",
+                  "layerInfoWindowSize": {"width": 480, "height": 400}
+                }
+              },
+              {
+                "name": "Identify",
+                "cfg": {
+                  "params": {
+                    "FI_POINT_TOLERANCE": 16,
+                    "FI_LINE_TOLERANCE": 8,
+                    "FI_POLYGON_TOLERANCE": 4,
+                    "feature_count": 20
+                  },
+                  "exportFormat": null,
+                  "longAttributesDisplay": "wrap",
+                  "displayResultTree": false,
+                  "initialWidth": 480,
+                  "initialHeight": 550
+                }
+              },
+              {
+                "name": "MapTip"
+              },
+              {
+                "name": "Share",
+                "cfg": {
+                  "showSocials": true,
+                  "showLink": true,
+                  "showQRCode": true
+                }
+              },
+              {
+                "name": "Print",
+                "cfg": {
+                  "printExternalLayers": true
+                }
+              },
+              {
+                 "name": "Help"
+              },
+              {
+                "name": "MapCopyright"
+              },
+              {
+                "name": "RasterExport",
+                "cfg": {
+                  "dpis": [96, 300]
+                }
+              },
+              {
+                "name": "Redlining",
+                "cfg": {
+                  "allowGeometryLabels": false
+                }
+              },
+              {
+                "name": "Editing"
+              },
+              {
+                "name": "MapCompare"
+              },
+              {
+                "name": "HeightProfile",
+                "cfg": {
+                  "height": 200
+                }
+              },
+              {
+                "name": "MapInfoTooltip"
+              },
+              {
+                "name": "Authentication"
+              },
+              {
+                "name": "LandRegisterExtract"
+              },
+              {
+                "name": "CCCInterface"
+              },
+              {
+                "name": "PlotInfoTool",
+                "cfg": {
+                  "toolLayers": ["Grundstücke"],
+                  "infoQueries": [
+                    {
+                      "key": "plotdescr",
+                      "title": "Grundstückbeschrieb",
+                      "query": "/plot/$egrid$",
+                      "pdfQuery": null
+                  }
+                  ]
+                }
+              }
+            ]
+        }
+      }
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: '2018-06-14T13:51:39Z'
+    name: config-json
+    namespace: gdi
