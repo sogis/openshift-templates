@@ -181,3 +181,27 @@ objects:
             timeoutSeconds: 5
           securityContext:
             runAsUser: 1001
+          volumeMounts:
+          - name: datadir
+            mountPath: /opt/zookeeper/data
+          - name: datalogdir
+            mountPath: /opt/zookeeper/data2
+    volumeClaimTemplates:
+    - metadata:
+        name: datadir
+      spec:
+        accessModes: 
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: "nfs"
+    - metadata:
+        name: datalogdir
+      spec:
+        accessModes: 
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: "nfs"
