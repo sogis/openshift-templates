@@ -2,7 +2,7 @@ apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   creationTimestamp: null
-  name: buildconfig
+  #name: buildconfig
 objects:
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
@@ -12,7 +12,7 @@ objects:
     creationTimestamp: null
     labels:
       build: qwc-service
-    #name: qwc-service
+    name: qwc-service
   spec:
     failedBuildsHistoryLimit: 5
     nodeSelector: null
