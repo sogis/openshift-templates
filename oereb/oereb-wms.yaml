@@ -33,26 +33,6 @@ objects:
         - name: oereb-wms
           image: sogis/oereb-wms:${TAG}
           env:
-          - name: PGHOST
-            value: ${PGHOST}
-          - name: PGPORT
-            value: ${PGPORT}
-          - name: PGDATABASE
-            value: ${PGDATABASE}
-          - name: PGUSER
-            valueFrom:
-              secretKeyRef:
-                name: oereb-wms-secret
-                key: pguser
-          - name: PGPASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: oereb-wms-secret
-                key: pgpassword
-          - name: PGSSLMODE
-            value: ${PGSSLMODE}
-          - name:  PGAPPNAME
-            value: oereb-wms
           - name: QGIS_FCGI_MIN_PROCESSES
             value: ${QGIS_FCGI_MIN_PROCESSES}
           - name: QGIS_FCGI_MAX_PROCESSES
@@ -77,6 +57,14 @@ objects:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 30
+          volumeMounts:
+          - name: oereb-wms-secret-volume
+            mountPath: /etc/postgresql-common
+            readOnly: true
+        volumes:
+        - name: oereb-wms-secret-volume
+          secret:
+            secretName: oereb-wms-secret
     replicas: ${{REPLICA_COUNT}}
     triggers:
     - type: ConfigChange
@@ -117,18 +105,6 @@ parameters:
 - name: REPLICA_COUNT
   description: "Number of replicas to run"
   value: "1"
-- name: PGHOST
-  description: "Name of host to connect to"
-  required: true
-- name: PGPORT
-  description: "Port number to connect to at the server host"
-  value: "5432"
-- name: PGDATABASE
-  description: "The database name to connect to"
-  required: true
-- name: PGSSLMODE
-  description: "Determines whether or with what priority a secure SSL TCP/IP connection will be negotiated with the server"
-  value: ""
 - name: QGIS_FCGI_MIN_PROCESSES
   description: "Minimum number of QGIS Server FCGI processes requested"
   value: "2"

@@ -4,15 +4,19 @@
 
 This step is needed only if this is the first installation, or if any value of the secret needs to be changed.
 
-Create a file *oereb-wms-secret.yaml* with the following content; replace `DBUSER` and `DBPASSWORD` with the actual values:
+Create a file *oereb-wms-secret.yaml* with the following content; replace `DBHOST`, `DBNAME`, `DBUSER` and `DBPASSWORD` with the actual values:
 ```
 apiVersion: v1
 kind: Secret
 metadata:
   name: oereb-wms-secret
 stringData:
-  pguser: DBUSER
-  pgpassword: DBPASSWORD
+  pg_service.conf: |-
+    [oereb]
+    host=DBHOST
+    dbname=DBNAME
+    user=DBUSER
+    password=DBPASSWORD
 ```
 
 Switch to the right OpenShift project (e.g. `oc project agi-oereb-test`) and create the secret by running the following command:
@@ -47,8 +51,6 @@ oc project agi-oereb-test
 oc process -f oereb/oereb-wms.yaml \
   -p TAG=latest \
   -p IMPORT_POLICY_SCHEDULED=true \
-  -p PGHOST=xy \
-  -p PGDATABASE=xy \
   | oc apply -f -
 ```
 
@@ -58,8 +60,6 @@ Deploy integration environment:
 oc project agi-oereb-integration
 oc process -f oereb/oereb-wms.yaml \
   -p TAG=f01f5ad \
-  -p PGHOST=xy \
-  -p PGDATABASE=xy \
   | oc apply -f -
 ```
 
@@ -69,7 +69,5 @@ Deploy production environment:
 oc project agi-oereb-production
 oc process -f oereb/oereb-wms.yaml \
   -p TAG=f01f5ad \
-  -p PGHOST=xy \
-  -p PGDATABASE=xy \
   | oc apply -f -
 ```
