@@ -185,7 +185,7 @@ objects:
           - name: datadir
             mountPath: /opt/zookeeper/data
           - name: datalogdir
-            mountPath: /opt/zookeeper/data2
+            mountPath: /opt/zookeeper/data-log
     volumeClaimTemplates:
     - metadata:
         name: datadir
