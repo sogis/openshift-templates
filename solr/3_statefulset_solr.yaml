@@ -35,6 +35,9 @@ parameters:
 - name: LOGGING_LEVEL
   value: "INFO"
   required: true
+- name: DBSERVER
+  value: geodb-t.rootso.org
+  required: true
 
 objects:
 - apiVersion: "v1"
@@ -167,6 +170,18 @@ objects:
                 value: "zookeeper.solr-cloud-${ENV}.svc:2181"
               - name: "SOLR_LOG_LEVEL"
                 value: ${LOGGING_LEVEL}
+              - name: DBUSER
+                valueFrom:
+                  secretKeyRef:
+                    key: user.txt
+                    name: dbcredentials
+              - name: DBPASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: password.txt
+                    name: dbcredentials
+              - name: DBSERVER
+                value: ${DBSERVER}
 
             livenessProbe:
               initialDelaySeconds: 70
