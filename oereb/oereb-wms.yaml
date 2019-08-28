@@ -1,0 +1,113 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: oereb-wms-template
+labels:
+  template: oereb-wms-template
+  app: oereb
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: oereb-wms
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: sogis/oereb-wms:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: oereb-wms
+  spec:
+    template:
+      metadata:
+        labels:
+          app: oereb
+          deploymentconfig: oereb-wms
+      spec:
+        containers:
+        - name: oereb-wms
+          image: sogis/oereb-wms:${TAG}
+          env:
+          - name: QGIS_FCGI_MIN_PROCESSES
+            value: ${QGIS_FCGI_MIN_PROCESSES}
+          - name: QGIS_FCGI_MAX_PROCESSES
+            value: ${QGIS_FCGI_MAX_PROCESSES}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /wms/oereb?SERVICE=WMS&REQUEST=GetCapabilities
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 30
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /wms/oereb?SERVICE=WMS&REQUEST=GetCapabilities
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 30
+          volumeMounts:
+          - name: oereb-wms-secret-volume
+            mountPath: /etc/postgresql-common
+            readOnly: true
+        volumes:
+        - name: oereb-wms-secret-volume
+          secret:
+            secretName: oereb-wms-secret
+    replicas: ${{REPLICA_COUNT}}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - oereb-wms
+        from:
+          kind: ImageStreamTag
+          name: oereb-wms:${TAG}
+    selector:
+      app: oereb
+      deploymentconfig: oereb-wms
+    strategy:
+      type: Rolling
+    revisionHistoryLimit: 10
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: oereb-wms
+  spec:
+    ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: oereb
+      deploymentconfig: oereb-wms
+    type: ClusterIP
+parameters:
+- name: TAG
+  description: "The Docker image tag to use (e.g. latest)"
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: "Regularly check for changed image?"
+  value: "false"
+- name: REPLICA_COUNT
+  description: "Number of replicas to run"
+  value: "1"
+- name: QGIS_FCGI_MIN_PROCESSES
+  description: "Minimum number of QGIS Server FCGI processes requested"
+  value: "2"
+- name: QGIS_FCGI_MAX_PROCESSES
+  description: "Maximum number of QGIS Server FCGI processes allowed"
+  value: "2"
