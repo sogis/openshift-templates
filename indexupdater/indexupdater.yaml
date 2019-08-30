@@ -61,7 +61,7 @@ objects:
         - env:
             - name: SPRING_APPLICATION_JSON
               value: >-
-                {"solrProtocol":"http","solrHost":"solr-headless.solr-cloud-${env}","solrPort":8983,"solrPathQuery":"solr/gdi/select","solrPathUpdate":"solr/gdi/update","logSilenceMaxDurationSeconds":3600,"dihPollIntervalSeconds":2,"dihImportMaxDurationSeconds":120,"dihDefaultPath":"solr/gdi/dih_geodata"}
+                {"solrProtocol":"http","solrHost":"solr-headless.solr-cloud-${env}","solrPort":8983,"solrPathQuery":"solr/gdi/select","solrPathUpdate":"solr/gdi/update","logSilenceMaxDurationSeconds":3600,"dihPollIntervalSeconds":2,"dihImportMaxDurationSeconds":900,"dihDefaultPath":"solr/gdi/dih_geodata"}
           image: sogis/indexupdater
           imagePullPolicy: IfNotPresent
           name: indexupdater
