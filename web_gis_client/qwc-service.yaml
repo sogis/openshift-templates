@@ -11,6 +11,10 @@ metadata:
       "Creates all necessary components for qwc-service"
     tags: "agi,gdi,python,web gis client, agdi"
     iconClass: icon-python
+parameters:
+  - description: Openshift Namespace
+    name: NAMESPACE
+    value:
 labels:
   application: GDI-Test
   createdBy: template-GDI
@@ -18,12 +22,6 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    annotations:
-      kompose.cmd: kompose --file docker-compose-4openshift.yml --provider openshift
-        convert
-      kompose.version: 1.10.0 (8bb0907)
-    creationTimestamp: null
-    generation: 1
     labels:
       io.kompose.service: qwc-service
     name: qwc-service
@@ -43,7 +41,6 @@ objects:
       type: Rolling
     template:
       metadata:
-        creationTimestamp: null
         labels:
           io.kompose.service: qwc-service
       spec:
