@@ -102,3 +102,55 @@ curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?acti
 ## Update of app configuration in Openshift Environment
 
 tbd
+
+## Update Dataimporthandler
+
+Unter https://github.com/sogis/searchservice/solr/configsets/gdi/conf befinden sich die beiden für die Suche notwendigen Configfiles (DIH Files) dih_geodata_config.xml und dih_metadata_config.xml. dih_metadata ist für die Suche nach Kartenlayern und in deren Metadaten. dih_geodata für alle weiteren Objektsuchen. Wenn nun eine neue Suche hinzugefügt wird oder eine bestehende gelöscht werden soll muss man wie folgt vorgehen (Beispiel für die Testumgebung):
+
+```
+git clone https://github.com/sogis/searchservice
+cd searchservice/solr/configsets/gdi/conf
+```
+
+Hinzufügen der entity im entsprechenden DIH File. Beispiel 
+```
+<entity name="ch_so_afu_abbaustellen_abbaustellen" query="SELECT * FROM afu_abbaustellen_pub.abbaustelle_solr_v">
+    <field column="search_1_stem" name="search_1_stem" />
+    <field column="search_2_stem" name="search_2_stem" />
+    <field column="facet" name="facet" />
+    <field column="id" name="id" />
+    <field column="sort" name="sort" />
+    <field column="display" name="display" />
+    <field column="idfield_meta" name="idfield_meta" />
+</entity>
+```
+
+Anzupassen sind hier im Tag *\<entity\>* *name* und *query*. *name* ist der Facet Name aus dem Eintrag im AGDI unter Dataset/Solr Facet, wobei die Punkte durch Unterstriche ersetzt werden müssen. Query frägt den für die Suche erstellten View ab.
+
+Anschliessend abspeichern des Files. 
+
+Nun muss das DIH File in die Solr Pods hochgeladen werden
+```
+Change Directory in den Ordner searchservice/solr/configsets 
+oc project solr-cloud-test
+oc rsync conf solr-0:/opt/solr/server/home/gdi
+oc rsync conf solr-1:/opt/solr/server/home/gdi
+```
+
+In einen Solr Pod einloggen. Es spielt keine Rolle in welchen.
+
+```
+oc rsh solr-0 /bin/bash
+```
+
+Configset gdi updaten
+
+```
+/opt/solr/server/scripts/cloud-scripts/zkcli.sh -z zookeeper.solr-cloud-test.svc:2181 -cmd upconfig -confdir /opt/solr/server/home/gdi/conf -confname gdi
+```
+
+Aus Solr Pod ausloggen und folgenden Curl Befehl ausführen
+
+```
+curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=MODIFYCOLLECTION&collection=gdi&collection.configName=gdi"
+```
