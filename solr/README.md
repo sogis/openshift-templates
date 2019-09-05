@@ -133,8 +133,8 @@ Nun muss das DIH File in die Solr Pods hochgeladen werden
 ```
 Change Directory in den Ordner searchservice/solr/configsets 
 oc project solr-cloud-test
-oc rsync conf solr-0:/opt/solr/server/home/gdi
-oc rsync conf solr-1:/opt/solr/server/home/gdi
+oc rsync gdi solr-0:/opt/solr/server/home
+oc rsync gdi solr-1:/opt/solr/server/home
 ```
 
 In einen Solr Pod einloggen. Es spielt keine Rolle in welchen.
