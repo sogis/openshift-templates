@@ -4,7 +4,7 @@
 
 This step is needed only if this is the first installation, or if any value of the secret needs to be changed.
 
-Create a file *oereb-wms-secret.yaml* with the following content; replace `DBHOST`, `DBNAME`, `DBUSER` and `DBPASSWORD` with the actual values:
+Create a file *oereb-wms-secret.yaml* for the oereb wms with the following content; replace `DBHOST`, `DBNAME`, `DBUSER` and `DBPASSWORD` with the actual values:
 ```
 apiVersion: v1
 kind: Secret
@@ -18,10 +18,21 @@ stringData:
     user=DBUSER
     password=DBPASSWORD
 ```
+Create a file *oereb-web-service-secret.yaml* for the oereb web service with the following content; replace `DBUSER` and `DBPASSWORD` with the actual values:
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: oereb-web-service-secret
+stringData:
+  username: DBUSER
+  password: DBPASSWORD
+```
 
-Switch to the right OpenShift project (e.g. `oc project agi-oereb-test`) and create the secret by running the following command:
+Switch to the right OpenShift project (e.g. `oc project agi-oereb-test`) and create the secret(s) by running the following commands:
 ```
 oc create -f oereb-wms-secret.yaml
+oc create -f oereb-web-service.yaml
 ```
 
 Run this command in the *agi-oereb-test*, *agi-oereb-integration* and *agi-oereb-production* OpenShift projects.
@@ -52,6 +63,12 @@ oc process -f oereb/oereb-wms.yaml \
   -p TAG=latest \
   -p IMPORT_POLICY_SCHEDULED=true \
   | oc apply -f -
+oc process -f oereb/oereb-web-service.yaml \
+  -p version=latest \
+  -p env=test \
+  -p dbenv=geodb-t \
+  -p dbschema=true \
+  | oc apply -f -
 ```
 
 Deploy integration environment:
@@ -61,6 +78,12 @@ oc project agi-oereb-integration
 oc process -f oereb/oereb-wms.yaml \
   -p TAG=f01f5ad \
   | oc apply -f -
+oc process -f oereb/oereb-web-service.yaml \
+  -p version=26 \
+  -p env=integration \
+  -p dbenv=geodb-i \
+  -p dbschema=stage \
+  | oc apply -f -
 ```
 
 Deploy production environment:
@@ -69,5 +92,11 @@ Deploy production environment:
 oc project agi-oereb-production
 oc process -f oereb/oereb-wms.yaml \
   -p TAG=f01f5ad \
+  | oc apply -f -
+oc process -f oereb/oereb-web-service.yaml \
+  -p version=26 \
+  -p env=production \
+  -p dbenv=geodb
+  -p dbschema=live \
   | oc apply -f -
 ```

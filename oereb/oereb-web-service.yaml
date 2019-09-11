@@ -1,0 +1,159 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: ilivalidator-template
+  annotations:
+    openshift.io/display-name: "All components for OEREB Web Service"
+    description: >-
+      "Creates all necessary components for the OEREB Web Service"
+    openshift.io/long-description: >-
+      "Creates all necessary components for the OEREB Web Service"
+    tags: "agi,gdi,oereb-service,java"
+    iconClass: icon-java
+labels:
+  createdBy: oereb-service-template
+parameters:
+  - description: Name for Environment
+    name: env
+    required: true
+    value: test
+  - description: URL of DB ENV
+    name: dbenv
+    required: true
+    value: geodb-t
+  - description:
+    name: dbschema
+    required: true
+    value: stage
+  - description: Version of Image
+    name: version
+    required: true
+    value:
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      description: Image Stream of the application
+    labels:
+      application: oereb-web-service
+    creationTimestamp: null
+    generation: 1
+    name: oereb-web-service
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentconfig: oereb-web-service
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 60
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          application: oereb-web-service
+          deploymentconfig: oereb-web-service
+      spec:
+        containers:
+        - env:
+            - name: DBURL
+              value: 'jdbc:postgresql://${dbenv}.rootso.org/oereb?sslmode=require'
+            - name: DBSCHEMA
+              value: ${dbschema}
+            - name: DBUSR
+              valueFrom:
+                secretKeyRef:
+                  name: oereb-web-service-secret
+                  key: username
+            - name: DBPWD
+              valueFrom:
+                secretKeyRef:
+                  name: oereb-web-service-secret
+                  key: password
+            - name: TMPDIR
+              value: /tmp
+          image: sogis/oereb-web-service
+          imagePullPolicy: IfNotPresent
+          name: oereb-web-service
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - oereb-web-service
+        from:
+          kind: ImageStreamTag
+          name: oereb-web-service:${version}
+          namespace: agi-oereb-${env}
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: oereb-web-service
+    annotations:
+      description: http port of application
+    labels:
+      application: oereb-web-service
+  spec:
+    selector:
+      deploymentconfig: oereb-web-service
+    ports:
+    - protocol: TCP
+      name: "80"
+      port: 80
+      targetPort: 8080
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: oereb-web-service
+    labels:
+      application: oereb-web-service
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: sogis/oereb-web-service:${version}
+      name: ${version}
+      importPolicy:
+        scheduled: true
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 60s
+    creationTimestamp: null
+    labels:
+      application: oereb-web-service
+    name: oereb-web-service
+  spec:
+    host: oereb-web-service.dev.so.ch
+    port:
+      targetPort: 8080
+    to:
+      kind: Service
+      name: oereb-web-service
+      weight: 100
+    wildcardPolicy: None
