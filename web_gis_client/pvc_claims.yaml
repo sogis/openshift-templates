@@ -10,6 +10,7 @@ parameters:
     name: env
     required: true
     value: test
+objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
