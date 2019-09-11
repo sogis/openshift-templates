@@ -24,9 +24,7 @@ objects:
     resources:
       requests:
         storage: 2Gi
-    storageClassName: netapp
-    volumeName: netapp-gditest-qwc-assets
-  status: {}
+    storageClassName: nfs
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -41,8 +39,7 @@ objects:
     resources:
       requests:
         storage: 1Gi
-    volumeName: netapp-gdi-jasper-config
-  status: {}
+    storageClassName: nfs
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -57,8 +54,7 @@ objects:
     resources:
       requests:
         storage: 1Gi
-    volumeName: netapp-gdi-nginx-config
-  status: {}
+    storageClassName: nfs
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -73,8 +69,8 @@ objects:
     resources:
       requests:
         storage: 5Gi
-    volumeName: netapp-gdi-qgs-resources
-  stpiVersion: v1
+    storageClassName: nfs
+- apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     annotations:
@@ -88,5 +84,4 @@ objects:
     resources:
       requests:
         storage: 5Gi
-    volumeName: netapp-gdi-reports
-  status: {}
+    storageClassName: nfs
