@@ -89,5 +89,4 @@ objects:
       requests:
         storage: 5Gi
     volumeName: netapp-gdi-reports
-  status: {}atus: {}
-
+  status: {}
