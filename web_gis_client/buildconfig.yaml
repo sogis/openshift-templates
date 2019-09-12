@@ -2,7 +2,7 @@ apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   creationTimestamp: null
-  #name: buildconfig
+  name: buildconfig-qwc-service
 objects:
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
