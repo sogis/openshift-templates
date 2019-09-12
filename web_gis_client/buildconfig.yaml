@@ -1,10 +1,14 @@
-apiVersion: template.openshift.io/v1
+apiVersion: v1
 kind: Template
 metadata:
   creationTimestamp: null
   name: buildconfig-qwc-service
+  annotations:
+    openshift.io/display-name: "Buildconfig for qwc-service"
+    description: >-
+      "Creates BuildConfig for qwc-service"
 objects:
-- apiVersion: build.openshift.io/v1
+- apiVersion: v1
   kind: BuildConfig
   metadata:
     annotations:
