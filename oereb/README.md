@@ -67,7 +67,7 @@ oc process -f oereb/oereb-web-service.yaml \
   -p version=latest \
   -p env=test \
   -p dbenv=geodb-t \
-  -p dbschema=true \
+  -p dbschema=stage \
   | oc apply -f -
 ```
 
