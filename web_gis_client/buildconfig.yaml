@@ -36,7 +36,7 @@ objects:
         name: deployso-at-gitlab-token
       type: Git
     strategy:
-      dockerStrategy:
+      sourceStrategy:
         buildArgs:
         - name: QWC2_VERSION
           value: 1.5.4
@@ -53,11 +53,6 @@ objects:
             secretKeyRef:
               key: password
               name: deployso-at-gitlab-token
-        from:
-          kind: ImageStreamTag
-          name: ubuntu:16.04
-      type: Docker
-    successfulBuildsHistoryLimit: 5
     triggers:
     - imageChange: {}
       type: ImageChange
