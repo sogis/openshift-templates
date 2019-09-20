@@ -54,8 +54,8 @@ objects:
               key: password
               name: deployso-at-gitlab-token
         from:
-          kind: Image
-          name: ubuntu:16.04
+          kind: ImageStreamTag
+          name: docker/ubuntu:16.04
       type: Docker
     successfulBuildsHistoryLimit: 5
     triggers:
