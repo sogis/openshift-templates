@@ -19,7 +19,7 @@ objects:
     - ReadWriteOnce
     resources:
       requests:
-        storage: 2Gi
+        storage: 2GiB
     storageClassName: nfs
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -30,7 +30,7 @@ objects:
     - ReadWriteOnce
     resources:
       requests:
-        storage: 1Gi
+        storage: 1GiB
     storageClassName: nfs
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -41,7 +41,7 @@ objects:
     - ReadWriteOnce
     resources:
       requests:
-        storage: 1Gi
+        storage: 1GiB
     storageClassName: nfs
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -52,7 +52,7 @@ objects:
     - ReadWriteOnce
     resources:
       requests:
-        storage: 5Gi
+        storage: 5GiB
     storageClassName: nfs
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -63,5 +63,5 @@ objects:
     - ReadWriteOnce
     resources:
       requests:
-        storage: 5Gi
+        storage: 5GiB
     storageClassName: nfs
