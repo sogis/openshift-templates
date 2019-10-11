@@ -17,6 +17,7 @@ stringData:
     dbname=DBNAME
     user=DBUSER
     password=DBPASSWORD
+    options=-c search_path=public,live
 ```
 Create a file *oereb-web-service-secret.yaml* for the oereb web service with the following content; replace `DBUSER` and `DBPASSWORD` with the actual values:
 ```
