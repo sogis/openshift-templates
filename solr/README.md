@@ -115,13 +115,6 @@ cd searchservice/solr/configsets/gdi/conf
 Hinzufügen der entity im entsprechenden DIH File. Beispiel 
 ```
 <entity name="ch_so_afu_abbaustellen_abbaustellen" query="SELECT * FROM afu_abbaustellen_pub.abbaustelle_solr_v">
-    <field column="search_1_stem" name="search_1_stem" />
-    <field column="search_2_stem" name="search_2_stem" />
-    <field column="facet" name="facet" />
-    <field column="id" name="id" />
-    <field column="sort" name="sort" />
-    <field column="display" name="display" />
-    <field column="idfield_meta" name="idfield_meta" />
 </entity>
 ```
 
