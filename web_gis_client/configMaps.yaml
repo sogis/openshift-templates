@@ -342,10 +342,10 @@ objects:
         }
 
 		location /api/oereb/v1 {
-          	proxy_set_header 'X-FORWARDED-HOST' '${URL}';
-          	proxy_set_header 'X-FORWARDED-PREFIX' '/api/oereb/v1';
-          	proxy_set_header 'X-FORWARDED-PROTO' 'https';
-          	proxy_pass http://oereb-web-service.agi-oereb-test.svc/;
+            proxy_set_header 'X-FORWARDED-HOST' '${URL}';
+            proxy_set_header 'X-FORWARDED-PREFIX' '/api/oereb/v1';
+            proxy_set_header 'X-FORWARDED-PROTO' 'https';
+            proxy_pass http://oereb-web-service.agi-oereb-test.svc/;
       	}
 
         location /api/v1/print {
