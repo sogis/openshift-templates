@@ -63,7 +63,7 @@ objects:
           livenessProbe:
             failureThreshold: 3
             httpGet:
-              path: /ilivalidator/actuator/health
+              path: /ilivalidator-nplso/actuator/health
               port: 8888
               scheme: HTTP
             initialDelaySeconds: 15
@@ -77,7 +77,7 @@ objects:
           readinessProbe:
             failureThreshold: 3
             httpGet:
-              path: /ilivalidator/actuator/health
+              path: /ilivalidator-nplso/actuator/health
               port: 8888
               scheme: HTTP
             initialDelaySeconds: 15
