@@ -1,4 +1,4 @@
-# ilivalidator-web-service
+# ilivalidator-web-service-nplso
 
 ## First install in an Openshift Environment
 
