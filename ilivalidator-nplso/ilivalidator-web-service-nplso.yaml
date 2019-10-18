@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Template
 metadata:
   creationTimestamp: null
-  name: ilivalidator-template
+  name: ilivalidator-nplso-template
   annotations:
     openshift.io/display-name: "All components for AGI Ilivalidator Web Service NPLSO"
     description: >-
@@ -12,7 +12,7 @@ metadata:
     tags: "agi,gdi,ilivalidator,java"
     iconClass: icon-java
 labels:
-  createdBy: ilivalidator-template
+  createdBy: ilivalidator-nplso-template
 parameters:
   - description: Name for Environment
     name: env
@@ -104,7 +104,7 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - ilivalidator-web-service
+        - ilivalidator-web-service-nplso
         from:
           kind: ImageStreamTag
           name: ilivalidator-web-service-nplso:${version}
