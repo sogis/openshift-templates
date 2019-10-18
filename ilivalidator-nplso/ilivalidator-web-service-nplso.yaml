@@ -1,0 +1,142 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: ilivalidator-template
+  annotations:
+    openshift.io/display-name: "All components for AGI Ilivalidator Web Service NPLSO"
+    description: >-
+      "Creates all necessary components for the AGI Ilivalidator Web Service NPLSO"
+    openshift.io/long-description: >-
+      "Creates all necessary components for the AGI Ilivalidator Web Service NPLSO"
+    tags: "agi,gdi,ilivalidator,java"
+    iconClass: icon-java
+labels:
+  createdBy: ilivalidator-template
+parameters:
+  - description: Name for Environment
+    name: env
+    required: true
+    value: test
+  - description: Version of Image
+    name: version
+    required: true
+    value:
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      description: Image Stream of the application
+    labels:
+      application: ilivalidator-web-service-nplso
+    creationTimestamp: null
+    generation: 1
+    name: ilivalidator-web-service-nplso
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentconfig: ilivalidator-web-service-nplso
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 60
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          application: ilivalidator-web-service-nplso
+          deploymentconfig: ilivalidator-web-service-nplso
+      spec:
+        containers:
+        - image: sogis/ilivalidator-web-service-nplso
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ilivalidator/actuator/health
+              port: 8888
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: ilivalidator-web-service-nplso
+          ports:
+          - containerPort: 8888
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ilivalidator/actuator/health
+              port: 8888
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /tmp
+            name: ilivalidator-web-service-nplso-volume-1
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: ilivalidator-web-service-nplso-volume-1
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ilivalidator-web-service
+        from:
+          kind: ImageStreamTag
+          name: ilivalidator-web-service-nplso:${version}
+          namespace: agi-apps-${env}
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ilivalidator-service-nplso
+    annotations:
+      description: http port of application
+    labels:
+      application: ilivalidator-web-service-nplso
+  spec:
+    selector:
+      deploymentconfig: ilivalidator-web-service-nplso
+    ports:
+    - protocol: TCP
+      name: "80"
+      port: 80
+      targetPort: 8888
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ilivalidator-web-service-nplso
+    labels:
+      application: ilivalidator-web-service-nplso
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: sogis/ilivalidator-web-service-nplso:${version}
+      name: ${version}
+      importPolicy:
+        scheduled: true
