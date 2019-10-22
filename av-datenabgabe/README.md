@@ -26,9 +26,7 @@ Deploy integration environment:
 ```
 oc project agi-apps-integration
 oc process -f av-datenabgabe/av-datenabgabe.yaml \
-  -p ENVIRONMENT_SHORT=prod \
-  -p TAG=1.0.12 \
-  -p IMPORT_POLICY_SCHEDULED=false \
+  --param-file=av-datenabgabe-int.env
   | oc apply -f -
 ```
 
@@ -37,9 +35,6 @@ Deploy production environment:
 ```
 oc project agi-apps-production
 oc process -f av-datenabgabe/av-datenabgabe.yaml \
-  -p ENVIRONMENT_SHORT=prod \
-  -p TAG=1.0.12 \
-  -p IMPORT_POLICY_SCHEDULED=false \
-  -p REPLICA_COUNT=2 \
+  --param-file=av-datenabgabe-prod.env
   | oc apply -f -
 ```

@@ -32,8 +32,26 @@ objects:
         containers:
         - name: cadastral-data-disposal
           env:
-          - name: SPRING_PROFILES_ACTIVE
-            value: ${ENVIRONMENT_SHORT}
+          - name: DATA_SERVICE_URL
+            value: https://${URL}.so.ch/api/data/v1/ch.so.agi.av.nachfuehrungsgemeinden.data/
+          - name: PDF_MAP_URL
+            value: https://${URL}.so.ch/map?hp=ch.so.agi.gemeindegrenzen&hf=%5B%5B%22bfs_gemeindenummer%22%2C%22%3D%22%2C%22{{BFS_NR}}%22%5D%5D
+          - name: ITF_SO_BUCKET_NAME
+            value: ${ITF_SO_BUCKET_NAME}
+          - name: ITF_CH_BUCKET_NAME
+            value: ${ITF_CH_BUCKET_NAME}
+          - name: DXF_BUCKET_NAME
+            value: ${DXF_BUCKET_NAME}
+          - name: AWS_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: aws_access_key
+          - name: AWS_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: aws_secret_key
           volumeMounts:
           - mountPath: /tmp
             name: cadastral-data-disposal-volume-1
@@ -71,9 +89,6 @@ objects:
       deploymentconfig: cadastral-data-disposal
     type: ClusterIP
 parameters:
-- name: ENVIRONMENT_SHORT
-  description: "The short name of the environment the template is processed for (one of dev, test, prod)"
-  value: test
 - name: TAG
   description: "The Docker image tag to use (e.g. latest, 1.0.5)"
   value: latest
@@ -83,3 +98,15 @@ parameters:
 - name: REPLICA_COUNT
   description: "Number of replicas to run"
   value: "1"
+- name: URL
+  description: "Url of the Environment"
+  value: geo-t
+- name: ITF_SO_BUCKET_NAME
+  description: "itf SO bucket name (ch.so.agi.av.dm01avso24lv95 for prod, ch.so.agi.av.dm01avso24lv95-test for test and int)"
+  value: ch.so.agi.av.dm01avso24lv95-test
+- name: ITF_CH_BUCKET_NAME
+  description: "itf CH bucket name (ch.so.agi.av.dm01avch24lv95 for prod, ch.so.agi.av.dm01avch24lv95-test for test and int)"
+  value: ch.so.agi.av.dm01avch24lv95-test
+- name: DXF_BUCKET_NAME
+  description: "dxf bucket name (ch.so.agi.av.dxfgeobau for prod, ch.so.agi.av.dxfgeobau-test for test and int)"
+  value: ch.so.agi.av.dxfgeobau-test
