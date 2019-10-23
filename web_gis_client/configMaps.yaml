@@ -473,7 +473,7 @@ objects:
       user=ogc_server
       password=${PW_OGC_SERVER}
       sslmode=require
-  kind: ConfigMap
+  kind: Secret
   metadata:
     name: qwc-service-pg-config
 - apiVersion: v1
