@@ -432,7 +432,7 @@ objects:
   metadata:
     name: nginx-config
 - apiVersion: v1
-  data:
+  stringData:
     pg_service.conf: |
       [sogis_services]
       host=${DB_SERVER}
