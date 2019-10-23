@@ -47,7 +47,7 @@ parameters:
     value:
 objects:
 - apiVersion: v1
-  data:
+  stringData:
     pg_service.conf: |
       [sogis_webmapping]
       host=${DB_SERVER}
@@ -80,7 +80,7 @@ objects:
       user=ogc_server
       password=${PW_OGC_SERVER}
       sslmode=require
-  kind: ConfigMap
+  kind: Secret
   metadata:
     name: qgis-server-pg-config
 - apiVersion: v1
@@ -197,7 +197,7 @@ objects:
   metadata:
     name: jasper-config
 - apiVersion: v1
-  data:
+  stringData:
     pg_service.conf: |
       [sogis_webmapping]
       host=${DB_SERVER}
@@ -206,7 +206,7 @@ objects:
       user=report_server
       password=${PW_REPORT_SERVER}
       sslmode=require
-  kind: ConfigMap
+  kind: Secret
   metadata:
     name: jasper-reporting-service-pg-config
 - apiVersion: v1
@@ -477,7 +477,7 @@ objects:
   metadata:
     name: qwc-service-pg-config
 - apiVersion: v1
-  data:
+  stringData:
     pg_service.conf: |
       [sogis_services]
       host=${DB_SERVER}
@@ -534,7 +534,7 @@ objects:
       user=ogc_server
       password=${PW_OGC_SERVER}
       sslmode=require
-  kind: ConfigMap
+  kind: Secret
   metadata:
     name: wsgi-service-pg-config
 - apiVersion: v1
