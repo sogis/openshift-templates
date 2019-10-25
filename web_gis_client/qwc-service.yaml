@@ -116,4 +116,4 @@ objects:
           persistentVolumeClaim:
             claimName: qwc-assets-claim
             readOnly: true
-  triggers: []
+    triggers: []
