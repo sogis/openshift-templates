@@ -115,15 +115,3 @@ objects:
           persistentVolumeClaim:
             claimName: qwc-assets-claim
             readOnly: true
-    test: false
-    triggers:
-    - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - sogis-qwc-service
-        from:
-          kind: ImageStreamTag
-          name: qwc-service:latest
-          namespace: ${NAMESPACE}
-      type: ImageChange
