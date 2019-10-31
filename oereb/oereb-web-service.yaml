@@ -83,6 +83,10 @@ objects:
                   key: password
             - name: TMPDIR
               value: /tmp
+            - name: TZ
+              value: Europe/Zurich
+            - name: MININTERSECTION
+              value: '0.5'
           image: sogis/oereb-web-service
           imagePullPolicy: IfNotPresent
           name: oereb-web-service
