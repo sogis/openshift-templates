@@ -77,7 +77,8 @@ Deploy integration environment:
 ```
 oc project agi-oereb-integration
 oc process -f oereb/oereb-wms.yaml \
-  -p TAG=f01f5ad \
+  -p TAG=5fad780 \
+  -p IMPORT_POLICY_SCHEDULED=false \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
   -p version=26 \
@@ -92,7 +93,9 @@ Deploy production environment:
 ```
 oc project agi-oereb-production
 oc process -f oereb/oereb-wms.yaml \
-  -p TAG=f01f5ad \
+  -p TAG=5fad780 \
+  -p IMPORT_POLICY_SCHEDULED=false \
+  -p REPLICA_COUNT=2 \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
   -p version=26 \
