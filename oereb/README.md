@@ -10,6 +10,8 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: oereb-wms-secret
+  labels:
+    app: oereb-wms
 stringData:
   pg_service.conf: |-
     [oereb]
