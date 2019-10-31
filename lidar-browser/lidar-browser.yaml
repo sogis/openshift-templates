@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: lidar-browser
+labels:
+  template: lidar-browser-template
+  app: lidar-browser
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: lidar-browser
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: sogis/lidar-browser:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: latest
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: lidar-browser
+  spec:
+    template:
+      metadata:
+        labels:
+          app: lidar-browser
+          deploymentconfig: lidar-browser
+      spec:
+        containers:
+        - name: lidar-browser
+    replicas: ${{REPLICA_COUNT}}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - lidar-browser
+        from:
+          kind: ImageStreamTag
+          name: lidar-browser:latest
+    selector:
+      app: lidar-browser
+      deploymentconfig: lidar-browser
+    strategy:
+      type: Rolling
+    revisionHistoryLimit: 10
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: lidar-browser
+  spec:
+    ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: lidar-browser
+      deploymentconfig: lidar-browser
+    type: ClusterIP
+parameters:
+- name: TAG
+  description: "The Docker image tag to use (e.g. latest, 1.0.5)"
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: "Regularly check for changed image (default: true)"
+  value: "true"
+- name: REPLICA_COUNT
+  description: "Number of replicas to run"
+  value: "1"
