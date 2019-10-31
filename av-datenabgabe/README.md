@@ -14,6 +14,22 @@ cd openshift-templates
 git pull
 ```
 
+Create a file secret.yaml for AWS with the following content; replace ACCESS_KEY and SECRET_KEY with the actual values:
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-secret
+stringData:
+  aws_access_key: ACCESS_KEY
+  aws_secret_key: SECRET_KEY
+```
+
+Switch to the right OpenShift project (e.g. oc project agi-apps-test) and create the secret by running the following commands:
+```
+oc create -f secret.yaml
+```
+
 Deploy test environment (for the test environment, the default values of the template parameters are usually fine):
 
 ```
@@ -26,7 +42,7 @@ Deploy integration environment:
 ```
 oc project agi-apps-integration
 oc process -f av-datenabgabe/av-datenabgabe.yaml \
-  --param-file=av-datenabgabe-int.env
+  --param-file=av-datenabgabe-int.env \
   | oc apply -f -
 ```
 
@@ -35,6 +51,6 @@ Deploy production environment:
 ```
 oc project agi-apps-production
 oc process -f av-datenabgabe/av-datenabgabe.yaml \
-  --param-file=av-datenabgabe-prod.env
+  --param-file=av-datenabgabe-prod.env \
   | oc apply -f -
 ```

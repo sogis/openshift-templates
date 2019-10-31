@@ -55,6 +55,26 @@ objects:
           volumeMounts:
           - mountPath: /tmp
             name: cadastral-data-disposal-volume-1
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /av_datenabgabe/actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /av_datenabgabe/actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
         volumes:
         - emptyDir: {}
           name: cadastral-data-disposal-volume-1
@@ -102,11 +122,11 @@ parameters:
   description: "Url of the Environment"
   value: geo-t
 - name: ITF_SO_BUCKET_NAME
-  description: "itf SO bucket name (ch.so.agi.av.dm01avso24lv95 for prod, ch.so.agi.av.dm01avso24lv95-test for test and int)"
+  description: "itf SO bucket name (ch.so.agi.av.dm01avso24lv95 for prod and int, ch.so.agi.av.dm01avso24lv95-test for test)"
   value: ch.so.agi.av.dm01avso24lv95-test
 - name: ITF_CH_BUCKET_NAME
-  description: "itf CH bucket name (ch.so.agi.av.dm01avch24lv95 for prod, ch.so.agi.av.dm01avch24lv95-test for test and int)"
-  value: ch.so.agi.av.dm01avch24lv95-test
+  description: "itf CH bucket name (ch.so.agi.av.dm01avch24lv95d for prod and int, ch.so.agi.av.dm01avch24lv95d-test for test)"
+  value: ch.so.agi.av.dm01avch24lv95d-test
 - name: DXF_BUCKET_NAME
-  description: "dxf bucket name (ch.so.agi.av.dxfgeobau for prod, ch.so.agi.av.dxfgeobau-test for test and int)"
+  description: "dxf bucket name (ch.so.agi.av.dxfgeobau for prod and int, ch.so.agi.av.dxfgeobau-test for test)"
   value: ch.so.agi.av.dxfgeobau-test
