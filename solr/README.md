@@ -108,10 +108,11 @@ tbd
 Unter https://github.com/sogis/searchservice/solr/configsets/gdi/conf befinden sich die beiden für die Suche notwendigen Configfiles (DIH Files) dih_geodata_config.xml und dih_metadata_config.xml. dih_metadata ist für die Suche nach Kartenlayern und in deren Metadaten. dih_geodata für alle weiteren Objektsuchen. Wenn nun eine neue Suche hinzugefügt wird oder eine bestehende gelöscht werden soll muss man wie folgt vorgehen (Beispiel für die Testumgebung):
 
 ```
-git clone https://github.com/sogis/searchservice
-cd searchservice/solr/configsets/gdi/conf
+git clone https://github.com/sogis/solr
+cd solr/conf
 ```
 
+Kopieren der entsprechenden DIH orig Files und anpassen der DB Verbindung
 Hinzufügen der entity im entsprechenden DIH File. Beispiel 
 ```
 <entity name="ch_so_afu_abbaustellen_abbaustellen" query="SELECT * FROM afu_abbaustellen_pub.abbaustelle_solr_v">
@@ -124,10 +125,10 @@ Anschliessend abspeichern des Files.
 
 Nun muss das DIH File in die Solr Pods hochgeladen werden
 ```
-Change Directory in den Ordner searchservice/solr/configsets 
+cd ..
 oc project solr-cloud-test
-oc rsync gdi solr-0:/opt/solr/server/home
-oc rsync gdi solr-1:/opt/solr/server/home
+oc rsync conf solr-0:/opt/solr/server/home/gdi
+oc rsync conf solr-1:/opt/solr/server/home/gdi
 ```
 
 In einen Solr Pod einloggen. Es spielt keine Rolle in welchen.
