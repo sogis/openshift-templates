@@ -125,4 +125,4 @@ objects:
           - sogis-qwc-service
         from:
           kind: ImageStreamTag
-          name: 'qwc-service:2.0.4'
+          name: 'qwc-service'
