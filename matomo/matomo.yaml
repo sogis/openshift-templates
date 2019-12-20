@@ -1,0 +1,287 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: matomo
+  annotations:
+    description: "Liberating Analytics. Matomo is the only web and mobile analytics platform that gives you full control over your data and more."
+    tags: "analytics,piwik,matomo"
+    iconClass: fa-cloud-upload
+    template.openshift.io/provider-display-name: "tobrunet"
+    template.openshift.io/documentation-url: "https://github.com/tobru/piwik-openshift/blob/master/README.md"
+    template.openshift.io/support-url: "https://github.com/tobru/piwik-openshift/issues"
+parameters:
+- name: APP_URL
+  description: Application URL of Matomo (Route/host)
+  required: true
+- name: MATOMO_IMAGE_SOURCE
+  description: Source of the Matomo Docker Image to deploy
+  value: matomo
+- name: MATOMO_IMAGE_TAG
+  description: Tag of the Matomo Docker Image to deploy
+  value: 3.13.0-fpm
+- name: NGINX_DOCKERFILE_REPO
+  description: Nginx Dockerfile source repository
+  value: https://github.com/tobru/piwik-openshift.git
+- name: PVC_SIZE_CONFIG
+  description: PVC size for config files
+  value: 1Gi
+objects:
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: app-config
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${PVC_SIZE_CONFIG}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: matomo
+    name: matomo
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: ${MATOMO_IMAGE_SOURCE}:${MATOMO_IMAGE_TAG}
+      from:
+        kind: DockerImage
+        name: ${MATOMO_IMAGE_SOURCE}:${MATOMO_IMAGE_TAG}
+      importPolicy:
+        scheduled: true
+      name: ${MATOMO_IMAGE_TAG}
+      referencePolicy:
+        type: Source
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      build: nginx
+      app: matomo
+    name: nginx
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: nginx:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      build: nginx
+      app: matomo
+    name: nginx
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: nginx:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        uri: ${NGINX_DOCKERFILE_REPO}
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: nginx:alpine
+      type: Docker
+    triggers:
+    - type: ConfigChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: matomo
+    name: matomo
+  spec:
+    replicas: 1
+    selector:
+      app: matomo
+      deploymentconfig: matomo
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: matomo
+          deploymentconfig: matomo
+      spec:
+        containers:
+        - image: matomo
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 9000
+            timeoutSeconds: 5
+          name: matomo
+          ports:
+          - containerPort: 9000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 9000
+            timeoutSeconds: 5
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www/html
+            name: matomo-source
+          - mountPath: /var/www/html/config
+            name: app-config
+        - image: nginx
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+          name: nginx
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www/html
+            name: matomo-source
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: matomo-source
+        - name: app-config
+          persistentVolumeClaim:
+            claimName: app-config
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - matomo
+        from:
+          kind: ImageStreamTag
+          name: matomo:${MATOMO_IMAGE_TAG}
+      type: ImageChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - nginx
+        from:
+          kind: ImageStreamTag
+          name: nginx:latest
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: matomo
+    name: matomo
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: matomo
+      deploymentconfig: matomo
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: matomo
+  spec:
+    host: ${APP_URL}
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: matomo
+      weight: 100
+    wildcardPolicy: None
+- apiVersion: batch/v1beta1
+  kind: CronJob
+  metadata:
+    name: matomo
+  spec:
+    successfulJobsHistoryLimit: 1
+    failedJobsHistoryLimit: 1
+    concurrencyPolicy: Replace
+    jobTemplate:
+      spec:
+        activeDeadlineSeconds: 3600
+        template:
+          spec:
+            containers:
+            - command:
+              - bash
+              - -c
+              - tar cf - --one-file-system -C /usr/src/matomo . | tar xf - --no-overwrite-dir
+                && php -f /var/www/html/console core:archive
+              image: matomo
+              imagePullPolicy: Always
+              name: cron
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              volumeMounts:
+              - mountPath: /var/www/html
+                name: matomo-source
+              - mountPath: /var/www/html/config
+                name: app-config
+            dnsPolicy: ClusterFirst
+            restartPolicy: OnFailure
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+            - emptyDir: {}
+              name: matomo-source
+            - name: app-config
+              persistentVolumeClaim:
+                claimName: app-config
+    schedule: '5 * * * *'
+    suspend: false
