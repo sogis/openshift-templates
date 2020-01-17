@@ -37,3 +37,21 @@ Email use sogis@bd.so.ch
 #### Website
 Name Web GIS Client
 Url geo-i.so.ch
+
+## Update Matomo
+To update matomo change parameter MATOMO_IMAGE_TAG in matomo.yaml and run
+```
+oc process -f matomo.yaml -p APP_URL=analytics-i.dev.so.ch | oc apply -f-
+```
+It's possible that after the update DBIP/ GeoIP2 Location Provider must be new installed.
+To install run from this directory 
+```
+oc rsync misc/ matomo-pod:/var/www/html/misc
+```
+Inside the matomo Pod cd to /var/www/html/misc and then run
+```
+mv dbip-city-lite-2020-01.mmdb DBIP-City.mmdb
+```
+Login to matomo with gdi-admin user.
+Click Preferences/Geolocation and Select DBIP/ GeoIP 2 which should be installed now. 
+Don't forget to save the adjustment
