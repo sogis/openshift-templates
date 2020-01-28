@@ -56,6 +56,13 @@ objects:
             value: ${DB_PWD_EDIT}
           - name: TZ
             value: Europe/Amsterdam
+          resources:
+            limits:
+              cpu: 800m
+              memory: 1000Mi
+            requests:
+              cpu: 400m
+              memory: 500Mi
           volumeMounts:
           - mountPath: /avdpool_data
             name: avdpool-data
@@ -117,4 +124,16 @@ parameters:
   required: true
 - name: DB_PWD_EDIT
   description: "The password for authenticating against the target database"
+  required: true
+- name: LIMIT_CORES
+  description: "Set Limit for Cores"
+  required: true
+- name: LIMIT_MEMORY
+  description: "Set Limit for Memory Usage"
+  required: true
+- name: REQUEST_CORES
+  description: "Set Request for Cores"
+  required: true
+- name: REQUEST_MEMORY
+  description: "Set Request for Memory"
   required: true
