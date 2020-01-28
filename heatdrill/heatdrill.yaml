@@ -87,6 +87,18 @@ objects:
             value: >-
               {"db-connection":{"url":"jdbc:postgresql://${DB_SERVER}:5432/sogis","userName":"mswrite","password":"${DB_PW}"}}
           image: sogis/heatdrill
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 3
+            timeoutSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 30
           imagePullPolicy: IfNotPresent
           name: heatdrill-service
           ports:

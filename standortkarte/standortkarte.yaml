@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: standortkarte-template
+labels:
+  template: standortkarte-template
+  app: standortkarte
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: standortkarte
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: sogis/standortkarte:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: standortkarte
+  spec:
+    template:
+      metadata:
+        labels:
+          app: standortkarte
+          deploymentconfig: standortkarte
+      spec:
+        containers:
+        - name: standortkarte
+          image: sogis/standortkarte:${TAG}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 30
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 30
+    replicas: ${{REPLICA_COUNT}}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - standortkarte
+        from:
+          kind: ImageStreamTag
+          name: standortkarte:${TAG}
+    selector:
+      app: standortkarte
+      deploymentconfig: standortkarte
+    strategy:
+      type: Rolling
+    revisionHistoryLimit: 10
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: standortkarte
+  spec:
+    ports:
+    - name: web
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: standortkarte
+      deploymentconfig: standortkarte
+    type: ClusterIP
+parameters:
+- name: TAG
+  description: "The Docker image tag to use (e.g. latest)"
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: "Regularly check for changed image?"
+  value: "false"
+- name: REPLICA_COUNT
+  description: "Number of replicas to run"
+  value: "1"
