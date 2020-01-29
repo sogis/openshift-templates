@@ -14,7 +14,7 @@ The necessary components of the application are configured with the following st
 ```
 oc create -f 1_poddisruptionbudget.yaml
 oc process -f 2_zk.yaml -p RESOURCE_MEMORY_LIMIT="150M" -p RESOURCE_CPU_LIMIT="200m" -p RESOURCE_MEMORY_REQ="75M" -p RESOURCE_CPU_REQ="10m" | oc apply -f-
-oc process -p ENV="test" -p SOLR_JAVA_MEM="-Xms1024m -Xmx1024m" -p MEMORY_LIMIT="2048M" -p CPU_LIMIT="800m" -p MEMORY_REQUEST="2048M" -p CPU_REQUEST="100m" -p LOGGING_LEVEL="INFO" -p DBSERVER='geoweb-t.rootso.org' -f 3_statefulset_solr.yaml | oc apply -f-
+oc process -p ENV="test" -p SOLR_JAVA_MEM="-Xms1024m -Xmx1024m" -p MEMORY_LIMIT="2048M" -p CPU_LIMIT="800m" -p MEMORY_REQUEST="1024M" -p CPU_REQUEST="100m" -p LOGGING_LEVEL="INFO" -p DBSERVER='geoweb-t.rootso.org' -f 3_statefulset_solr.yaml | oc apply -f-
 oc create -f 4_poddisruptionbudget_solr.yaml
 oc process -p ENV="test" -f 5_service-headless-solr.yaml | oc apply -f-
 ```
