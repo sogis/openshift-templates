@@ -52,6 +52,13 @@ objects:
               secretKeyRef:
                 name: aws-secret
                 key: aws_secret_key
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
           volumeMounts:
           - mountPath: /tmp
             name: cadastral-data-disposal-volume-1
@@ -130,3 +137,15 @@ parameters:
 - name: DXF_BUCKET_NAME
   description: "dxf bucket name (ch.so.agi.av.dxfgeobau for prod and int, ch.so.agi.av.dxfgeobau-test for test)"
   value: ch.so.agi.av.dxfgeobau-test
+- name: CPU_LIMIT
+  description: "Set Limit for cpu"
+  required: true
+- name: MEMORY_LIMIT
+  description: "Set Limit for Memory Usage"
+  required: true
+- name: CPU_REQUEST
+  description: "Set Request for cpu"
+  required: true
+- name: MEMORY_REQUEST
+  description: "Set Request for Memory"
+  required: true
