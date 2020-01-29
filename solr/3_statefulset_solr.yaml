@@ -184,14 +184,14 @@ objects:
                 value: ${DBSERVER}
 
             livenessProbe:
-              initialDelaySeconds: 70
+              initialDelaySeconds: 30
               periodSeconds: 10
               httpGet:
                 scheme: "HTTP"
                 path: /solr/admin/info/system
                 port: 8983
             readinessProbe:
-              initialDelaySeconds: 70
+              initialDelaySeconds: 30
               periodSeconds: 5
               httpGet:
                 scheme: "HTTP"
