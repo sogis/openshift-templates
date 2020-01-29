@@ -12,7 +12,7 @@ metadata:
     tags: "agi,gdi,ilivalidator,java"
     iconClass: icon-java
 labels:
-  createdBy: iindexupdater-template
+  createdBy: indexupdater-template
 parameters:
   - description: Name for Environment
     name: env
@@ -22,6 +22,18 @@ parameters:
     name: version
     required: true
     value:
+  - description: Set cpu Limit
+    name: CPU_LIMIT
+    value: "800m"
+  - description: Set cpu request
+    name: CPU_REQUEST
+    value: "100m"
+  - description: Set Memory Limit
+    name: MEMORY_LIMIT
+    value: "250MB"
+  - description: Set Memory Request
+    name: MEMORY_REQUEST
+    value: "500MB"
 objects:
 - apiVersion: v1
   kind: DeploymentConfig
@@ -61,14 +73,40 @@ objects:
         - env:
             - name: SPRING_APPLICATION_JSON
               value: >-
-                {"solrProtocol":"http","solrHost":"solr-headless.solr-cloud-${env}","solrPort":8983,"solrPathQuery":"solr/gdi/select","solrPathUpdate":"solr/gdi/update","logSilenceMaxDurationSeconds":3600,"dihPollIntervalSeconds":2,"dihImportMaxDurationSeconds":900,"dihDefaultPath":"solr/gdi/dih_geodata"}
+                {"solrProtocol":"http","solrHost":"solr-headless.solr-cloud-${env}","solrPort":8983,"solrPathQuery":"solr/gdi/select","solrPathUpdate":"solr/gdi/update","logSilenceMaxDurationSeconds":3600,"dihPollIntervalSeconds":2,"dihImportMaxDurationSeconds":900,"dihDefaultPath":"solr/gdi/dih_geodata", "logLevel":"info"}
           image: sogis/indexupdater
           imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
           name: indexupdater
           ports:
           - containerPort: 8888
             protocol: TCP
-          resources: {}
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
         dnsPolicy: ClusterFirst
