@@ -50,6 +50,7 @@ objects:
             requests:
               cpu: ${CPU_REQUEST}
               memory: ${MEMORY_REQUEST}
+    replicas: 1
     triggers:
     - type: ConfigChange
     - type: ImageChange
