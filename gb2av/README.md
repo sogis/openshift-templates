@@ -77,6 +77,10 @@ oc process -f gb2av/gb2av.yaml \
   -p ENVIRONMENT_SHORT=test \
   -p TAG=latest \
   -p IMPORT_POLICY_SCHEDULED=true \
+  -p CPU_LIMIT="0" \
+  -p MEMORY_LIMIT="0" \
+  -p CPU_REQUEST="0" \
+  -p MEMORY_REQUEST="0" \
   | oc apply -f -
 ```
 
@@ -86,8 +90,12 @@ Deploy integration environment:
 oc project agi-apps-integration
 oc process -f gb2av/gb2av.yaml \
   -p ENVIRONMENT_SHORT=int \
-  -p TAG=1.0.11 \
+  -p TAG=1.0.16 \
   -p IMPORT_POLICY_SCHEDULED=false \
+  -p CPU_LIMIT="750m" \
+  -p MEMORY_LIMIT="600Mi" \
+  -p CPU_REQUEST="60m" \
+  -p MEMORY_REQUEST="300Mi" \
   | oc apply -f -
 ```
 
@@ -99,5 +107,9 @@ oc process -f gb2av/gb2av.yaml \
   -p ENVIRONMENT_SHORT=prod \
   -p TAG=1.0.11 \
   -p IMPORT_POLICY_SCHEDULED=false \
+  -p CPU_LIMIT="750m" \
+  -p MEMORY_LIMIT="600Mi" \
+  -p CPU_REQUEST="60m" \
+  -p MEMORY_REQUEST="750Mi" \
   | oc apply -f -
 ```

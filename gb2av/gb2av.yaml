@@ -43,7 +43,13 @@ objects:
               name: infogrips-secret
           - secretRef:
               name: db-secret-gretl
-    replicas: 1
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
     triggers:
     - type: ConfigChange
     - type: ImageChange
@@ -70,3 +76,15 @@ parameters:
 - name: IMPORT_POLICY_SCHEDULED
   description: "Regularly check for changed image (default: false)"
   value: "false"
+- name: CPU_LIMIT
+  description: "Set Limit for cpu"
+  required: true
+- name: MEMORY_LIMIT
+  description: "Set Limit for Memory Usage"
+  required: true
+- name: CPU_REQUEST
+  description: "Set Request for cpu"
+  required: true
+- name: MEMORY_REQUEST
+  description: "Set Request for Memory"
+  required: true
