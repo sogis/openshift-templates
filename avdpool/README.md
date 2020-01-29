@@ -31,10 +31,10 @@ oc process -f avdpool/avdpool.yaml \
   -p FTP_PWD_INFOGRIPS=xy \
   -p DB_USER_EDIT=xy \
   -p DB_PWD_EDIT=xy \
-  -p LIMIT_CORES="" \
-  -p LIMIT_MEMORY="" \
-  -p REQUEST_CORES="" \
-  -p REQUEST_MEMORY="" \
+  -p CPU_LIMIT="0" \
+  -p MEMORY_LIMIT="0" \
+  -p CPU_REQUEST="0" \
+  -p MEMORY_REQUEST="0" \
   | oc apply -f -
 ```
 
@@ -55,10 +55,10 @@ oc process -f avdpool/avdpool.yaml \
   -p FTP_PWD_INFOGRIPS=xy \
   -p DB_USER_EDIT=xy \
   -p DB_PWD_EDIT=xy \
-  -p LIMIT_CORES=800m \
-  -p LIMIT_MEMORY=1000mi \
-  -p REQUEST_CORES=40m \
-  -p REQUEST_MEMORY=500mi \
+  -p CPU_LIMIT="800m" \
+  -p MEMORY_LIMIT="1000Mi" \
+  -p CPU_REQUEST="400m" \
+  -p MEMORY_REQUEST="500Mi" \
   | oc apply -f -
 ```
 
@@ -79,9 +79,9 @@ oc process -f avdpool/avdpool.yaml \
   -p FTP_PWD_INFOGRIPS=xy \
   -p DB_USER_EDIT=xy \
   -p DB_PWD_EDIT=xy \
-  -p LIMIT_CORES=800m \
-  -p LIMIT_MEMORY=1000mi \
-  -p REQUEST_CORES=80m \
-  -p REQUEST_MEMORY=1000mi \
+  -p CPU_LIMIT="800m" \
+  -p MEMORY_LIMIT="1000Mi" \
+  -p CPU_REQUEST="800m" \
+  -p MEMORY_REQUEST="1000Mi" \
   | oc apply -f -
 ```

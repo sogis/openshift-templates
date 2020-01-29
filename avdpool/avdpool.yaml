@@ -58,11 +58,11 @@ objects:
             value: Europe/Amsterdam
           resources:
             limits:
-              cpu: 800m
-              memory: 1000Mi
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
             requests:
-              cpu: 400m
-              memory: 500Mi
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -145,15 +145,15 @@ parameters:
 - name: DB_PWD_EDIT
   description: "The password for authenticating against the target database"
   required: true
-- name: LIMIT_CORES
-  description: "Set Limit for Cores"
+- name: CPU_LIMIT
+  description: "Set Limit for cpu"
   required: true
-- name: LIMIT_MEMORY
+- name: MEMORY_LIMIT
   description: "Set Limit for Memory Usage"
   required: true
-- name: REQUEST_CORES
-  description: "Set Request for Cores"
+- name: CPU_REQUEST
+  description: "Set Request for cpu"
   required: true
-- name: REQUEST_MEMORY
+- name: MEMORY_REQUEST
   description: "Set Request for Memory"
   required: true
