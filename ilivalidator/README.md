@@ -5,7 +5,7 @@
 All necessary components of the application are configured in the template ilivalidator-web-service.yaml
 Set environment and desired version of the image for test,int and prod environment
 ```
-oc process -p env=test -p version=latest \ 
+oc process -p env=test -p version=latest \
   -p CPU_LIMIT="0" \
   -p MEMORY_LIMIT="0" \
   -p CPU_REQUEST="0" \
@@ -14,7 +14,7 @@ oc process -p env=test -p version=latest \
   | oc apply -f-
 ```
 ```
-oc process -p env=integration -p version=1.2.18 \ 
+oc process -p env=integration -p version=1.2.18 \
   -p CPU_LIMIT="800m" \
   -p MEMORY_LIMIT="800Mi" \
   -p CPU_REQUEST="40m" \
@@ -23,7 +23,7 @@ oc process -p env=integration -p version=1.2.18 \
    | oc apply -f-
 ```
 ```
-oc process -p env=production -p version=1.2.18 \ 
+oc process -p env=production -p version=1.2.18 \
   -p CPU_LIMIT="800m" \
   -p MEMORY_LIMIT="800Mi" \
   -p CPU_REQUEST="40m" \
