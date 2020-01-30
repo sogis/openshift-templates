@@ -34,14 +34,16 @@ Deploy test environment (for the test environment, the default values of the tem
 
 ```
 oc project agi-apps-test
-oc process -f av-datenabgabe/av-datenabgabe.yaml | oc apply -f -
+oc process -f av-datenabgabe.yaml \
+  --param-file=av-datenabgabe-test.env \
+  | oc apply -f -
 ```
 
 Deploy integration environment:
 
 ```
 oc project agi-apps-integration
-oc process -f av-datenabgabe/av-datenabgabe.yaml \
+oc process -f av-datenabgabe.yaml \
   --param-file=av-datenabgabe-int.env \
   | oc apply -f -
 ```
@@ -50,7 +52,7 @@ Deploy production environment:
 
 ```
 oc project agi-apps-production
-oc process -f av-datenabgabe/av-datenabgabe.yaml \
+oc process -f av-datenabgabe.yaml \
   --param-file=av-datenabgabe-prod.env \
   | oc apply -f -
 ```
