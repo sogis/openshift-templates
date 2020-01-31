@@ -32,7 +32,7 @@ objects:
         containers:
         - name: lidar-browser
         resources:
-           limits:
+          limits:
             cpu: ${CPU_LIMIT}
             memory: ${MEMORY_LIMIT}
           requests:
