@@ -26,6 +26,18 @@ parameters:
     name: scheduled
     required: true
     value: "false"
+  - name: CPU_LIMIT
+    description: "Set Limit for cpu"
+    required: true
+  - name: MEMORY_LIMIT
+    description: "Set Limit for Memory Usage"
+    required: true
+  - name: CPU_REQUEST
+    description: "Set Request for cpu"
+    required: true
+  - name: MEMORY_REQUEST
+    description: "Set Request for Memory"
+    required: true
 objects:
 - apiVersion: v1
   kind: DeploymentConfig
@@ -68,7 +80,13 @@ objects:
           ports:
           - containerPort: 8080
             protocol: TCP
-          resources: {}
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
         dnsPolicy: ClusterFirst
