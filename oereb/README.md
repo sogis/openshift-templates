@@ -71,6 +71,10 @@ oc process -f oereb/oereb-web-service.yaml \
   -p env=test \
   -p dbenv=geodb-t \
   -p dbschema=live \
+  -p CPU_LIMIT="0" \
+  -p MEMORY_LIMIT="0" \
+  -p CPU_REQUEST="0" \
+  -p MEMORY_REQUEST="0" \
   | oc apply -f -
 ```
 
@@ -83,10 +87,14 @@ oc process -f oereb/oereb-wms.yaml \
   -p IMPORT_POLICY_SCHEDULED=false \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
-  -p version=26 \
+  -p version=51 \
   -p env=integration \
   -p dbenv=geodb-i \
   -p dbschema=live \
+  -p CPU_LIMIT="750m" \
+  -p MEMORY_LIMIT="1400Mi" \
+  -p CPU_REQUEST="100m" \
+  -p MEMORY_REQUEST="700Mi" \
   | oc apply -f -
 ```
 
@@ -100,9 +108,13 @@ oc process -f oereb/oereb-wms.yaml \
   -p REPLICA_COUNT=2 \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
-  -p version=26 \
+  -p version=51 \
   -p env=production \
   -p dbenv=geodb
   -p dbschema=live \
+  -p CPU_LIMIT="750m" \
+  -p MEMORY_LIMIT="1400Mi" \
+  -p CPU_REQUEST="100m" \
+  -p MEMORY_REQUEST="1400Mi" \
   | oc apply -f -
 ```

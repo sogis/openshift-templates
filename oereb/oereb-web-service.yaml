@@ -93,7 +93,13 @@ objects:
           ports:
           - containerPort: 8080
             protocol: TCP
-          resources: {}
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
         dnsPolicy: ClusterFirst
@@ -153,7 +159,7 @@ objects:
       application: oereb-web-service
     name: oereb-web-service
   spec:
-    host: oereb-web-service.dev.so.ch
+    host: oereb-web-service-${env}.dev.so.ch
     port:
       targetPort: 8080
     to:
