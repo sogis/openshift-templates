@@ -105,7 +105,7 @@ Deploy production environment:
 oc project agi-apps-production
 oc process -f gb2av/gb2av.yaml \
   -p ENVIRONMENT_SHORT=prod \
-  -p TAG=1.0.11 \
+  -p TAG=1.0.16 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p CPU_LIMIT="750m" \
   -p MEMORY_LIMIT="600Mi" \
