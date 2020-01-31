@@ -52,6 +52,13 @@ objects:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 30
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
     replicas: ${{REPLICA_COUNT}}
     triggers:
     - type: ConfigChange
@@ -93,3 +100,15 @@ parameters:
 - name: REPLICA_COUNT
   description: "Number of replicas to run"
   value: "1"
+ - name: CPU_LIMIT
+    description: "Set Limit for cpu"
+    required: true
+  - name: MEMORY_LIMIT
+    description: "Set Limit for Memory Usage"
+    required: true
+  - name: CPU_REQUEST
+    description: "Set Request for cpu"
+    required: true
+  - name: MEMORY_REQUEST
+    description: "Set Request for Memory"
+    required: true
