@@ -44,7 +44,7 @@ Deploy integration environment:
 oc project agi-apps-integration
 oc process -f avdpool/avdpool.yaml \
   -p ENVIRONMENT_SHORT=int \
-  -p TAG=1.0.43 \
+  -p TAG=1.0.52 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p AWS_ACCESS_KEY=xy \
   -p AWS_SECRET_KEY=xy \
@@ -55,9 +55,9 @@ oc process -f avdpool/avdpool.yaml \
   -p FTP_PWD_INFOGRIPS=xy \
   -p DB_USER_EDIT=xy \
   -p DB_PWD_EDIT=xy \
-  -p CPU_LIMIT="800m" \
+  -p CPU_LIMIT="1200m" \
   -p MEMORY_LIMIT="1000Mi" \
-  -p CPU_REQUEST="400m" \
+  -p CPU_REQUEST="100m" \
   -p MEMORY_REQUEST="500Mi" \
   | oc apply -f -
 ```
@@ -68,7 +68,7 @@ Deploy production environment:
 oc project agi-apps-production
 oc process -f avdpool/avdpool.yaml \
   -p ENVIRONMENT_SHORT=prod \
-  -p TAG=1.0.43 \
+  -p TAG=1.0.52 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p AWS_ACCESS_KEY=xy \
   -p AWS_SECRET_KEY=xy \
@@ -79,9 +79,9 @@ oc process -f avdpool/avdpool.yaml \
   -p FTP_PWD_INFOGRIPS=xy \
   -p DB_USER_EDIT=xy \
   -p DB_PWD_EDIT=xy \
-  -p CPU_LIMIT="800m" \
+  -p CPU_LIMIT="1200m" \
   -p MEMORY_LIMIT="1000Mi" \
-  -p CPU_REQUEST="800m" \
+  -p CPU_REQUEST="100m" \
   -p MEMORY_REQUEST="1000Mi" \
   | oc apply -f -
 ```
