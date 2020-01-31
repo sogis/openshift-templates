@@ -110,6 +110,6 @@ oc process -f gb2av/gb2av.yaml \
   -p CPU_LIMIT="750m" \
   -p MEMORY_LIMIT="600Mi" \
   -p CPU_REQUEST="60m" \
-  -p MEMORY_REQUEST="750Mi" \
+  -p MEMORY_REQUEST="600Mi" \
   | oc apply -f -
 ```
