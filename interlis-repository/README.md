@@ -21,7 +21,8 @@ oc process -f interlis-repository.yaml \
   -p CPU_LIMIT="50m" \
   -p MEMORY_LIMIT="100Mi" \
   -p CPU_REQUEST="10m" \
-  -p MEMORY_REQUEST="50Mi"
+  -p MEMORY_REQUEST="50Mi" \
+  | oc apply -f-
 oc process -f interlis-repository.yaml \
   -p env=integration \
   -p version=1.0.26 \
@@ -29,7 +30,8 @@ oc process -f interlis-repository.yaml \
   -p CPU_LIMIT="50m" \
   -p MEMORY_LIMIT="100Mi" \
   -p CPU_REQUEST="10m" \
-  -p MEMORY_REQUEST="100Mi"
+  -p MEMORY_REQUEST="100Mi" \
+  | oc apply -f-
 ```
 
 ## Update of app configuration in Openshift Environment
@@ -53,7 +55,8 @@ oc process -f interlis-repository.yaml \
   -p CPU_LIMIT="50m" \
   -p MEMORY_LIMIT="100Mi" \
   -p CPU_REQUEST="10m" \
-  -p MEMORY_REQUEST="50Mi"
+  -p MEMORY_REQUEST="50Mi" \
+  | oc apply -f-
 oc process -f interlis-repository.yaml \
   -p env=integration \
   -p version=1.0.26 \
@@ -61,5 +64,6 @@ oc process -f interlis-repository.yaml \
   -p CPU_LIMIT="50m" \
   -p MEMORY_LIMIT="100Mi" \
   -p CPU_REQUEST="10m" \
-  -p MEMORY_REQUEST="100Mi"
+  -p MEMORY_REQUEST="100Mi" \
+  | oc apply -f-
 ```
