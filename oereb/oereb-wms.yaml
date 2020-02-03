@@ -57,6 +57,13 @@ objects:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 30
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
           volumeMounts:
           - name: oereb-wms-secret-volume
             mountPath: /etc/postgresql-common
@@ -111,3 +118,15 @@ parameters:
 - name: QGIS_FCGI_MAX_PROCESSES
   description: "Maximum number of QGIS Server FCGI processes allowed"
   value: "2"
+- name: CPU_REQUEST
+  description: "The minimum amount of CPU the container is guaranteed."
+  value: 10m
+- name: CPU_LIMIT
+  description: "The maximum amount of CPU the container is allowed to use when running."
+  value: "1"
+- name: MEMORY_REQUEST
+  description: "The minimum amount of memory the container is guaranteed."
+  value: 350Mi
+- name: MEMORY_LIMIT
+  description: "The maximum amount of memory the container is allowed to use when running."
+  value: 1Gi
