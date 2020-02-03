@@ -44,7 +44,7 @@ Deploy integration environment:
 oc project agi-apps-integration
 oc process -f avdpool/avdpool.yaml \
   -p ENVIRONMENT_SHORT=int \
-  -p TAG=1.0.52 \
+  -p TAG=1.0.57 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p AWS_ACCESS_KEY=xy \
   -p AWS_SECRET_KEY=xy \
@@ -68,7 +68,7 @@ Deploy production environment:
 oc project agi-apps-production
 oc process -f avdpool/avdpool.yaml \
   -p ENVIRONMENT_SHORT=prod \
-  -p TAG=1.0.52 \
+  -p TAG=1.0.57 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p AWS_ACCESS_KEY=xy \
   -p AWS_SECRET_KEY=xy \
