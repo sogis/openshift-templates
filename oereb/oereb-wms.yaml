@@ -38,24 +38,16 @@ objects:
           - name: QGIS_FCGI_MAX_PROCESSES
             value: ${QGIS_FCGI_MAX_PROCESSES}
           readinessProbe:
-            failureThreshold: 3
             httpGet:
               path: /wms/oereb?SERVICE=WMS&REQUEST=GetCapabilities
               port: 80
-              scheme: HTTP
             initialDelaySeconds: 3
-            periodSeconds: 10
-            successThreshold: 1
             timeoutSeconds: 30
           livenessProbe:
-            failureThreshold: 3
             httpGet:
               path: /wms/oereb?SERVICE=WMS&REQUEST=GetCapabilities
               port: 80
-              scheme: HTTP
             initialDelaySeconds: 10
-            periodSeconds: 10
-            successThreshold: 1
             timeoutSeconds: 30
           resources:
             limits:
