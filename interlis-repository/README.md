@@ -16,17 +16,17 @@ oc process -f interlis-repository.yaml \
   | oc apply -f-
 oc process -f interlis-repository.yaml \
   -p env=integration \
-  -p version=1.0.26 \
-  -p scheduled=false \
+  -p version=latest \
+  -p scheduled=true \
   -p CPU_LIMIT="50m" \
   -p MEMORY_LIMIT="100Mi" \
   -p CPU_REQUEST="10m" \
   -p MEMORY_REQUEST="50Mi" \
   | oc apply -f-
 oc process -f interlis-repository.yaml \
-  -p env=integration \
-  -p version=1.0.26 \
-  -p scheduled=false \
+  -p env=production \
+  -p version=latest \
+  -p scheduled=true \
   -p CPU_LIMIT="50m" \
   -p MEMORY_LIMIT="100Mi" \
   -p CPU_REQUEST="10m" \
@@ -50,17 +50,17 @@ oc process -f interlis-repository.yaml \
   | oc apply -f-
 oc process -f interlis-repository.yaml \
   -p env=integration \
-  -p version=1.0.26 \
-  -p scheduled=false \
+  -p version=latest \
+  -p scheduled=true \
   -p CPU_LIMIT="50m" \
   -p MEMORY_LIMIT="100Mi" \
   -p CPU_REQUEST="10m" \
   -p MEMORY_REQUEST="50Mi" \
   | oc apply -f-
 oc process -f interlis-repository.yaml \
-  -p env=integration \
-  -p version=1.0.26 \
-  -p scheduled=false \
+  -p env=production \
+  -p version=latest \
+  -p scheduled=true \
   -p CPU_LIMIT="50m" \
   -p MEMORY_LIMIT="100Mi" \
   -p CPU_REQUEST="10m" \
