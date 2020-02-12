@@ -84,19 +84,19 @@ Anschliessend zunächst den solr-1 Pod deleten, warten bis er wieder läuft und 
 
 ### AGI Config hochladen
 ```
-git clone https://github.com/sogis/searchservice.git
-cd solr/configsets/
-oc rsync gdi solr-0:/opt/solr/server/home
-oc rsync gdi solr-1:/opt/solr/server/home
+git clone https://github.com/sogis/solr.git
+cd solr
+oc rsync conf solr-0:/opt/solr/server/home/gdi
+oc rsync conf solr-1:/opt/solr/server/home/gdi
 ```
 In einen solr Pod (solr-0 oder solr-1) einloggen und configset gdi updaten
 ```
 oc rsh solr-0 /bin/bash
 /opt/solr/server/scripts/cloud-scripts/zkcli.sh -z zookeeper.solr-cloud-test.svc:2181 -cmd upconfig -confdir /opt/solr/server/home/gdi/conf -confname gdi
 ```
-### Update des gdi configsets
+### Reload der gdi collection
 ```
-curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=MODIFYCOLLECTION&collection=gdi&collection.configName=gdi"
+curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=RELOAD&name=gdi"
 ```
 
 ## Update of app configuration in Openshift Environment
@@ -105,11 +105,11 @@ tbd
 
 ## Update Dataimporthandler
 
-Unter https://github.com/sogis/searchservice/solr/configsets/gdi/conf befinden sich die beiden für die Suche notwendigen Configfiles (DIH Files) dih_geodata_config.xml und dih_metadata_config.xml. dih_metadata ist für die Suche nach Kartenlayern und in deren Metadaten. dih_geodata für alle weiteren Objektsuchen. Wenn nun eine neue Suche hinzugefügt wird oder eine bestehende gelöscht werden soll muss man wie folgt vorgehen (Beispiel für die Testumgebung):
+Unter https://github.com/sogis/solr/tree/master/conf befinden sich die beiden für die Suche notwendigen Configfiles (DIH Files) dih_geodata_config.xml und dih_metadata_config.xml. dih_metadata ist für die Suche nach Kartenlayern und in deren Metadaten. dih_geodata für alle weiteren Objektsuchen. Wenn nun eine neue Suche hinzugefügt wird oder eine bestehende gelöscht werden soll muss man wie folgt vorgehen (Beispiel für die Testumgebung):
 
 ```
-git clone https://github.com/sogis/solr
-cd solr/conf
+git clone https://github.com/sogis/solr.git
+cd solr/config
 ```
 
 Kopieren der entsprechenden DIH orig Files und anpassen der DB Verbindung
@@ -146,5 +146,5 @@ Configset gdi updaten
 Aus Solr Pod ausloggen und folgenden Curl Befehl ausführen
 
 ```
-curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=MODIFYCOLLECTION&collection=gdi&collection.configName=gdi"
+curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=RELOAD&name=gdi"
 ```
