@@ -14,11 +14,13 @@ The necessary components of the application are configured with the following st
 ```
 oc create -f 1_poddisruptionbudget.yaml
 oc process -f 2_zk.yaml -p RESOURCE_MEMORY_LIMIT="150M" -p RESOURCE_CPU_LIMIT="200m" -p RESOURCE_MEMORY_REQ="75M" -p RESOURCE_CPU_REQ="10m" | oc apply -f-
-oc process -p ENV="test" -p SOLR_JAVA_MEM="-Xms1024m -Xmx1024m" -p MEMORY_LIMIT="2048M" -p CPU_LIMIT="800m" -p MEMORY_REQUEST="1024M" -p CPU_REQUEST="100m" -p LOGGING_LEVEL="INFO" -p DBSERVER='geoweb-t.rootso.org' -f 3_statefulset_solr.yaml | oc apply -f-
+oc process -p ENV="test" -p SOLR_JAVA_MEM="-Xms1024m -Xmx1024m" -p MEMORY_LIMIT="2048M" -p CPU_LIMIT="1600m" -p MEMORY_REQUEST="1024M" -p CPU_REQUEST="100m" -p LOGGING_LEVEL="INFO" -p DBSERVER='geoweb-t.rootso.org' -f 3_statefulset_solr.yaml | oc apply -f-
 oc create -f 4_poddisruptionbudget_solr.yaml
 oc process -p ENV="test" -f 5_service-headless-solr.yaml | oc apply -f-
+oc process -p ENV="test" -f 6_exporter-deployment.yaml | oc apply -f-
 ```
-Je nach Umgebung muss darauf geachtet werden die Ressource Limits korrekt zu setzen. In der Testumgebung braucht es gar keine (nachträglich aus dem Statefulset entfernen), auf der Integration sollten die Requested Resources tiefer sein als die Limits auf der Produktion identisch. Nach Anpassung der Statefulsets müssen die Zookeeper Pods gelöscht werden. Die Solr Pods werden später ohenhin noch gelöscht.
+Je nach Umgebung muss darauf geachtet werden die Ressource Limits korrekt zu setzen. In der Testumgebung braucht es gar keine (nachträglich aus dem Statefulset entfernen), auf der Integration sollten die Requested Resources tiefer sein als die Limits auf der Produktion identisch. Solr Exporter sammelt Metriken und andere Daten von Solr, die über Prometheus ausgewertet werden können. Wenn man den Output der Metriken direkt anschauen möchte kann man noch ein Route zum solr-exporter service legen.
+Nach Anpassung der Statefulsets müssen die Zookeeper Pods gelöscht werden. Die Solr Pods werden später ohenhin noch gelöscht.
 Anschliessend von der Konsole in einen solr Pod einloggen
 ```
 oc rsh podname /bin/bash
@@ -83,20 +85,40 @@ oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name"
 Anschliessend zunächst den solr-1 Pod deleten, warten bis er wieder läuft und dann den solr-0 Pod deleten.
 
 ### AGI Config hochladen
+
+Dies ist aus zweierlei Gründen notwendig. 
+Zum einen ist in der config auch die Postgresql lib enthalten, die Solr für die Abfrage der DB bei der Indexberechnung benötigt.Diese muss in beiden Solr Pods am im gdi/conf/solrconfig.xml definierten Ort vorhanden sein.
+Zum zweiten muss das configSet für das Hochladen in Zookeeper im Pod vorhanden sein. Dies funktioniert nur aus dem Pod, da der Port 2181 nur innerhalb Openshifts erreichbar ist. 
+Für den Betrieb von Solr bräuchte es das configSet nicht physisch im Solr Pod. Das configSet wird durch Zookeeper verwaltet.
+
+Zuerst in den Solr Pods das Verzeichnis gdi anlegen
+```
+oc rsh solr-0 /bin/bash
+mkdir /opt/solr/server/home/gdi
+exit
+oc rsh solr-1 /bin/bash
+mkdir /opt/solr/server/home/gdi
+exit
+```
+
+Dann das configSet hochladen
 ```
 git clone https://github.com/sogis/solr.git
 cd solr
 oc rsync conf solr-0:/opt/solr/server/home/gdi
 oc rsync conf solr-1:/opt/solr/server/home/gdi
 ```
-In einen solr Pod (solr-0 oder solr-1) einloggen und configset gdi updaten
+
+In einen beliebigen solr Pod (solr-0 oder solr-1) einloggen und configset gdi updaten.
+Wie oben beschrieben geht dies nur aus Solr, da der Port 2181 ansonsten zu ist.
 ```
 oc rsh solr-0 /bin/bash
 /opt/solr/server/scripts/cloud-scripts/zkcli.sh -z zookeeper.solr-cloud-test.svc:2181 -cmd upconfig -confdir /opt/solr/server/home/gdi/conf -confname gdi
 ```
-### Reload der gdi collection
+### configName der collection zu gdi korrigieren
+Notwendig, da beim Create Befehl für die Collection weiter oben gdi.AUTOCREATED als configName verwendet wird.
 ```
-curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=RELOAD&name=gdi"
+curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=MODIFYCOLLECTION&collection=gdi&collection.configName=gdi"
 ```
 
 ## Update of app configuration in Openshift Environment
