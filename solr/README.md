@@ -84,10 +84,10 @@ oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name"
 ```
 Anschliessend zunächst den solr-1 Pod deleten, warten bis er wieder läuft und dann den solr-0 Pod deleten.
 
-### AGI Config hochladen
+### AGI configSet hochladen
 
 Dies ist aus zweierlei Gründen notwendig. 
-Zum einen ist in der config auch die Postgresql lib enthalten, die Solr für die Abfrage der DB bei der Indexberechnung benötigt.Diese muss in beiden Solr Pods am im gdi/conf/solrconfig.xml definierten Ort vorhanden sein.
+Zum einen ist in dem configSet auch die PostgreSql Java lib enthalten, die Solr für die Abfrage der DB bei der Indexberechnung benötigt.Diese muss in beiden Solr Pods am im gdi/conf/solrconfig.xml definierten Ort vorhanden sein.
 Zum zweiten muss das configSet für das Hochladen in Zookeeper im Pod vorhanden sein. Dies funktioniert nur aus dem Pod, da der Port 2181 nur innerhalb Openshifts erreichbar ist. 
 Für den Betrieb von Solr bräuchte es das configSet nicht physisch im Solr Pod. Das configSet wird durch Zookeeper verwaltet.
 
@@ -121,13 +121,11 @@ Notwendig, da beim Create Befehl für die Collection weiter oben gdi.AUTOCREATED
 curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=MODIFYCOLLECTION&collection=gdi&collection.configName=gdi"
 ```
 
-## Update of app configuration in Openshift Environment
+## Update configSet
 
-tbd
-
-## Update Dataimporthandler
-
-Unter https://github.com/sogis/solr/tree/master/conf befinden sich die beiden für die Suche notwendigen Configfiles (DIH Files) dih_geodata_config.xml und dih_metadata_config.xml. dih_metadata ist für die Suche nach Kartenlayern und in deren Metadaten. dih_geodata für alle weiteren Objektsuchen. Wenn nun eine neue Suche hinzugefügt wird oder eine bestehende gelöscht werden soll muss man wie folgt vorgehen (Beispiel für die Testumgebung):
+Unter https://github.com/sogis/solr befinden sich das für die Suche notwendige configSet inklusive der Dataimporthandler (DIH Files) dih_geodata_config.xml und dih_metadata_config.xml. dih_metadata ist für die Suche nach Kartenlayern und in deren Metadaten. dih_geodata für alle weiteren Objektsuchen. 
+Für ein Update des configSets wird folgendermassen vorgegangen.
+Beispiel: Hinzufügen einer neuen  bzw Löschen oder Anpassen einer bestehenden Suche (Beispiel für die Testumgebung):
 
 ```
 git clone https://github.com/sogis/solr.git
@@ -135,7 +133,7 @@ cd solr/config
 ```
 
 Kopieren der entsprechenden DIH orig Files und anpassen der DB Verbindung
-Hinzufügen der entity im entsprechenden DIH File. Beispiel 
+Hinzufügen bzw. Löschen oder Anpassen der entity im entsprechenden DIH File. Beispiel 
 ```
 <entity name="ch_so_afu_abbaustellen_abbaustellen" query="SELECT * FROM afu_abbaustellen_pub.abbaustelle_solr_v">
 </entity>
@@ -145,28 +143,34 @@ Anzupassen sind hier im Tag *\<entity\>* *name* und *query*. *name* ist der Face
 
 Anschliessend abspeichern des Files. 
 
-Nun muss das DIH File in die Solr Pods hochgeladen werden
+Nun muss das DIH File in einen Solr Pod hochgeladen werden. Auch hier gilt wieder: Dies ist nur erforderlich, da das Solr Skript für die Verwaltung des configSets in Zookeeper, wegen des geschlossenen Ports 2181, nur aus einem Pod in Openshift ausgeführt werden kann.
 ```
 cd ..
 oc project solr-cloud-test
 oc rsync conf solr-0:/opt/solr/server/home/gdi
-oc rsync conf solr-1:/opt/solr/server/home/gdi
 ```
 
-In einen Solr Pod einloggen. Es spielt keine Rolle in welchen.
+In den Solr Pod, in den das configSet hochgeladen wurde, einloggen.
 
 ```
 oc rsh solr-0 /bin/bash
 ```
 
-Configset gdi updaten
-
+Configset gdi updaten.
+Falls man nur ein einzelnes File angepasst hat genügt der folgende Befehl, der das angepasste File, dih_geodata_config.xml, in Zookeeper hochlädt.
+```
+/opt/solr/server/scripts/cloud-scripts/zkcli.sh -z zookeeper.solr-cloud-test.svc:2181 -cmd putfile /configs/gdi/dih_geodata_config.xml /opt/solr/server/home/gdi/conf/dih_geodata_config.xml
+```
+Wenn mehrere Dateien angepasst wurden kann mit dem folgenden Befehl das gesamte configSet upgedated werden.
 ```
 /opt/solr/server/scripts/cloud-scripts/zkcli.sh -z zookeeper.solr-cloud-test.svc:2181 -cmd upconfig -confdir /opt/solr/server/home/gdi/conf -confname gdi
 ```
 
-Aus Solr Pod ausloggen und folgenden Curl Befehl ausführen
+Aus Solr Pod ausloggen und folgenden Curl Befehl ausführen, um die Collection neu zu laden.
 
 ```
 curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=RELOAD&name=gdi"
 ```
+
+## Disaster Recovery
+tbd
