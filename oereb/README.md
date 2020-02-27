@@ -103,7 +103,7 @@ Deploy production environment:
 ```
 oc project agi-oereb-production
 oc process -f oereb/oereb-wms.yaml \
-  -p TAG=a1f4432 \
+  -p TAG=b793f3c \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p REPLICA_COUNT=2 \
   | oc apply -f -
