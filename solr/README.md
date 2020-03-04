@@ -20,7 +20,6 @@ oc process -p ENV="test" -f 5_service-headless-solr.yaml | oc apply -f-
 oc process -p ENV="test" -f 6_exporter-deployment.yaml | oc apply -f-
 ```
 Je nach Umgebung muss darauf geachtet werden die Ressource Limits korrekt zu setzen. In der Testumgebung braucht es gar keine (nachträglich aus dem Statefulset entfernen), auf der Integration sollten die Requested Resources tiefer sein als die Limits auf der Produktion identisch. Solr Exporter sammelt Metriken und andere Daten von Solr, die über Prometheus ausgewertet werden können. Wenn man den Output der Metriken direkt anschauen möchte kann man noch ein Route zum solr-exporter service legen.
-Nach Anpassung der Statefulsets müssen die Zookeeper Pods gelöscht werden. Die Solr Pods werden später ohenhin noch gelöscht.
 Anschliessend von der Konsole in einen solr Pod einloggen
 ```
 oc rsh podname /bin/bash
@@ -120,6 +119,12 @@ Notwendig, da beim Create Befehl für die Collection weiter oben gdi.AUTOCREATED
 ```
 curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=MODIFYCOLLECTION&collection=gdi&collection.configName=gdi"
 ```
+
+## Anpassung Statefulset
+
+Nach der Anpassung eines Statefulsets müssen die zugehörigen Pods gelöscht werden, damit die Anpassung wirksam wird.
+Um einen unterbruchsfreien Betrieb zu gewährleisten sollte immer nur ein Pod gelöscht werden. Erst wenn dieser wieder ready ist kann man den nächsten Pod löschen.
+Bei Solr ist es sogar unbedingt erforderlich beide Pods nacheinander zu löschen. Löscht man diese gleichzeitig können die Pods auf Grund der Readiness Probe nicht mehr starten.
 
 ## Update configSet
 
