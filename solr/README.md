@@ -237,13 +237,14 @@ Notwendig, da beim Create Befehl für die Collection weiter oben gdi.AUTOCREATED
 curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=MODIFYCOLLECTION&collection=gdi&collection.configName=gdi"
 ```
 
-## Anpassung Statefulset
+## Unterhalt
+### Anpassung Statefulset
 
 Nach der Anpassung eines Statefulsets müssen die zugehörigen Pods gelöscht werden, damit die Anpassung wirksam wird.
 Um einen unterbruchsfreien Betrieb zu gewährleisten sollte immer nur ein Pod gelöscht werden. Erst wenn dieser wieder ready ist kann man den nächsten Pod löschen.
 Bei Solr ist es sogar unbedingt erforderlich beide Pods nacheinander zu löschen. Löscht man diese gleichzeitig können die Pods auf Grund der Readiness Probe nicht mehr starten.
 
-## Update configSet
+### Update configSet
 
 Unter https://github.com/sogis/solr befinden sich das für die Suche notwendige configSet inklusive der Dataimporthandler (DIH Files) dih_geodata_config.xml und dih_metadata_config.xml. dih_metadata ist für die Suche nach Kartenlayern und in deren Metadaten. dih_geodata für alle weiteren Objektsuchen. 
 Für ein Update des configSets wird folgendermassen vorgegangen.
