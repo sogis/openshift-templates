@@ -1,0 +1,114 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: solr-exporter
+  annotations:
+    openshift.io/display-name: Solr Cloud
+    description: Create Solr Prometheus Exporter.Prometheus Exporter is used for collecting metrics and other data. More info on https://lucene.apache.org/solr/guide/7_3/monitoring-solr-with-prometheus-and-grafana.html
+  labels:
+    template: solr-exporter
+    component: solr-exporter
+parameters:
+- name: ENV
+  value: "test"
+  required: true
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: solr-exporter
+    labels:
+      app: solr
+      release: solr
+  spec:
+    clusterIP: None
+    ports:
+    - port: 9983
+      name: solr-client-exporter
+    selector:
+      app: solr
+      release: solr
+      component: exporter
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: solr-exporter
+    labels:
+      app: solr
+      release: solr
+      component: exporter
+  spec:
+    selector:
+      app: solr
+      release: solr
+      component: exporter
+    replicas: 1
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 60
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: solr
+          release: solr
+          component: exporter
+      spec:
+        containers:
+          - name: exporter
+            image: 'solr:7.7.1'
+            imagePullPolicy: IfNotPresent
+            resources:
+              limits:
+                cpu: 800m
+                memory: 2048M
+              requests:
+                cpu: 100m
+                memory: 1024M
+            ports:
+            - containerPort: 8983
+              name: solr-client
+            command:
+              - "/opt/solr/contrib/prometheus-exporter/bin/solr-exporter"
+              - "-p"
+              - "9983"
+              - "-z"
+              - "zookeeper.solr-cloud-${ENV}.svc:2181"
+              - "-n"
+              - "7"
+              - "-f"
+              - "/opt/solr/contrib/prometheus-exporter/conf/solr-exporter-config.xml"
+            livenessProbe:
+              initialDelaySeconds: 20
+              periodSeconds: 10
+              httpGet:
+                path: "/metrics"
+                port: 9983
+            readinessProbe:
+              initialDelaySeconds: 15
+              periodSeconds: 5
+              httpGet:
+                path: "/metrics"
+                port: 9983
+        initContainers:
+          - name: solr-init
+            image: "solr:7.7.1"
+            imagePullPolicy: IfNotPresent
+            command:
+              - 'sh'
+              - '-c'
+              - |
+                PROTOCOL="http://"
+                COUNTER=0;
+                while [  $COUNTER -lt 30 ]; do
+                  curl -k -s --connect-timeout 10 solr-headless.solr-cloud-${ENV}:8983/solr/admin/info/system && exit 0
+                  sleep 2
+                done;
+                echo "Did NOT see a Running Solr instance after 60 secs!";
+                exit 1;
