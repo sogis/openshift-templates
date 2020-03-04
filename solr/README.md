@@ -1,8 +1,8 @@
 # Solr Cloud
 
-## First install in an Openshift Environment
+## Erstinstallation in Openshift
 
-First create the necessary secret dbcredentials
+Zuerst müssen die notwendigen DB Credentials erstellt werden.
 Lokal eine Datei user.txt erstellen mit dem Usernamen sogis_service.
 Ausserdem eine Datei password.txt mit dem Passwort des Users erstellen (im keepass)
 Achtung die Dateien müssen genau so heissen.
@@ -10,7 +10,7 @@ Dann das Secret erstellen
 ```
 oc create secret generic dbcredentials --from-file user.txt --from-file password.txt
 ```
-The necessary components of the application are configured with the following steps
+Die weiteren Komponenten werden mit den folgenden Schritten erstellt.
 ```
 oc create -f 1_poddisruptionbudget.yaml
 oc process -f 2_zk.yaml -p RESOURCE_MEMORY_LIMIT="150M" -p RESOURCE_CPU_LIMIT="200m" -p RESOURCE_MEMORY_REQ="75M" -p RESOURCE_CPU_REQ="10m" | oc apply -f-
