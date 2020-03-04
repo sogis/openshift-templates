@@ -1,4 +1,113 @@
+# Zookeeper (Because coordinating distributed systems is a zoo)
+
+### What is zookeeper
+Here an selection of definitions
+
+https://stackoverflow.com/questions/19043881/roles-of-zookeeper-in-solr-cloud
+Zookeepers are a central repository for SolrCloud configuration. You can consider it as a distributed filesystem which can be accessed by all Solr nodes in the cluster. 
+So if you change any config file you just need to inform or upload it to Zookeeper and not on every node in the cluster.
+
+One more important responsibility of Zookeeper is to keep an eye on the state of all Solr nodes in the cluster. If any node goes down and a search request comes in for 
+that node, Zookeeper routes it to an alternative replica node.
+
+https://stackoverflow.com/questions/46332853/what-is-the-interaction-between-solr-and-zookeeper
+A Single node Solr instance uses it's own configuration files usually in a conf folder containing files like schema.xml, stopwords.txt etc. 
+But in Solr cloud context a collection is a logical index having group of cores. These group of cores need centralised configurations 
+(same configuration shared among cores belonging to same collection). 
+ZooKeeper is a centralised service for maintaining configuration information in a distributed system.
+You can upload, download, and edit configuration files, so that all cores belonging to the same collection get same config set.
+
+https://lucene.apache.org/solr/guide/6_6/solrcloud.html
+ZooKeeper is mostly a black-box technology that you don’t need to worry about too much other than the initial configuration.(Solr in Action S.415f).
+Zookeeper manages cluster state (as in solr Web GUI http://solr-headless-solr-cloud-production.dev.so.ch/solr/#/~cloud?view=graph) and distributes configuration files to nodes joining the cluster.
+It's a kind of centralized configuration store. Centralized configuration allows all nodes in the cluster to download their configurations from a central location instead of a system
+administrator having to push configuration changes to multiple nodes.
+
+Solr uses Zookeeper for:
+* Centralized configuration storage and distribution
+* Detection and notification when the cluster state changes
+* Shard-leader election
+
+ZooKeeper organizes data into a hierarchical namespace similar to a filesystem. Each level in the hierarchy is called a znode. Each znode encapsulates basic metadata such as
+creation time and last-modified time and can also store a small amount of data. ZooKeeper keeps znodes in memory for performance reasons.
+You can have a look on the znodes in Solr WebGUI unter Cloud/Tree. 
+
+A central concept in ZooKeeper is the ephemeral znode, which requires an active client connection to keep the znode alive.
+If the client application that created the ephemeral znode goes away, the ephemeral znode is automatically deleted by ZooKeeper. 
+When a Solr node joins the cluster, it creates an ephemeral znode under the /live_nodes node. Solr keeps an active connection to this node using the ZooKeeper API. 
+If Solr crashes, the connection to the ephemeral znode is lost, causing that node to be considered gone. When the state of a znode changes, ZooKeeper notifies the other nodes in the cluster that one of the nodes is down. 
+This is important so that Solr doesn’t try to send distributed query requests to the failed node.
+
+### ZNODE WATCHER
+Another core concept in ZooKeeper is that of a znode watcher. Any client application can register itself as a watcher of a znode. 
+If the state of the znode changes, ZooKeeper will notify all registered watchers of the change. 
+For instance, Solr registers as a watcher of the /clusterstate.json znode so that it can receive notifications when the state of the cluster changes, as when there is a new replica or a node is offline.
+
 # Solr Cloud
+Solr cloud supports
+* Central configuration for the entire cluster
+* Automatic load balancing and fail-over for queries
+* ZooKeeper integration for cluster coordination and configuration
+
+SolrCloud is flexible distributed search and indexing, without a master node to allocate nodes, shards and replicas. Instead, Solr uses ZooKeeper to manage these locations, depending on configuration files and schemas. 
+Queries and updates can be sent to any server. Solr will use the information in the ZooKeeper database to figure out which servers need to handle the request.
+If ZooKeeper goes offline, Solr can still respond to queries but will refuse to accept updates. Solr can respond to queries because each node caches the cluster state received from Zookeeper.
+
+### Motivation behind Solr Cloud
+* Scalability (Sharding and replication)
+* High availability (replication)
+* Consistency (Same Indexes on each replica every time)
+* Simplicity (Scalability, High availability, and Consistency were already there before solr cloud but very complex)
+* Elasticity (Add more replicas or split shards easily)
+
+### Logical concept
+A cluster can host multiple collections of Solr documents.
+A collection can be partitioned into multiple shards. A shard is a subset of documents in the collection => Brauchts bei uns laut Daniel Wrigley nicht, da wir keine so grosse
+collection haben.
+
+### Physical concept
+A cluster is made up of one or more Solr Nodes. Each of these Nodes can host multiple cores.
+Each core in a cluster is a physical replica for a logical shard. Every core uses the same configuration specified for the collection that it is a part of.
+The number of replicas that each shard has determines:
+* The level of redundancy built into the collection.
+* The theoretical limit in the number concurrent search requests that can be processed under heavy load
+
+In solr cloud there are no masters or slaves. Instead every shard consists of at least one physical replica, exactly one of which is a leader.
+Leaders are automatically elected, initially on first-come-first-served basis, and then based on the zookeeper process.
+
+When a document is sent to a solr node for indexing the system first determines which Shard that belongs to and then which node is currently hosting the leader of
+that shard. The document is then forwarded to the current leader for indexing and the leader forwards the update to all of the other replicas.
+
+### core
+A core is a uniquely named, managed, and configured index running in a Solr server. A Solr server can host one or more cores.
+A core is composed of a set of configuration files, Lucene index files, and Solr’s transaction log.
+
+### collection
+A collection extends the concept of a uniquely named, managed, and configured index to one that is split into shards and distributed across multiple servers. 
+The reason SolrCloud needs a new term (instead of core) is because each shard of a distributed index is hosted in a Solr core
+
+### Ablageort der Indexe
+Die Indexe liegen in home/collectionname_shardn_replica_n Verzeichnis. n ist jeweils mit der entsprechenden Ziffer des Shards oder der Replica zu ersetzen.
+
+## Tools
+
+### ZooKeeper Command Line Interface (CLI) script
+/opt/solr/server/scripts/cloud-scripts/zkcli.sh is specific to solr => it includes command line arguments to deal with solr data in zookeeper and allows you to interact directly with Solr configuration
+files stored in ZooKeeper.
+
+#### upconfig
+Lädt ein config Verzeichnis in zookeeper hoch. Der verteilt es dann auf die solr nodes. Im solr Pod müssen die Dateien nicht vorhanden sein.
+Theoretisch könnte man zkcli.sh Skript auch von lokal ausführen. Dann brauchts aber ne Route für Zookeeper oder der Port 2181 muss von lokal nach Openshift offen sein.
+
+#### downconfig
+Mit downconfig kann man den aktuellen Stand eines config Verzeichnisses aus Zookeeper herunterladen.
+
+### Collections API
+https://lucene.apache.org/solr/guide/6_6/collections-api.html
+The Collections API is used to enable you to create, remove, or reload collections, but in the context of SolrCloud you can also use it to create collections with a specific number of shards and replicas.
+
+
+# Betrieb Solr Cloud im AGI
 
 ## Erstinstallation in Openshift
 
