@@ -1,5 +1,7 @@
 [Zookeeper](https://github.com/sogis/openshift-templates/tree/master/solr#zookeeper-because-coordinating-distributed-systems-is-a-zoo)
-[Solr Cloud] (https://github.com/sogis/openshift-templates/tree/master/solr#solr-cloud)
+
+[Solr Cloud](https://github.com/sogis/openshift-templates/tree/master/solr#solr-cloud)
+
 [Betrieb Solr Cloud im AGI](https://github.com/sogis/openshift-templates/tree/master/solr#betrieb-solr-cloud-im-agi)
 
 
