@@ -173,4 +173,18 @@ curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?acti
 ```
 
 ## Disaster Recovery
-tbd
+Wenn aus irgendeinem Grund beide solr Pods gleichzeitig vorübergehend gelöscht wurden (mussten) oder in keinen State ready mehr kommen, dann können diese wegen der Readiness Probe nicht mehr starten.
+Diese schlägt dann beim solr-0 Pod fehl. solr-1 startet dann gar nicht erst.
+In diesem Fall muss die Readiness Probe folgendermassen entfernt werden
+```
+oc patch statefulset/solr --type json -p '[{ "op": "remove", "path": "/spec/template/spec/containers/0/readinessProbe" }]'
+```
+Anschliessend den solr-0 Pod deleten. Dieser sollte danach wieder erfolgreich starten und anschliessend auch der solr-1 Pod.
+Wenn beide Pods wieder oben sind kann die Readiness Probe wieder hinzugefügt werden.
+```
+oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","readinessProbe":{"httpGet":{"path":"/solr/gdi/select?q=id%3Adummy&rows=1","port":8983}}}]}}}}'
+```
+Anschliessend zunächst einen der beiden solr Pods deleten (es ist egal welchen), warten bis dieser gestartet und ready ist und dann den anderen solr Pod deleten.
+
+Bei Zookeeper sollte es keine Probleme geben, wenn mehr als ein Pod zeitgleich weg ist. Zwar kann dann vorübergehend kein Leader mehr gewählt werden, die fehlenden Pods sollten aber schnell
+wieder gestartet werden und das System heilt sich dann selbst. Probleme kann es lediglich geben, wenn mehr als ein Pod dauerhaft nicht mehr hoch kommt.
