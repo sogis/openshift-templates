@@ -1,3 +1,8 @@
+[Zookeeper](https://github.com/sogis/openshift-templates/tree/master/solr#zookeeper-because-coordinating-distributed-systems-is-a-zoo)
+[Solr Cloud] (https://github.com/sogis/openshift-templates/tree/master/solr#solr-cloud)
+[Betrieb Solr Cloud im AGI](https://github.com/sogis/openshift-templates/tree/master/solr#betrieb-solr-cloud-im-agi)
+
+
 # Zookeeper (Because coordinating distributed systems is a zoo)
 
 ### What is zookeeper
@@ -78,6 +83,7 @@ Leaders are automatically elected, initially on first-come-first-served basis, a
 When a document is sent to a solr node for indexing the system first determines which Shard that belongs to and then which node is currently hosting the leader of
 that shard. The document is then forwarded to the current leader for indexing and the leader forwards the update to all of the other replicas.
 
+## Definitions
 ### core
 A core is a uniquely named, managed, and configured index running in a Solr server. A Solr server can host one or more cores.
 A core is composed of a set of configuration files, Lucene index files, and Solr’s transaction log.
@@ -86,7 +92,7 @@ A core is composed of a set of configuration files, Lucene index files, and Solr
 A collection extends the concept of a uniquely named, managed, and configured index to one that is split into shards and distributed across multiple servers. 
 The reason SolrCloud needs a new term (instead of core) is because each shard of a distributed index is hosted in a Solr core
 
-### Ablageort der Indexe
+## Ablageort der Indexe
 Die Indexe liegen in home/collectionname_shardn_replica_n Verzeichnis. n ist jeweils mit der entsprechenden Ziffer des Shards oder der Replica zu ersetzen.
 
 ## Tools
