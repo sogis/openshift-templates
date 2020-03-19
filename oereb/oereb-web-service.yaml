@@ -30,6 +30,18 @@ parameters:
     name: version
     required: true
     value:
+  - description: CPU limit
+    name: CPU_LIMIT
+    value:
+  - description: CPU request
+    name: CPU_REQUEST
+    value:
+  - description: Memory limit
+    name: MEMORY_LIMIT
+    value:
+  - description: Memory request
+    name: MEMORY_REQUEST
+    value:
 objects:
 - apiVersion: v1
   kind: DeploymentConfig
