@@ -164,3 +164,20 @@ objects:
       requests:
         storage: 1Gi
     storageClassName: nfs 
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 60s
+    labels:
+      application: pgadmin4
+    name: pgadmin4
+  spec:
+    host: pgadmin4-${env}.dev.so.ch
+    port:
+      targetPort: 80
+    to:
+      kind: Service
+      name: pgadmin4
+      weight: 100
+    wildcardPolicy: None
