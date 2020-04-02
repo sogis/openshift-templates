@@ -113,7 +113,7 @@ objects:
               memory: ${MEMORY_REQUEST}
           terminationMessagePath: /dev/termination-log
           volumeMounts:
-          - mountPath: /var/lib/pgadmin4
+          - mountPath: /var/lib/pgadmin
             name: pgadmin4
           terminationMessagePolicy: File
         dnsPolicy: ClusterFirst
