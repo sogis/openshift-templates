@@ -150,9 +150,9 @@ objects:
       deploymentconfig: pgadmin4
     ports:
     - protocol: TCP
-      port: 80
+      port: 5050
       targetPort: 5050
-      name: "80"
+      name: "5050"
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -175,7 +175,7 @@ objects:
   spec:
     host: pgadmin4-${env}.dev.so.ch
     port:
-      targetPort: 80
+      targetPort: 5050
     to:
       kind: Service
       name: pgadmin4-service
