@@ -178,6 +178,6 @@ objects:
       targetPort: 80
     to:
       kind: Service
-      name: pgadmin4
+      name: pgadmin4-service
       weight: 100
     wildcardPolicy: None
