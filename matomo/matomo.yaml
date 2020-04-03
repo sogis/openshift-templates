@@ -184,14 +184,12 @@ objects:
           terminationMessagePath: /dev/termination-log
           volumeMounts:
           - mountPath: /var/www/html
-            name: matomo-source
+            name: app-config
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         securityContext: {}
         terminationGracePeriodSeconds: 30
         volumes:
-        - emptyDir: {}
-          name: matomo-source
         - name: app-config
           persistentVolumeClaim:
             claimName: app-config
