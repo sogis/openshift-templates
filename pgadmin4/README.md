@@ -8,15 +8,15 @@ Set version parameter to set Image version
 ```
 oc process -f pgadmin4.yaml \
   -p version=latest \
-  -p env=integration \ 
+  -p scheduled=true \
+  -p env="-integration" \ 
   -p CPU_LIMIT="800m" \
   -p MEMORY_LIMIT="800Mi" \
   -p CPU_REQUEST="20m" \
   -p MEMORY_REQUEST="400Mi" \
   | oc apply -f-
 oc process -f pgadmin4.yaml \
-  -p version=4.20 \
-  -p env=production \ 
+  -p version=4 \
   -p CPU_LIMIT="800m" \
   -p MEMORY_LIMIT="800Mi" \
   -p CPU_REQUEST="20m" \

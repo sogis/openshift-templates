@@ -15,7 +15,6 @@ labels:
 parameters:
   - description: Environment
     name: env
-    required: true
     value:
   - description: Version of Image
     name: version
@@ -135,7 +134,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: pgadmin4:${version}
-          namespace: agi-infrastructure-${env}
+          namespace: agi-infrastructure${env}
       type: ImageChange
 - apiVersion: v1
   kind: Service
