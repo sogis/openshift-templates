@@ -172,7 +172,7 @@ objects:
       application: pgadmin4
     name: pgadmin4
   spec:
-    host: pgadmin4-${env}.dev.so.ch
+    host: pgadmin4${env}.dev.so.ch
     port:
       targetPort: 80
     to:
