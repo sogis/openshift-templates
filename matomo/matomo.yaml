@@ -275,8 +275,12 @@ objects:
               volumeMounts:
               - mountPath: /var/www/html
                 name: matomo-source
+              - mountPath: /var/www/html/misc
+                name: app-config
+                subPath: misc
               - mountPath: /var/www/html/config
                 name: app-config
+                subPath: config
             dnsPolicy: ClusterFirst
             restartPolicy: OnFailure
             securityContext: {}
