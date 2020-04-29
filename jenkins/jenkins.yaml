@@ -1,30 +1,28 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  app: jenkins-ephemeral
-  template: jenkins-ephemeral-template
+  app: jenkins-persistent
+  template: jenkins-persistent-template
 message: A Jenkins service has been created in your project.  Log into Jenkins with
   your OpenShift account.  The tutorial at https://github.com/openshift/origin/blob/master/examples/jenkins/README.md
   contains more information about using this template.
 metadata:
   annotations:
     description: |-
-      Jenkins service, without persistent storage.
+      Jenkins service, with persistent storage.
 
-      WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing.
+      NOTE: You must have persistent volumes available in your cluster to use this template.
     iconClass: icon-jenkins
-    openshift.io/display-name: Jenkins (Ephemeral)
+    openshift.io/display-name: Jenkins
     openshift.io/documentation-url: https://docs.openshift.org/latest/using_images/other_images/jenkins.html
     openshift.io/long-description: This template deploys a Jenkins server capable
-      of managing OpenShift Pipeline builds and supporting OpenShift-based oauth login.  The
-      Jenkins configuration is stored in non-persistent storage, so this configuration
-      should be used for experimental purposes only.
+      of managing OpenShift Pipeline builds and supporting OpenShift-based oauth login.
     openshift.io/provider-display-name: Red Hat, Inc.
     openshift.io/support-url: https://access.redhat.com
     tags: instant-app,jenkins
   creationTimestamp: null
-  name: jenkins-ephemeral
-  selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/jenkins-ephemeral
+  name: jenkins-persistent
+  selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/jenkins-persistent
 objects:
 - apiVersion: v1
   kind: Route
@@ -40,6 +38,16 @@ objects:
     to:
       kind: Service
       name: ${JENKINS_SERVICE_NAME}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: ${JENKINS_SERVICE_NAME}
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${VOLUME_CAPACITY}
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -74,6 +82,8 @@ objects:
             value: ${JENKINS_SERVICE_NAME}
           - name: JNLP_SERVICE_NAME
             value: ${JNLP_SERVICE_NAME}
+          - name: ENABLE_FATAL_ERROR_LOG_FILE
+            value: ${ENABLE_FATAL_ERROR_LOG_FILE}
           envFrom:
           - configMapRef:
               name: jenkins-env-config
@@ -108,9 +118,9 @@ objects:
         restartPolicy: Always
         serviceAccountName: ${JENKINS_SERVICE_NAME}
         volumes:
-        - emptyDir:
-            medium: ""
-          name: ${JENKINS_SERVICE_NAME}-data
+        - name: ${JENKINS_SERVICE_NAME}-data
+          persistentVolumeClaim:
+            claimName: ${JENKINS_SERVICE_NAME}
     triggers:
     - imageChangeParams:
         automatic: true
@@ -191,6 +201,11 @@ parameters:
   displayName: Memory Limit
   name: MEMORY_LIMIT
   value: 512Mi
+- description: Volume space available for data, e.g. 512Mi, 2Gi.
+  displayName: Volume Capacity
+  name: VOLUME_CAPACITY
+  required: true
+  value: 1Gi
 - description: The OpenShift Namespace where the Jenkins ImageStream resides.
   displayName: Jenkins ImageStream Namespace
   name: NAMESPACE
@@ -205,3 +220,8 @@ parameters:
   displayName: Jenkins ImageStreamTag
   name: JENKINS_IMAGE_STREAM_TAG
   value: jenkins:2
+- description: When a fatal error occurs, an error log is created with information
+    and the state obtained at the time of the fatal error.
+  displayName: Fatal Error Log File
+  name: ENABLE_FATAL_ERROR_LOG_FILE
+  value: "false"
