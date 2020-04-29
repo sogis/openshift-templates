@@ -14,7 +14,7 @@ oc process -p env=test -p version=latest \
   | oc apply -f-
 ```
 ```
-oc process -p env=integration -p version=1.2.18 \
+oc process -p env=integration -p version=1.2.24 \
   -p CPU_LIMIT="1000m" \
   -p MEMORY_LIMIT="800Mi" \
   -p CPU_REQUEST="500m" \
@@ -23,11 +23,11 @@ oc process -p env=integration -p version=1.2.18 \
    | oc apply -f-
 ```
 ```
-oc process -p env=production -p version=1.2.18 \
+oc process -p env=production -p version=1.2.24 \
   -p CPU_LIMIT="1000m" \
-  -p MEMORY_LIMIT="800Mi" \
+  -p MEMORY_LIMIT="2Gi" \
   -p CPU_REQUEST="500m" \
-  -p MEMORY_REQUEST="800Mi" \
+  -p MEMORY_REQUEST="2Gi" \
   -f ilivalidator-web-service.yaml  \
    | oc apply -f-
 ```
