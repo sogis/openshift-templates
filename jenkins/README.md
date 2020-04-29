@@ -13,3 +13,10 @@ Finally install jenkins with
 oc process -f jenkins.yaml  \
   | oc apply -f-
 ```
+
+### Export/Import Jobs from one jenkins to another one
+To export a job from one jenkins (eg test jenkins) to another one (eg prod jenkins) use jenkins-cli.jar and the export_import_jobs.sh script.
+For exporting all jobs of an jenkins instance and importing it in another jenkins instance use
+```
+for i in $(java -jar ~/Downloads/jenkins-cli.jar -s https://jenkins-agi-apps-test.dev.so.ch -noCertificateCheck -auth "your-jenkins-user-name":your-jenkins-token list-jobs);do ./export_import_jobs.sh test integration $i; done
+``` 
