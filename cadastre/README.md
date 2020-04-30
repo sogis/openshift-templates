@@ -50,8 +50,8 @@ git pull
 Deploy test environment:
 
 ```
-oc project agi-test
-oc process -f cadastre/cadastre-web-service.yaml \
+oc project agi-apps-test
+oc process -f cadastre/cadastre.yaml \
   -p version=latest \
   -p env=test \
   -p dbenv=geodb-t \
