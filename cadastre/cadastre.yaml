@@ -99,9 +99,9 @@ objects:
               value: Europe/Zurich
             - name: MININTERSECTION
               value: '0.5'
-          image: sogis/grundstuecksinformation/grundstuecksinformation-cadastre-web-service
+          image: sogis/cadastre-web-service
           imagePullPolicy: IfNotPresent
-          name: grundstuecksinformation-cadastre-web-service
+          name: cadastre-web-service
           ports:
           - containerPort: 8080
             protocol: TCP
@@ -129,7 +129,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: cadastre-web-service:${version}
-          namespace: agi-${env}
+          namespace: agi-apps-${env}
       type: ImageChange
 - apiVersion: v1
   kind: Service
