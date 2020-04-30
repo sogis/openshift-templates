@@ -4,7 +4,7 @@
 
 This step is needed only if this is the first installation, or if any value of the secret needs to be changed.
 
-Create a file *cadastre-web-service.yaml* for the cadastre wms with the following content; replace `DBHOST`, `DBNAME`, `DBUSER` and `DBPASSWORD` with the actual values:
+Create a file *cadastre.yaml* for the cadastre wms with the following content; replace `DBHOST`, `DBNAME`, `DBUSER` and `DBPASSWORD` with the actual values:
 ```
 apiVersion: v1
 kind: Secret
