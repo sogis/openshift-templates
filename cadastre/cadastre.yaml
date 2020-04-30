@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Template
 metadata:
   creationTimestamp: null
-  name: ilivalidator-template
+  name: cadastre-web-service
   annotations:
     openshift.io/display-name: "All components for Cadastre Web Service"
     description: >-
@@ -52,7 +52,7 @@ objects:
       application: cadastre-web-service
     creationTimestamp: null
     generation: 1
-    name:cadastre-web-service
+    name: cadastre-web-service
   spec:
     replicas: 1
     revisionHistoryLimit: 10
