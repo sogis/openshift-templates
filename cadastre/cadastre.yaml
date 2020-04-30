@@ -99,9 +99,9 @@ objects:
               value: Europe/Zurich
             - name: MININTERSECTION
               value: '0.5'
-          image: sogis/cadastre-web-service
+          image: sogis/grundstuecksinformation/grundstuecksinformation-cadastre-web-service
           imagePullPolicy: IfNotPresent
-          name: cadastre-web-service
+          name: grundstuecksinformation-cadastre-web-service
           ports:
           - containerPort: 8080
             protocol: TCP
