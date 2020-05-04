@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Template
 metadata:
   creationTimestamp: null
-  name: cadastre-web-service
+  name: cadastre-web-service-template
   annotations:
     openshift.io/display-name: "All components for Cadastre Web Service"
     description: >-
@@ -12,7 +12,7 @@ metadata:
     tags: "agi,gdi,oereb-service,java"
     iconClass: icon-java
 labels:
-  createdBy: cadastre-service-template
+  createdBy: cadastre-web-service-template
 parameters:
   - description: Name for Environment
     name: env
@@ -99,7 +99,7 @@ objects:
               value: Europe/Zurich
             - name: MININTERSECTION
               value: '0.5'
-          image: sogis/cadastre-web-service
+          image: grundstuecksinformation/grundstuecksinformation-cadastre-web-service:${version}
           imagePullPolicy: IfNotPresent
           name: cadastre-web-service
           ports:
@@ -157,7 +157,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-        name: sogis/cadastre-web-service:${version}
+        name: cadastre-web-service:${version}
       name: ${version}
       importPolicy:
         scheduled: true
