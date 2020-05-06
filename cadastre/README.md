@@ -4,30 +4,23 @@
 
 This step is needed only if this is the first installation, or if any value of the secret needs to be changed.
 
-Create a file *cadastre.yaml* for the cadastre wms with the following content; replace `DBHOST`, `DBNAME`, `DBUSER` and `DBPASSWORD` with the actual values:
+Create a file *cadastre-web-service-secret.yaml* for the cadastre web service with the following content; replace `DBUSER` and `DBPASSWORD` with the actual values:
 ```
 apiVersion: v1
 kind: Secret
 metadata:
-  name: cadastre-wms-secret
-  labels:
-    app: cadastre-wms
+  name: cadastre-web-service-secret
 stringData:
-  pg_service.conf: |-
-    [oereb]
-    host=DBHOST
-    dbname=DBNAME
-    user=DBUSER
-    password=DBPASSWORD
-    options=-c search_path=public,live
+  username: DBUSER
+  password: DBPASSWORD
 ```
 
-Switch to the right OpenShift project (e.g. `oc project agi-test`) and create the secret(s) by running the following commands:
+Switch to the right OpenShift project (e.g. `oc project agi-apps-test`) and create the secret(s) by running the following commands:
 ```
-oc create -f cadastre-web-service.yaml
+oc create -f cadastre-web-service-secret.yaml
 ```
 
-Run this command in the *agi-test* OpenShift projects.
+Run this command in the *agi-apps-test*, *agi-apps-integration* and *agi-apps-production* OpenShift projects.
 
 
 ## Install or update the cadastre application
@@ -48,10 +41,9 @@ git pull
 
 
 Deploy test environment:
-
 ```
 oc project agi-apps-test
-oc process -f cadastre/cadastre.yaml \
+oc process -f cadastre/cadastre-web-service.yaml \
   -p version=latest \
   -p env=test \
   -p dbenv=geodb-t \
@@ -61,5 +53,4 @@ oc process -f cadastre/cadastre.yaml \
   -p CPU_REQUEST="0" \
   -p MEMORY_REQUEST="0" \
   | oc apply -f -
-
 ```

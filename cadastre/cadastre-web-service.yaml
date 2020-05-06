@@ -9,7 +9,7 @@ metadata:
       "Creates all necessary components for the Cadastre Web Service"
     openshift.io/long-description: >-
       "Creates all necessary components for the Cadastre Web Service"
-    tags: "agi,gdi,oereb-service,java"
+    tags: "agi,gdi,cadastre-service,java"
     iconClass: icon-java
 labels:
   createdBy: cadastre-web-service-template
@@ -99,7 +99,7 @@ objects:
               value: Europe/Zurich
             - name: MININTERSECTION
               value: '0.5'
-          image: grundstuecksinformation/grundstuecksinformation-cadastre-web-service:${version}
+          image: sogis/cadastre-web-service:${version}
           imagePullPolicy: IfNotPresent
           name: cadastre-web-service
           ports:
