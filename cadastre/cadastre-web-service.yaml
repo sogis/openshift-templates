@@ -80,7 +80,7 @@ objects:
         containers:
         - env:
             - name: DBURL
-              value: 'jdbc:postgresql://${dbenv}.rootso.org/edit?sslmode=require'
+              value: 'jdbc:postgresql://${dbenv}.rootso.org/oereb?sslmode=require'
             - name: DBSCHEMA
               value: ${dbschema}
             - name: DBUSR
@@ -99,7 +99,7 @@ objects:
               value: Europe/Zurich
             - name: MININTERSECTION
               value: '0.5'
-          image: sogis/cadastre-web-service:${version}
+          image: cadastre-web-service:${version}
           imagePullPolicy: IfNotPresent
           name: cadastre-web-service
           ports:
