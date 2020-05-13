@@ -87,7 +87,7 @@ oc process -f oereb/oereb-wms.yaml \
   -p IMPORT_POLICY_SCHEDULED=false \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
-  -p version=60 \
+  -p version=66 \
   -p env=integration \
   -p dbenv=geodb-i \
   -p dbschema=live \
@@ -108,11 +108,11 @@ oc process -f oereb/oereb-wms.yaml \
   -p REPLICA_COUNT=2 \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
-  -p version=51 \
+  -p version=66 \
   -p env=production \
   -p dbenv=geodb
   -p dbschema=live \
-  -p CPU_LIMIT="750m" \
+  -p CPU_LIMIT="1250m" \
   -p MEMORY_LIMIT="1400Mi" \
   -p CPU_REQUEST="100m" \
   -p MEMORY_REQUEST="1400Mi" \
