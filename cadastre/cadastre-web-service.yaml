@@ -157,25 +157,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-        name: cadastre-web-service:${version}
+        name: sogis/cadastre-web-service:${version}
       name: ${version}
       importPolicy:
         scheduled: true
-- apiVersion: route.openshift.io/v1
-  kind: Route
-  metadata:
-    annotations:
-      haproxy.router.openshift.io/timeout: 60s
-    creationTimestamp: null
-    labels:
-      application: cadastre-web-service
-    name: cadastre-web-service
-  spec:
-    host: cadastre-web-service-${env}.dev.so.ch
-    port:
-      targetPort: 8080
-    to:
-      kind: Service
-      name: cadastre-web-service
-      weight: 100
-    wildcardPolicy: None
