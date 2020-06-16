@@ -83,7 +83,7 @@ Deploy integration environment:
 ```
 oc project agi-oereb-integration
 oc process -f oereb/oereb-wms.yaml \
-  -p TAG=21 \
+  -p TAG=25 \
   -p IMPORT_POLICY_SCHEDULED=false \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
