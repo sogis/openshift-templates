@@ -1,0 +1,157 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: wgc-embedded-template
+  annotations:
+    openshift.io/display-name: "All components for wgc-embedded"
+    description: >-
+      "Creates all necessary components for the wgc-embedded"
+    openshift.io/long-description: >-
+      "Creates all necessary components for the wgc-embedded"
+    tags: "agi,gdi,java"
+    iconClass: icon-java
+labels:
+  createdBy: wgc-embedded-template
+parameters:
+  - description: Name for Environment
+    name: env
+    required: true
+    value: test
+  - description: Version of Image
+    name: version
+    required: true
+    value:
+  - description: CPU limit
+    name: CPU_LIMIT
+    value:
+  - description: CPU request
+    name: CPU_REQUEST
+    value:
+  - description: Memory limit
+    name: MEMORY_LIMIT
+    value:
+  - description: Memory request
+    name: MEMORY_REQUEST
+    value:
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      description: Image Stream of the application
+    labels:
+      application: wgc-embedded
+    creationTimestamp: null
+    generation: 1
+    name: wgc-embedded
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentconfig: wgc-embedded
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 10%
+        maxUnavailable: 10%
+        timeoutSeconds: 60
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          application: wgc-embedded
+          deploymentconfig: wgc-embedded
+      spec:
+        containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: 'test'
+          image: wgc-embedded:${version}
+          imagePullPolicy: IfNotPresent
+          name: wgc-embedded
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /wgc-embedded/actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /wgc-embedded/actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - wgc-embedded
+        from:
+          kind: ImageStreamTag
+          name: wgc-embedded:${version}
+          namespace: agi-apps-${env}
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: wgc-embeddede
+    annotations:
+      description: http port of application
+    labels:
+      application: wgc-embedded
+  spec:
+    selector:
+      deploymentconfig: wgc-embedded
+    ports:
+    - protocol: TCP
+      name: "80"
+      port: 80
+      targetPort: 8080
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: wgc-embedded
+    labels:
+      application: wgc-embedded
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: sogis/wgc-embedded:${version}
+      name: ${version}
+      importPolicy:
+        scheduled: true
