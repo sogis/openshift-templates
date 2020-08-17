@@ -65,6 +65,10 @@ oc project agi-oereb-test
 oc process -f oereb/oereb-wms.yaml \
   -p TAG=latest \
   -p IMPORT_POLICY_SCHEDULED=true \
+  -p CPU_REQUEST=0 \
+  -p CPU_LIMIT=0 \
+  -p MEMORY_REQUEST=0 \
+  -p MEMORY_LIMIT=0 \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
   -p version=latest \
@@ -85,6 +89,10 @@ oc project agi-oereb-integration
 oc process -f oereb/oereb-wms.yaml \
   -p TAG=25 \
   -p IMPORT_POLICY_SCHEDULED=false \
+  -p CPU_REQUEST=200m \
+  -p CPU_LIMIT=1 \
+  -p MEMORY_REQUEST=350Mi \
+  -p MEMORY_LIMIT=500Mi \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
   -p version=66 \
@@ -106,6 +114,10 @@ oc process -f oereb/oereb-wms.yaml \
   -p TAG=25 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p REPLICA_COUNT=2 \
+  -p CPU_REQUEST=200m \
+  -p CPU_LIMIT=1 \
+  -p MEMORY_REQUEST=500Mi \
+  -p MEMORY_LIMIT=500Mi \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
   -p version=66 \
