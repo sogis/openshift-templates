@@ -112,7 +112,7 @@ parameters:
   value: "2"
 - name: CPU_REQUEST
   description: "The minimum amount of CPU the container is guaranteed."
-  value: 10m
+  value: 200m
 - name: CPU_LIMIT
   description: "The maximum amount of CPU the container is allowed to use when running."
   value: "1"
@@ -121,4 +121,4 @@ parameters:
   value: 350Mi
 - name: MEMORY_LIMIT
   description: "The maximum amount of memory the container is allowed to use when running."
-  value: 1Gi
+  value: 500Mi
