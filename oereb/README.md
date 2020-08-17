@@ -112,6 +112,7 @@ oc process -f oereb/oereb-web-service.yaml \
   -p env=production \
   -p dbenv=geodb
   -p dbschema=live \
+  -p REPLICA_COUNT=2 \
   -p CPU_LIMIT="1250m" \
   -p MEMORY_LIMIT="1400Mi" \
   -p CPU_REQUEST="100m" \
