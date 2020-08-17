@@ -30,6 +30,9 @@ parameters:
     name: version
     required: true
     value:
+  - description: Number of replicas to run
+    name: REPLICA_COUNT
+    value: "1"
   - description: CPU limit
     name: CPU_LIMIT
     value:
@@ -54,7 +57,7 @@ objects:
     generation: 1
     name: oereb-web-service
   spec:
-    replicas: 1
+    replicas: ${{REPLICA_COUNT}}
     revisionHistoryLimit: 10
     selector:
       deploymentconfig: oereb-web-service
