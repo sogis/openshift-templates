@@ -110,7 +110,7 @@ oc process -f oereb/oereb-wms.yaml \
 oc process -f oereb/oereb-web-service.yaml \
   -p version=66 \
   -p env=production \
-  -p dbenv=geodb
+  -p dbenv=geodb \
   -p dbschema=live \
   -p REPLICA_COUNT=2 \
   -p CPU_LIMIT="1250m" \
