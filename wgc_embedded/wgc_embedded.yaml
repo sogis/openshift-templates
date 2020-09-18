@@ -128,7 +128,7 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    name: wgc-embeddede
+    name: wgc-embedded
     annotations:
       description: http port of application
     labels:
