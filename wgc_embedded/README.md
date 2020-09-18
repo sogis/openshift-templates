@@ -23,9 +23,33 @@ oc project agi-apps-test
 oc process -f wgc-embedded/wgc-embedded.yaml \
   -p version=latest \
   -p env=test \
-  -p CPU_LIMIT="0" \
-  -p MEMORY_LIMIT="512M" \
-  -p CPU_REQUEST="0" \
-  -p MEMORY_REQUEST="500k" \
+  -p CPU_LIMIT="500m" \
+  -p MEMORY_LIMIT="512Mi" \
+  -p CPU_REQUEST="250m" \
+  -p MEMORY_REQUEST="258Mi" \
+  | oc apply -f -
+```
+Deploy integration environment:
+```
+oc project agi-apps-integration
+oc process -f wgc-embedded/wgc-embedded.yaml \
+  -p version=latest \
+  -p env=integration \
+  -p CPU_LIMIT="500m" \
+  -p MEMORY_LIMIT="512Mi" \
+  -p CPU_REQUEST="250m" \
+  -p MEMORY_REQUEST="258Mi" \
+  | oc apply -f -
+```
+Deploy production environment:
+```
+oc project agi-apps-production
+oc process -f wgc-embedded/wgc-embedded.yaml \
+  -p version=production \
+  -p env=test \
+  -p CPU_LIMIT="500m" \
+  -p MEMORY_LIMIT="512Mi" \
+  -p CPU_REQUEST="250m" \
+  -p MEMORY_REQUEST="258Mi" \
   | oc apply -f -
 ```
