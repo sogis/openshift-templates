@@ -56,9 +56,9 @@ oc process -f avdpool/avdpool.yaml \
   -p DB_USER_EDIT=xy \
   -p DB_PWD_EDIT=xy \
   -p CPU_LIMIT="1200m" \
-  -p MEMORY_LIMIT="1000Mi" \
+  -p MEMORY_LIMIT="1500Mi" \
   -p CPU_REQUEST="100m" \
-  -p MEMORY_REQUEST="500Mi" \
+  -p MEMORY_REQUEST="750Mi" \
   | oc apply -f -
 ```
 
@@ -80,8 +80,8 @@ oc process -f avdpool/avdpool.yaml \
   -p DB_USER_EDIT=xy \
   -p DB_PWD_EDIT=xy \
   -p CPU_LIMIT="1200m" \
-  -p MEMORY_LIMIT="1000Mi" \
+  -p MEMORY_LIMIT="1500Mi" \
   -p CPU_REQUEST="100m" \
-  -p MEMORY_REQUEST="1000Mi" \
+  -p MEMORY_REQUEST="1500Mi" \
   | oc apply -f -
 ```
