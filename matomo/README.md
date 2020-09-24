@@ -48,6 +48,13 @@ To update matomo change parameter MATOMO_IMAGE_TAG in matomo.yaml and run
 ```
 oc process -f matomo.yaml -p APP_URL=analytics-i.dev.so.ch | oc apply -f-
 ```
+### Comment bjsvwpfe 24.9.2020
+With actual version 3.14.1-fpm the cronjob doesn't work anymore. As a workaround added a own builded image to openshift registry (agi-matomo).
+In the Image the sourcecode of the default matomo 3.14.1-fpm Image is overwrittnen with downloaded sourcecode from https://builds.matomo.org/matomo.zip.
+The agi-matomo image is used in the cronjob.
+Hope this could be rolled back with the next version.
+
+
 It's possible that after the update DBIP/ GeoIP2 Location Provider must be new installed.
 To install run from this directory 
 ```
