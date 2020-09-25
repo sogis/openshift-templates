@@ -28,7 +28,7 @@ oc process -p env=production -p version=1.2.24 \
   -p MEMORY_LIMIT="2Gi" \
   -p CPU_REQUEST="500m" \
   -p MEMORY_REQUEST="2Gi" \
-  -f ili2gpkg-service.yaml  \
+  -f ili2gpkg-web-service.yaml  \
    | oc apply -f-
 ```
 ## Update of app configuration in Openshift Environment
