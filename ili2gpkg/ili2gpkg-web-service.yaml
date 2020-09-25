@@ -132,7 +132,7 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    name: li2gpkg-web-service
+    name: ili2gpkg-web-service
     annotations:
       description: http port of application
     labels:
