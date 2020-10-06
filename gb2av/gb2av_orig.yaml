@@ -67,23 +67,6 @@ objects:
     strategy:
       type: Rolling
     revisionHistoryLimit: 10
-- apiVersion: v1
-  kind: Service
-  metadata:
-    name: gb2av
-    annotations:
-      description: http port of application
-    labels:
-      app: gb2av
-      deploymentconfig: gb2av
-  spec:
-    selector:
-      deploymentconfig: gb2av
-    ports:
-    - protocol: TCP
-      name: "80"
-      port: 80
-      targetPort: 8080
 parameters:
 - name: ENVIRONMENT_SHORT
   description: "The short name of the environment the template is processed for (one of dev, test, int, prod)"
