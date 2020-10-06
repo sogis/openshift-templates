@@ -43,6 +43,9 @@ objects:
               name: infogrips-secret
           - secretRef:
               name: db-secret-gretl
+          ports:
+          - containerPort: 8080
+            protocol: TCP
           resources:
             limits:
               cpu: ${CPU_LIMIT}
@@ -50,6 +53,26 @@ objects:
             requests:
               cpu: ${CPU_REQUEST}
               memory: ${MEMORY_REQUEST}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1 
     replicas: 1
     triggers:
     - type: ConfigChange
