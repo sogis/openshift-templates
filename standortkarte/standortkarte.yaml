@@ -100,15 +100,15 @@ parameters:
 - name: REPLICA_COUNT
   description: "Number of replicas to run"
   value: "1"
- - name: CPU_LIMIT
-    description: "Set Limit for cpu"
-    required: true
-  - name: MEMORY_LIMIT
-    description: "Set Limit for Memory Usage"
-    required: true
-  - name: CPU_REQUEST
-    description: "Set Request for cpu"
-    required: true
-  - name: MEMORY_REQUEST
-    description: "Set Request for Memory"
-    required: true
+- name: CPU_LIMIT
+  description: "Set Limit for cpu"
+  required: true
+- name: MEMORY_LIMIT
+  description: "Set Limit for Memory Usage"
+  required: true
+- name: CPU_REQUEST
+  description: "Set Request for cpu"
+  required: true
+- name: MEMORY_REQUEST
+  description: "Set Request for Memory"
+  required: true
