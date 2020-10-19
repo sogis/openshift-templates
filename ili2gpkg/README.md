@@ -14,7 +14,7 @@ oc process -p env=test -p version=latest \
   | oc apply -f-
 ```
 ```
-oc process -p env=integration -p version=1.2.24 \
+oc process -p env=integration -p version=1.0.31 \
   -p CPU_LIMIT="1000m" \
   -p MEMORY_LIMIT="800Mi" \
   -p CPU_REQUEST="500m" \
@@ -23,7 +23,7 @@ oc process -p env=integration -p version=1.2.24 \
    | oc apply -f-
 ```
 ```
-oc process -p env=production -p version=1.2.24 \
+oc process -p env=production -p version=1.0.31 \
   -p CPU_LIMIT="1000m" \
   -p MEMORY_LIMIT="2Gi" \
   -p CPU_REQUEST="500m" \
