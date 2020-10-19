@@ -32,6 +32,8 @@ objects:
         containers:
         - name: cadastral-data-disposal
           env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: ${ENVIRONMENT_SHORT} 
           - name: DATA_SERVICE_URL
             value: https://${URL}.so.ch/api/data/v1/ch.so.agi.av.nachfuehrungsgemeinden.data/
           - name: PDF_MAP_URL
@@ -116,6 +118,9 @@ objects:
       deploymentconfig: cadastral-data-disposal
     type: ClusterIP
 parameters:
+- name: ENVIRONMENT_SHORT
+  description: "The short name of the environment the template is processed for (one of dev, test, int, prod)"
+  value: int
 - name: TAG
   description: "The Docker image tag to use (e.g. latest, 1.0.5)"
   value: latest
