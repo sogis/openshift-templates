@@ -41,6 +41,18 @@ oc create -f oereb-web-service.yaml
 Run this command in the *agi-oereb-test*, *agi-oereb-integration* and *agi-oereb-production* OpenShift projects.
 
 
+## Create a Docker image pull secret
+
+This step is needed only if this is the first installation, or if any value of the secret needs to be changed.
+
+Create a secret for pulling the Docker images, and link this secret to the default service account:
+```
+oc create secret docker-registry sogis-pull-secret --docker-username=xx --docker-password=yy
+oc secrets link default sogis-pull-secret --for=pull
+```
+
+Run these commands in the *agi-oereb-test*, *agi-oereb-integration* and *agi-oereb-production* OpenShift projects.
+
 ## Install or update the OEREB application
 
 Checkout the openshift-templates repository:
