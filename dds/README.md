@@ -43,7 +43,7 @@ Deploy integration environment:
 oc project agi-apps-integration
 oc process -f dds/dds.yaml \
   -p env=int \
-  -p TAG=1.0.19 \
+  -p TAG=X.X \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p CPU_LIMIT="750m" \
   -p MEMORY_LIMIT="600Mi" \
@@ -58,7 +58,7 @@ Deploy production environment:
 oc project agi-apps-production
 oc process -f dds/dds.yaml \
   -p env=prod \
-  -p TAG=1.0.19 \
+  -p TAG=X.X \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p CPU_LIMIT="750m" \
   -p MEMORY_LIMIT="600Mi" \
