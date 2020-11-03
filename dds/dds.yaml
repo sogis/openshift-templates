@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: dds
+labels:
+  template: dds-template
+  app: dds
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: dds
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: sogis/dds:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: dds
+  spec:
+    template:
+      metadata:
+        labels:
+          app: dds
+          deploymentconfig: dds
+      spec:
+        containers:
+        - name: dds
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1 
+    replicas: 1
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - dds
+        from:
+          kind: ImageStreamTag
+          name: dds:${TAG}
+    selector:
+      app: dds
+      deploymentconfig: dds
+    strategy:
+      type: Rolling
+    revisionHistoryLimit: 10
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: dds
+    annotations:
+      description: http port of application
+    labels:
+      app: dds
+      deploymentconfig: dds
+  spec:
+    selector:
+      deploymentconfig: dds
+    ports:
+    - protocol: TCP
+      name: "80"
+      port: 80
+      targetPort: 8080
+parameters:
+- name: ENV
+  description: "Name for Environment"
+- name: TAG
+  description: "The Docker image tag to use (e.g. latest, 1.0.11)"
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: "Regularly check for changed image (default: false)"
+  value: "false"
+- name: CPU_LIMIT
+  description: "Set Limit for cpu"
+  required: true
+- name: MEMORY_LIMIT
+  description: "Set Limit for Memory Usage"
+  required: true
+- name: CPU_REQUEST
+  description: "Set Request for cpu"
+  required: true
+- name: MEMORY_REQUEST
+  description: "Set Request for Memory"
+  required: true
