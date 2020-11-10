@@ -36,6 +36,24 @@ objects:
       release: "solr"
       component: "server"
 
+- apiVersion: "v1"
+  kind: "Service"
+  metadata:
+    name: "solr-headless-clientip"
+    labels:
+      app: solr
+      release: solr
+  spec:
+    clusterIP: "None"
+    ports:
+    - port: 8983
+      name: "solr-headless-clientip"
+    selector:
+      app: "solr"
+      release: "solr"
+      component: "server"
+    sessionAffinity: ClientIP
+
 - apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
