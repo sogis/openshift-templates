@@ -1,8 +1,30 @@
 # ilivalidator-web-service
 
 ## First install in an Openshift Environment
-
-All necessary components of the application are configured in the template ilivalidator-web-service.yaml
+Checkout the openshift-templates repository:
+```
+git clone https://github.com/sogis/openshift-templates.git
+cd openshift-templates
+```
+Create the following secret YAML file locally, in a directory outside the checked out Git repository. Replace the `xy` placeholders with the
+appropriate keepass values. Then, in each environment (test, integration, production) create the secrets by running
+```
+oc create -n PROJECTNAME -f FILENAME
+```
+aws-secret-ilivalidator.yaml
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-secret-gb2av
+  labels:
+    app: gb2av
+type: Opaque
+stringData:
+  awsAccessKey: xy
+  awsSecretKey: xy
+```
+All other necessary components of the application are configured in the template ilivalidator-web-service.yaml
 Set environment and desired version of the image for test,int and prod environment
 ```
 oc process -p env=test -p version=latest \
