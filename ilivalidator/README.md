@@ -21,8 +21,8 @@ metadata:
     app: gb2av
 type: Opaque
 stringData:
-  awsAccessKey: xy
-  awsSecretKey: xy
+  AWS_ACCESS_KEY_ID: xy
+  AWS_SECRET_ACCESS_KEY: xy
 ```
 All other necessary components of the application are configured in the template ilivalidator-web-service.yaml
 Set environment and desired version of the image for test,int and prod environment

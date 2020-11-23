@@ -70,7 +70,10 @@ objects:
           deploymentconfig: ilivalidator-web-service
       spec:
         containers:
-        - image: sogis/ilivalidator-web-service
+        - envFrom:
+          - secretRef:
+              name: aws-secret-ilivalidator
+          image: sogis/ilivalidator-web-service
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 3
