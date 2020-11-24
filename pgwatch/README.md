@@ -90,3 +90,4 @@ Run
 ```
 oc process -p ENV=environment-name -f openshift_deploymentconfig_template.yaml | oc apply -f-
 ```
+After installing pgwatch expose a route in openshift for the pgwatch web gui and for grafana. Eventually it's necessary to set a data source for the Influx DB in grafana under grafana-url/datasources
