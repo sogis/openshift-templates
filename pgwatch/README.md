@@ -4,7 +4,7 @@ Checkout this repo
 git clone https://github.com/sogis/openshift-templates.git
 cd pgwatch2
 ```
-## Steps to configure your database for monitoring
+### Steps to configure your database for monitoring
 
 As a base requirement you'll need a login user (non-superuser suggested) for connecting to your PostgreSQL servers and fetching metrics queries.
 Using a user named "pgwatch2" is recommended though, as otherwise your might need to adjust some scripts for advanced monitoring options,
@@ -22,14 +22,14 @@ Additionally, for extra insights on "to be monitored" databases, it's recommende
 contrib extension and enable the [track_io_timing](https://www.postgresql.org/docs/current/static/runtime-config-statistics.html#GUC-TRACK-IO-TIMING)
 parameter in server configuration.
 
-## Helper functions to retrieve protected statistics and Integration of OS level metrics
-### first install the Python bindings for Postgres
+### Helper functions to retrieve protected statistics and Integration of OS level metrics
+##### first install the Python bindings for Postgres
 ```
 apt install postgresql-plpython3-XY
 apt install postgresqlXY-plpython3
 psql -c "CREATE EXTENSION plpython3u" mydb
 ```
-### Install necessary helper functions on the monitored database `DBNAME`
+##### Install necessary helper functions on the monitored database `DBNAME`
 ```
 psql DBNAME -h dbserver -U username -W -c 'set role role of the superuser' -f pgwatch2/metrics/00_helpers/get_backup_age_walg/9.1/metric.sql
 psql DBNAME -h dbserver -U username -W -c 'set role role of the superuser' -f pgwatch2/metrics/00_helpers/get_psutil_mem/9.1/metric.sql
