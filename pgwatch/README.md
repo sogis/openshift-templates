@@ -14,7 +14,7 @@ in case an unpriveleged monitoring account is used.  More documentation on that 
 CREATE ROLE pgwatch2 WITH LOGIN PASSWORD 'secret';
 -- NB! For very important databases it might make sense to ensure that the user
 -- account used for monitoring can only open a limited number of connections (there are according checks in code also though)
-ALTER ROLE pgwatch2 CONNECTION LIMIT 3;
+ALTER ROLE pgwatch2 CONNECTION LIMIT 6;
 GRANT pg_monitor TO pgwatch2;   -- system role available for v10+ servers to reduce superuser usage
 ```
 
