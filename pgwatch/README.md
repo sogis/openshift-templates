@@ -88,5 +88,5 @@ All usernames and passwords are stored in keepass
 ### Install pgwatch
 Run
 ```
-oc process -p ENV=environment-name -f openshift_deployment_template.yaml | oc apply -f-
+oc process -p ENV=environment-name -f openshift_deploymentconfig_template.yaml | oc apply -f-
 ```
