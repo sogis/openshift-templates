@@ -76,7 +76,7 @@ grafanauser-secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: webuser-secret-pw2
+  name: grafanauser-secret-pw2
   labels:
     app: pgwatch
 type: Opaque
@@ -84,6 +84,7 @@ stringData:
   PW2_GRAFANAUSER: xy
   PW2_GRAFANAPASSWORD: xy
 ```
+All usernames and passwords are stored in keepass
 ### Install pgwatch
 Run
 ```
