@@ -32,8 +32,6 @@ objects:
                 name: pgwatch2-config
               - mountPath: /var/lib/postgresql
                 name: pgwatch2-postgresql
-              - mountPath: /var/lib/grafana
-                name: pgwatch2-grafana
               - mountPath: /var/lib/influxdb
                 name: pgwatch2-influx
             livenessProbe:
@@ -91,20 +89,17 @@ objects:
               - secretRef:
                   name: webuser-secret-pw2
               - secretRef:
-                  name: grafana-secret-pw2 
+                  name: grafanauser-secret-pw2 
         volumes:
         - name: pgwatch2-config
           persistentVolumeClaim:
-            claimName: ${PVC_PGWATCH2}
+            claimName: pw2-pgwatch-${ENV}-claim
         - name: pgwatch2-postgresql
           persistentVolumeClaim:
-            claimName: ${PVC_POSTGRESQL}
-        - name: pgwatch2-grafana
-          persistentVolumeClaim:
-            claimName: ${PVC_GRAFANA}
+            claimName: pw2-postgresql-${ENV}-claim
         - name: pgwatch2-influx
           persistentVolumeClaim:
-            claimName: ${PVC_INFLUX}
+            claimName: pw2-influxdb-${ENV}-claim
     replicas: 1
     strategy:
       type: "Recreate"
@@ -136,20 +131,8 @@ objects:
 parameters:
 - description: environment for pgwatch
   name: ENV
-- description: PVC name for pgwatch2 config(must be pre-created, min 10 MB)
-  name: PVC_PGWATCH2
-  value: "pvc-pgwatch-${ENV}-claim"
-  required: true
-- description: PVC name for Postgres (must be pre-created, min 100 MB)
-  name: PVC_POSTGRESQL
-  value: "pvc-postgres-${ENV}-claim"
-  required: true
 - description: PVC name for Grafana (must be pre-created, min 10MB, needed only when installing plugins)
   name: PVC_GRAFANA
-- description: PVC name for InfluxDB (must be pre-created, min 1 GB, ~250 MB per monitored instance per month in "exhaustive" settings)
-  name: PVC_INFLUX
-  value: "pvc-influxdb-${ENV}-claim"
-  required: true
 - description: Don't add the local config DB to monitoring
   name: NOTESTDB
   value: ""
