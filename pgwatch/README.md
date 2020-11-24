@@ -48,7 +48,7 @@ psql DBNAME -h dbserver -U username -W -c 'set role role of the superuser' -f pg
 ```
 You need to create three pvcs with the template pgwatch_pvc.yaml. In production environment pvcs are created from the AIO on the Netapp filer 
 ``` 
-oc process -p env=test -f pgwatch_pvc.yaml  | oc apply -f-
+oc process -p ENV=test -f pgwatch_pvc.yaml  | oc apply -f-
 ```
 `openshift_deployment_template.yaml` is provided by pgwatch (https://github.com/cybertec-postgresql/pgwatch2.git). It's adapted to our infrastructure purposes.
 When updating to a new pgwatch version first check in the pgwatch repo if this template has changed.
