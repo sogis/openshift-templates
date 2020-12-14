@@ -1,17 +1,46 @@
-# Running docker-mapcache in OpenShift
+# Install or update MapCache in OpenShift
 
 ## Set up MapCache
 
 A persistent volume claim for storing the tiles must exist already.
 
-Optional: Specify Docker Hub credentials to use for pulling image:
+
+## Create a Docker image pull secret
+
+This step is needed only if this is the first installation, or if any value of the secret needs to be changed.
+
+Create a secret for pulling the Docker images, and link this secret to the default service account:
+
+For test environment:
+
 ```
 oc project agi-mapcache-test
 oc create secret docker-registry sogis-pull-secret --docker-username=xx --docker-password=yy
 oc secrets link default sogis-pull-secret --for=pull
 ```
 
-Deploy MapCache and create service and route:
+For production environment:
+
+Run the same commands as above, but connect to `agi-mapcache-production` before.
+
+
+# Deploy MapCache
+
+Checkout the openshift-templates repository:
+
+```
+git clone https://github.com/sogis/openshift-templates.git
+cd openshift-templates
+```
+
+Or, if already checked out, update the OpenShift templates repository:
+
+```
+cd openshift-templates
+git pull
+```
+
+Deploy test environment:
 ```
 oc project agi-mapcache-test
 oc process -f openshift/mapcache_template.yaml \
@@ -36,6 +65,8 @@ http://geo-wmts-t.so.ch/mapcache/wmts/1.0.0/WMTSCapabilities.xml
 ## Set up a separate QGIS Server for seeding
 
 Run the following commands to create a QGIS Server Deployment Configuration; the templates are based on those in https://github.com/sogis/pipelines/tree/master/api_webgisclient/qgis-server, and they are additionally modified so that they use the Image Registry of a different OpenShift project:
+
+Deploy test environment:
 ```
 oc project agi-mapcache-test
 oc policy add-role-to-user system:image-puller system:serviceaccount:agi-mapcache-test:default --rolebinding-name puller-agi-mapcache-test -n gdi-test
@@ -81,6 +112,8 @@ oc process -f openshift/seeder-cronjob-template.yaml \
 The *hintergrundkarte_ortho* tile set and the zoom levels 0 to 10 of the *ch.so.agi.hintergrundkarte_farbig* and the *ch.so.agi.hintergrundkarte_sw* tile set should be seeded on a local machine. Please refer to the instructions in the *seed* folder.
 
 For manual seeding of the zoom levels 11 to 14 of the *ch.so.agi.hintergrundkarte_farbig* and *ch.so.agi.hintergrundkarte_sw* tile sets, use the following commands:
+
+In test environment:
 ```
 oc project agi-mapcache-test
 oc process -f openshift/seeder-job-template.yaml \
