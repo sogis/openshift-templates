@@ -43,7 +43,7 @@ git pull
 Deploy test environment:
 ```
 oc project agi-mapcache-test
-oc process -f openshift/mapcache_template.yaml \
+oc process -f mapcache/mapcache_template.yaml \
   -p TAG=latest \
   -p IMPORT_POLICY_SCHEDULED=true \
   -p REPLICA_COUNT=1 \
@@ -65,7 +65,7 @@ http://geo-wmts-t.so.ch/mapcache/wmts/1.0.0/WMTSCapabilities.xml
 Deploy production environment:
 ```
 oc project agi-mapcache-production
-oc process -f openshift/mapcache_template.yaml \
+oc process -f mapcache/mapcache_template.yaml \
   -p TAG=27 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p REPLICA_COUNT=2 \
@@ -92,13 +92,13 @@ Deploy test environment:
 ```
 oc project agi-mapcache-test
 oc policy add-role-to-user system:image-puller system:serviceaccount:agi-mapcache-test:default --rolebinding-name puller-agi-mapcache-test -n gdi-test
-oc process -f openshift/qgis-server_resources.yaml \
+oc process -f mapcache/qgis-server_resources.yaml \
   -p DB_SERVER=xy \
   -p DB_PUB=xy \
   -p USER_OGC_SERVER=xy \
   -p PW_OGC_SERVER=xy \
   | oc apply -f -
-oc process -f openshift/qgis-server_deploymentconfig.yaml \
+oc process -f mapcache/qgis-server_deploymentconfig.yaml \
   -p ENVIRONMENT=test \
   -p NAMESPACE=gdi-test \
   -p TAG=latest \
@@ -114,13 +114,13 @@ Deploy production environment:
 ```
 oc project agi-mapcache-production
 oc policy add-role-to-user system:image-puller system:serviceaccount:agi-mapcache-production:default --rolebinding-name puller-agi-mapcache-production -n gdi
-oc process -f openshift/qgis-server_resources.yaml \
+oc process -f mapcache/qgis-server_resources.yaml \
   -p DB_SERVER=xy \
   -p DB_PUB=xy \
   -p USER_OGC_SERVER=xy \
   -p PW_OGC_SERVER=xy \
   | oc apply -f -
-oc process -f openshift/qgis-server_deploymentconfig.yaml \
+oc process -f mapcache/qgis-server_deploymentconfig.yaml \
   -p ENVIRONMENT=production \
   -p NAMESPACE=gdi \
   -p TAG=latest \
@@ -143,7 +143,7 @@ In test environment:
 In production environment:
 ```
 oc project agi-mapcache-production
-oc process -f openshift/seeder-cronjob-template.yaml \
+oc process -f mapcache/seeder-cronjob-template.yaml \
   -p PVC_NAME=gdi-mapcache-lowback \
   -p ZOOM_LEVELS=11,14 \
   -p SCHEDULE='00 03 * * *' \
@@ -164,13 +164,13 @@ For manual seeding of the zoom levels 11 to 14 of the *ch.so.agi.hintergrundkart
 In test environment:
 ```
 oc project agi-mapcache-test
-oc process -f openshift/seeder-job-template.yaml \
+oc process -f mapcache/seeder-job-template.yaml \
   -p PVC_NAME=gditest-mapcache-lowback \
   -p VARIANT=farbig \
   -p ZOOM_LEVELS=11,14 \
   -p ENVIRONMENT_NAME=test \
   | oc create -f -
-oc process -f openshift/seeder-job-template.yaml \
+oc process -f mapcache/seeder-job-template.yaml \
   -p PVC_NAME=gditest-mapcache-lowback \
   -p VARIANT=sw \
   -p ZOOM_LEVELS=11,14 \
@@ -181,13 +181,13 @@ oc process -f openshift/seeder-job-template.yaml \
 In production environment:
 ```
 oc project agi-mapcache-production
-oc process -f openshift/seeder-job-template.yaml \
+oc process -f mapcache/seeder-job-template.yaml \
   -p PVC_NAME=gdi-mapcache-lowback \
   -p VARIANT=farbig \
   -p ZOOM_LEVELS=11,14 \
   -p ENVIRONMENT_NAME=production \
   | oc create -f -
-oc process -f openshift/seeder-job-template.yaml \
+oc process -f mapcache/seeder-job-template.yaml \
   -p PVC_NAME=gdi-mapcache-lowback \
   -p VARIANT=sw \
   -p ZOOM_LEVELS=11,14 \
