@@ -28,8 +28,6 @@ objects:
               - containerPort: 8088
                 protocol: "TCP"
             volumeMounts:
-              - mountPath: /pgwatch2/persistent-config
-                name: pgwatch2-config
               - mountPath: /var/lib/postgresql
                 name: pgwatch2-postgresql
               - mountPath: /var/lib/influxdb
@@ -91,9 +89,6 @@ objects:
               - secretRef:
                   name: grafanauser-secret-pw2 
         volumes:
-        - name: pgwatch2-config
-          persistentVolumeClaim:
-            claimName: pw2-pgwatch-${ENV}-claim
         - name: pgwatch2-postgresql
           persistentVolumeClaim:
             claimName: pw2-postgresql-${ENV}-claim
