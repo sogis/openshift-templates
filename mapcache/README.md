@@ -59,7 +59,7 @@ oc process -f mapcache/mapcache_template.yaml \
 
 Check the deployment:
 ```
-http://geo-wmts-t.so.ch/mapcache/wmts/1.0.0/WMTSCapabilities.xml
+https://geo-wmts-t.so.ch/mapcache/wmts/1.0.0/WMTSCapabilities.xml
 ```
 
 Deploy production environment:
@@ -81,7 +81,7 @@ oc process -f mapcache/mapcache_template.yaml \
 
 Check the deployment:
 ```
-http://geo-wmts.so.ch/mapcache/wmts/1.0.0/WMTSCapabilities.xml
+https://geo-wmts.so.ch/mapcache/wmts/1.0.0/WMTSCapabilities.xml
 ```
 
 ## Set up a separate QGIS Server for seeding
