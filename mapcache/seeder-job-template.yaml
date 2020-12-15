@@ -14,7 +14,7 @@ objects:
       spec:
         containers:
         - name: seeder-manual-${VARIANT}
-          image: sogis/docker-mapcache
+          image: docker-registry.default.svc:5000/${NAMESPACE}/mapcache:seeder
           command:
           - mapcache_seed
           - -c
@@ -42,6 +42,9 @@ objects:
           persistentVolumeClaim:
             claimName: ${PVC_NAME}
 parameters:
+- name: NAMESPACE
+  description: "The namespace where the mapcache imagestream resides"
+  displayName: Namespace of the mapcache imagestream
 - name: PVC_NAME
   description: Persistent Volume Claim to be added to the container
   displayName: Persistent Volume Claim name
