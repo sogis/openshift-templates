@@ -37,6 +37,7 @@ psql DBNAME -h dbserver -c 'set role role of the superuser' -f pgwatch2/metrics/
 psql DBNAME -h dbserver -c 'set role role of the superuser' -f pgwatch2/metrics/00_helpers/get_table_bloat_approx/9.5/metric.sql
 psql DBNAME -h dbserver -c 'set role role of the superuser' -f pgwatch2/metrics/00_helpers/get_table_bloat_approx_sql/12/metric.sql
 psql DBNAME -h dbserver -c 'set role role of the superuser' -f pgwatch2/metrics/00_helpers/get_load_average/9.1/metric.sql
+psql DBNAME -h dbserver -c 'set role role of the superuser' -f pgwatch2/metrics/00_helpers/get_psutil_disk/9.1/metric.sql
 ```
 You need to create three pvcs with the template pgwatch_pvc.yaml. In production environment pvcs are created from the AIO on the Netapp filer 
 ``` 
