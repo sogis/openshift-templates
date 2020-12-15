@@ -144,6 +144,7 @@ In production environment:
 ```
 oc project agi-mapcache-production
 oc process -f mapcache/seeder-cronjob-template.yaml \
+  -p NAMESPACE=agi-mapcache-production \
   -p PVC_NAME=gdi-mapcache-lowback \
   -p ZOOM_LEVELS=11,14 \
   -p SCHEDULE='00 03 * * *' \
@@ -165,12 +166,14 @@ In test environment:
 ```
 oc project agi-mapcache-test
 oc process -f mapcache/seeder-job-template.yaml \
+  -p NAMESPACE=agi-mapcache-test \
   -p PVC_NAME=gditest-mapcache-lowback \
   -p VARIANT=farbig \
   -p ZOOM_LEVELS=11,14 \
   -p ENVIRONMENT_NAME=test \
   | oc create -f -
 oc process -f mapcache/seeder-job-template.yaml \
+  -p NAMESPACE=agi-mapcache-test \
   -p PVC_NAME=gditest-mapcache-lowback \
   -p VARIANT=sw \
   -p ZOOM_LEVELS=11,14 \
@@ -182,12 +185,14 @@ In production environment:
 ```
 oc project agi-mapcache-production
 oc process -f mapcache/seeder-job-template.yaml \
+  -p NAMESPACE=agi-mapcache-production \
   -p PVC_NAME=gdi-mapcache-lowback \
   -p VARIANT=farbig \
   -p ZOOM_LEVELS=11,14 \
   -p ENVIRONMENT_NAME=production \
   | oc create -f -
 oc process -f mapcache/seeder-job-template.yaml \
+  -p NAMESPACE=agi-mapcache-production \
   -p PVC_NAME=gdi-mapcache-lowback \
   -p VARIANT=sw \
   -p ZOOM_LEVELS=11,14 \

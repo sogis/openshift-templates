@@ -18,6 +18,12 @@ objects:
       importPolicy:
         scheduled: ${{IMPORT_POLICY_SCHEDULED}}
       name: ${TAG}
+    - from:
+        kind: DockerImage
+        name: sogis/docker-mapcache:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: seeder
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
