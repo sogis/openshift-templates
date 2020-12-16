@@ -73,7 +73,6 @@ objects:
             value: ${QGIS_FCGI_MIN_PROCESSES}
           - name: QGIS_FCGI_MAX_PROCESSES
             value: ${QGIS_FCGI_MAX_PROCESSES}
-          image: docker-registry.default.svc:5000/${QGIS_SERVER_IMAGESTREAM_NAMESPACE}/qgis-server:${TAG}
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
