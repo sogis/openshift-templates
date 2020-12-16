@@ -100,7 +100,7 @@ oc process -f mapcache/qgis-server_resources.yaml \
   | oc apply -f -
 oc process -f mapcache/qgis-server_deploymentconfig.yaml \
   -p ENVIRONMENT=test \
-  -p NAMESPACE=gdi-test \
+  -p QGIS_SERVER_IMAGESTREAM_NAMESPACE=gdi-test \
   -p TAG=latest \
   -p REPLICAS=1 \
   -p CPU_REQUEST=0.5 \
@@ -122,7 +122,7 @@ oc process -f mapcache/qgis-server_resources.yaml \
   | oc apply -f -
 oc process -f mapcache/qgis-server_deploymentconfig.yaml \
   -p ENVIRONMENT=production \
-  -p NAMESPACE=gdi \
+  -p QGIS_SERVER_IMAGESTREAM_NAMESPACE=gdi \
   -p TAG=latest \
   -p REPLICAS=1 \
   -p CPU_REQUEST=1 \
