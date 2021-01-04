@@ -44,6 +44,7 @@ objects:
               - mountPath: /tiles
                 name: mapcache-tiles 
             restartPolicy: Never
+            activeDeadlineSeconds: 21600
             volumes:
             - name: mapcache-tiles
               persistentVolumeClaim:
