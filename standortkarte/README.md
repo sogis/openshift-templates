@@ -36,10 +36,10 @@ Deploy integration environment:
 ```
 oc project agi-apps-integration
 oc process -f standortkarte/standortkarte.yaml \
-  -p TAG=1.1.7 \
+  -p TAG=2.0.15 \
   -p IMPORT_POLICY_SCHEDULED=false \
-  -p CPU_LIMIT="100m" \
-  -p MEMORY_LIMIT="150Mi" \
+  -p CPU_LIMIT="200m" \
+  -p MEMORY_LIMIT="200Mi" \
   -p CPU_REQUEST="10m" \
   -p MEMORY_REQUEST="100Mi" \
   | oc apply -f -
@@ -50,11 +50,11 @@ Deploy production environment:
 ```
 oc project agi-apps-production
 oc process -f standortkarte/standortkarte.yaml \
-  -p TAG=1.1.7 \
+  -p TAG=2.0.15 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p REPLICA_COUNT=2 \
-  -p CPU_LIMIT="50m" \
-  -p MEMORY_LIMIT="100Mi" \
+  -p CPU_LIMIT="200m" \
+  -p MEMORY_LIMIT="200Mi" \
   -p CPU_REQUEST="10m" \
   -p MEMORY_REQUEST="100Mi" \
   | oc apply -f -
