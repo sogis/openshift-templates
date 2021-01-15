@@ -28,6 +28,7 @@ oc process -f standortkarte/standortkarte.yaml \
   -p MEMORY_LIMIT="0" \
   -p CPU_REQUEST="0" \
   -p MEMORY_REQUEST="0" \
+  -p ENVIRONMENT_SHORT=test \
   | oc apply -f -
 ```
 
@@ -42,6 +43,7 @@ oc process -f standortkarte/standortkarte.yaml \
   -p MEMORY_LIMIT="200Mi" \
   -p CPU_REQUEST="10m" \
   -p MEMORY_REQUEST="100Mi" \
+  -p ENVIRONMENT_SHORT=int \
   | oc apply -f -
 ```
 
@@ -57,5 +59,6 @@ oc process -f standortkarte/standortkarte.yaml \
   -p MEMORY_LIMIT="200Mi" \
   -p CPU_REQUEST="10m" \
   -p MEMORY_REQUEST="100Mi" \
+  -p ENVIRONMENT_SHORT=prod \
   | oc apply -f -
 ```
