@@ -50,10 +50,10 @@ oc process -f mapcache/mapcache_template.yaml \
   -p ENVIRONMENT=test \
   -p TILES_PVC_NAME=gditest-mapcache-lowback \
   -p HOSTNAME=geo-wmts-t.so.ch \
-  -p CPU_REQUEST=250m \
-  -p CPU_LIMIT=1 \
-  -p MEMORY_REQUEST=200Mi \
-  -p MEMORY_LIMIT=600Mi \
+  -p CPU_REQUEST=0 \
+  -p CPU_LIMIT=0 \
+  -p MEMORY_REQUEST=0 \
+  -p MEMORY_LIMIT=0 \
   | oc apply -f -
 ```
 
@@ -103,10 +103,10 @@ oc process -f mapcache/qgis-server_deploymentconfig.yaml \
   -p QGIS_SERVER_IMAGESTREAM_NAMESPACE=gdi-test \
   -p TAG=latest \
   -p REPLICAS=1 \
-  -p CPU_REQUEST=0.5 \
-  -p CPU_LIMIT=2 \
-  -p MEMORY_REQUEST=2Gi \
-  -p MEMORY_LIMIT=4Gi \
+  -p CPU_REQUEST=0 \
+  -p CPU_LIMIT=0 \
+  -p MEMORY_REQUEST=0 \
+  -p MEMORY_LIMIT=0 \
   | oc apply -f -
 ```
 
