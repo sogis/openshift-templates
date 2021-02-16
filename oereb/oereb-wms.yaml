@@ -31,7 +31,6 @@ objects:
       spec:
         containers:
         - name: oereb-wms
-          image: sogis/oereb-wms:${TAG}
           env:
           - name: QGIS_FCGI_MIN_PROCESSES
             value: ${QGIS_FCGI_MIN_PROCESSES}
