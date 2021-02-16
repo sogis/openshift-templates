@@ -66,7 +66,7 @@ Deploy production environment:
 ```
 oc project agi-mapcache-production
 oc process -f mapcache/mapcache_template.yaml \
-  -p TAG=27 \
+  -p TAG=41 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p REPLICA_COUNT=2 \
   -p ENVIRONMENT=production \
