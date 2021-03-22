@@ -123,7 +123,7 @@ parameters:
 - name: SERVICE_URL
   description: "The base URL of the MapCache service (e.g. https://geo-t.so.ch/api)"
 - name: SOURCE_URL
-  description: "The base URL of the source WMS (e.g. https://geo-t.so.ch/api/wms)"
+  description: "The base URL of the source WMS (e.g. http://qgis-server.agi-mapcache-test.svc/ows/somap)"
 - name: TILES_PVC_NAME
   description: "The name of the Persisent Volume Claim containing the tiles"
 - name: HOSTNAME
