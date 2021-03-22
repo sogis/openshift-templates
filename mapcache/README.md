@@ -67,7 +67,7 @@ Deploy production environment:
 ```
 oc project agi-mapcache-production
 oc process -f mapcache/mapcache_template.yaml \
-  -p TAG=41 \
+  -p TAG=45 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p REPLICA_COUNT=2 \
   -p SERVICE_URL=https://geo.so.ch/api \
