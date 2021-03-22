@@ -15,17 +15,7 @@ objects:
         containers:
         - name: seeder-manual-${VARIANT}
           image: docker-registry.default.svc:5000/${NAMESPACE}/mapcache:seeder
-          command:
-          - mapcache_seed
-          - -c
-          - /mapcache/mapcache.xml
-          - -t
-          - ch.so.agi.hintergrundkarte_${VARIANT}
-          - -f
-          - -z
-          - ${ZOOM_LEVELS}
-          - -n
-          - "4"
+          args: ["mapcache_seed", "-c", "/mapcache/mapcache.xml", "-t", "ch.so.agi.hintergrundkarte_${VARIANT}", "-f", "-z", "${ZOOM_LEVELS}", "-n", "4"]
           env:
           - name: SOURCE_URL
             value: ${SOURCE_URL}
