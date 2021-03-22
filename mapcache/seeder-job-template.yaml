@@ -18,7 +18,7 @@ objects:
           command:
           - mapcache_seed
           - -c
-          - /mapcache/mapcache${ENVIRONMENT_NAME}.xml
+          - /mapcache/mapcache.xml
           - -t
           - ch.so.agi.hintergrundkarte_${VARIANT}
           - -f
@@ -26,6 +26,9 @@ objects:
           - ${ZOOM_LEVELS}
           - -n
           - "4"
+          env:
+          - name: SOURCE_URL
+            value: ${SOURCE_URL}
           resources:
             limits:
               cpu: ${CPU_LIMIT}
@@ -57,10 +60,8 @@ parameters:
   description: The zoom levels to be seeded by this job (e.g. 0,10)
   displayName: Zoom levels to seed
   value: 0,14
-- name: ENVIRONMENT_NAME
-  description: Name of the environment in which the container is running (e.g. test or production)
-  displayName: Environment name
-  value: ''
+- name: SOURCE_URL
+  description: "The base URL of the source WMS (e.g. http://qgis-server.agi-mapcache-test.svc/ows/somap)"
 - name: CPU_REQUEST
   description: "The minimum amount of CPU the container is guaranteed."
   value: 500m
