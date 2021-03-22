@@ -47,7 +47,8 @@ oc process -f mapcache/mapcache_template.yaml \
   -p TAG=latest \
   -p IMPORT_POLICY_SCHEDULED=true \
   -p REPLICA_COUNT=1 \
-  -p ENVIRONMENT=test \
+  -p SERVICE_URL=https://geo-t.so.ch/api \
+  -p SOURCE_URL=http://qgis-server.agi-mapcache-test.svc/ows/somap \
   -p TILES_PVC_NAME=gditest-mapcache-lowback \
   -p HOSTNAME=geo-wmts-t.so.ch \
   -p CPU_REQUEST=0 \
@@ -69,7 +70,8 @@ oc process -f mapcache/mapcache_template.yaml \
   -p TAG=41 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p REPLICA_COUNT=2 \
-  -p ENVIRONMENT=production \
+  -p SERVICE_URL=https://geo.so.ch/api \
+  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
   -p TILES_PVC_NAME=gdi-mapcache-lowback \
   -p HOSTNAME=geo-wmts.so.ch \
   -p CPU_REQUEST=250m \
@@ -148,7 +150,7 @@ oc process -f mapcache/seeder-cronjob-template.yaml \
   -p PVC_NAME=gdi-mapcache-lowback \
   -p ZOOM_LEVELS=11,14 \
   -p SCHEDULE='00 03 * * *' \
-  -p ENVIRONMENT_NAME=production \
+  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
   -p PGHOST=xy \
   -p PGDATABASE=pub \
   -p PGUSER=ogc_server \
@@ -170,14 +172,14 @@ oc process -f mapcache/seeder-job-template.yaml \
   -p PVC_NAME=gditest-mapcache-lowback \
   -p VARIANT=farbig \
   -p ZOOM_LEVELS=11,14 \
-  -p ENVIRONMENT_NAME=test \
+  -p SOURCE_URL=http://qgis-server.agi-mapcache-test.svc/ows/somap \
   | oc create -f -
 oc process -f mapcache/seeder-job-template.yaml \
   -p NAMESPACE=agi-mapcache-test \
   -p PVC_NAME=gditest-mapcache-lowback \
   -p VARIANT=sw \
   -p ZOOM_LEVELS=11,14 \
-  -p ENVIRONMENT_NAME=test \
+  -p SOURCE_URL=http://qgis-server.agi-mapcache-test.svc/ows/somap \
   | oc create -f -
 ```
 
@@ -189,14 +191,14 @@ oc process -f mapcache/seeder-job-template.yaml \
   -p PVC_NAME=gdi-mapcache-lowback \
   -p VARIANT=farbig \
   -p ZOOM_LEVELS=11,14 \
-  -p ENVIRONMENT_NAME=production \
+  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
   | oc create -f -
 oc process -f mapcache/seeder-job-template.yaml \
   -p NAMESPACE=agi-mapcache-production \
   -p PVC_NAME=gdi-mapcache-lowback \
   -p VARIANT=sw \
   -p ZOOM_LEVELS=11,14 \
-  -p ENVIRONMENT_NAME=production \
+  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
   | oc create -f -
 ```
 

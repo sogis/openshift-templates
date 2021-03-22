@@ -38,8 +38,10 @@ objects:
         containers:
         - name: mapcache
           env:
-          - name: ENVIRONMENT
-            value: ${ENVIRONMENT}
+          - name: SERVICE_URL
+            value: ${SERVICE_URL}
+          - name: SOURCE_URL
+            value: ${SOURCE_URL}
           readinessProbe:
             httpGet:
               path: mapcache/wmts/1.0.0/WMTSCapabilities.xml
@@ -118,8 +120,10 @@ parameters:
 - name: REPLICA_COUNT
   description: "Number of replicas to run"
   value: "1"
-- name: ENVIRONMENT
-  description: "The name of the environment (test, production)"
+- name: SERVICE_URL
+  description: "The base URL of the MapCache service (e.g. https://geo-t.so.ch/api)"
+- name: SOURCE_URL
+  description: "The base URL of the source WMS (e.g. https://geo-t.so.ch/api/wms)"
 - name: TILES_PVC_NAME
   description: "The name of the Persisent Volume Claim containing the tiles"
 - name: HOSTNAME
