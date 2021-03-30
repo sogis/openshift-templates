@@ -130,7 +130,7 @@ oc process -f mapcache/qgis-server_deploymentconfig.yaml \
   -p CPU_REQUEST=1 \
   -p CPU_LIMIT=6 \
   -p MEMORY_REQUEST=2Gi \
-  -p MEMORY_LIMIT=10Gi \
+  -p MEMORY_LIMIT=6Gi \
   | oc apply -f -
 ```
 
