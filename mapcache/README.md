@@ -101,9 +101,9 @@ oc process -f mapcache/qgis-server_resources.yaml \
   -p PW_OGC_SERVER=xy \
   | oc apply -f -
 oc process -f mapcache/qgis-server_deploymentconfig.yaml \
-  -p ENVIRONMENT=test \
   -p QGIS_SERVER_IMAGESTREAM_NAMESPACE=gdi-test \
   -p TAG=latest \
+  -p GEODATA_PVC_NAME=datensogispicmir-claim-test \
   -p REPLICAS=1 \
   -p CPU_REQUEST=0 \
   -p CPU_LIMIT=0 \
@@ -123,9 +123,9 @@ oc process -f mapcache/qgis-server_resources.yaml \
   -p PW_OGC_SERVER=xy \
   | oc apply -f -
 oc process -f mapcache/qgis-server_deploymentconfig.yaml \
-  -p ENVIRONMENT=production \
   -p QGIS_SERVER_IMAGESTREAM_NAMESPACE=gdi \
   -p TAG=latest \
+  -p GEODATA_PVC_NAME=datensogispicmir-claim2 \
   -p REPLICAS=1 \
   -p CPU_REQUEST=1 \
   -p CPU_LIMIT=6 \

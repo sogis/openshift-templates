@@ -9,8 +9,8 @@ parameters:
     name: QGIS_SERVER_IMAGESTREAM_NAMESPACE
   - description: Image Stream Tag
     name: TAG
-  - description: Environment
-    name: ENVIRONMENT
+  - description: The name of the geodata persistent volume claim
+    name: GEODATA_PVC_NAME
   - description: Number of Replicas
     name: REPLICAS
   - description: Minimum number of QGIS Server FCGI processes requested
@@ -133,7 +133,7 @@ objects:
             claimName: qgs-resources-claim1
         - name: datensogispicmir
           persistentVolumeClaim:
-            claimName: datensogispicmir-claim-${ENVIRONMENT}
+            claimName: ${GEODATA_PVC_NAME}
     test: false
     triggers:
     - type: ConfigChange
