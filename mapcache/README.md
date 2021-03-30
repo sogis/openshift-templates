@@ -123,7 +123,7 @@ oc process -f mapcache/qgis-server_resources.yaml \
   -p PW_OGC_SERVER=xy \
   | oc apply -f -
 oc process -f mapcache/qgis-server_deploymentconfig.yaml \
-  -p QGIS_SERVER_IMAGESTREAM_NAMESPACE=gdi \
+  -p QGIS_SERVER_IMAGESTREAM_NAMESPACE=gdi-production \
   -p TAG=latest \
   -p GEODATA_PVC_NAME=datensogispicmir-claim2 \
   -p REPLICAS=1 \
