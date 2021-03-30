@@ -10,7 +10,7 @@ Set version parameter to set Image version
 ```
 oc process -f nginx-prometheus-exporter.yaml \
   -p APPNAME=nginx-prometheus-exporter \
-  -p IMAGENAME=nginx/nginx-prometheus-exporter \ 
+  -p IMAGENAME=nginx/nginx-prometheus-exporter \
   -p TAG=0.8.0 \
   -p scheduled=false \
   -p env="gdi-test" \ 
