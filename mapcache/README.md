@@ -115,7 +115,7 @@ oc process -f mapcache/qgis-server_deploymentconfig.yaml \
 Deploy production environment:
 ```
 oc project agi-mapcache-production
-oc policy add-role-to-user system:image-puller system:serviceaccount:agi-mapcache-production:default --rolebinding-name puller-agi-mapcache-production -n gdi
+oc policy add-role-to-user system:image-puller system:serviceaccount:agi-mapcache-production:default --rolebinding-name puller-agi-mapcache-production -n gdi-production
 oc process -f mapcache/qgis-server_resources.yaml \
   -p DB_SERVER=xy \
   -p DB_PUB=xy \
