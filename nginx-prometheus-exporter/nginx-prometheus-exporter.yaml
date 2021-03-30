@@ -17,7 +17,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-        name: nginx/${IMAGENAME}:${TAG}
+        name: ${IMAGENAME}:${TAG}
       importPolicy:
         scheduled: ${{IMPORT_POLICY_SCHEDULED}}
       name: ${TAG}
