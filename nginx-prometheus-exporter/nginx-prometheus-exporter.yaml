@@ -63,7 +63,7 @@ objects:
     - name: 80-tcp
       port: 80
       protocol: TCP
-      targetPort:
+      targetPort: 9113
     selector:
       app: ${APPNAME}
 parameters:
