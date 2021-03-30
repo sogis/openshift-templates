@@ -12,7 +12,7 @@ oc process -f nginx-prometheus-exporter.yaml \
   -p APPNAME=nginx-prometheus-exporter \
   -p IMAGENAME=nginx/nginx-prometheus-exporter \
   -p TAG=0.8.0 \
-  -p scheduled=false \
-  -p env="gdi-test" \
+  -p IMPORT_POLICY_SCHEDULED=false \
+  -p ENV="gdi-test" \
   | oc apply -f-
 ```
