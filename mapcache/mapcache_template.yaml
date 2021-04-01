@@ -44,13 +44,13 @@ objects:
             value: ${SOURCE_URL}
           readinessProbe:
             httpGet:
-              path: mapcache/wmts/1.0.0/WMTSCapabilities.xml
+              path: mapcache/wmts/1.0.0/ch.so.agi.hintergrundkarte_sw/default/2056/2/0/0.png
               port: 8080
             initialDelaySeconds: 2
             timeoutSeconds: 1
           livenessProbe:
             httpGet:
-              path: mapcache/wmts/1.0.0/WMTSCapabilities.xml
+              path: mapcache/wmts/1.0.0/ch.so.agi.hintergrundkarte_sw/default/2056/2/0/0.png
               port: 8080
             initialDelaySeconds: 2
             timeoutSeconds: 1
