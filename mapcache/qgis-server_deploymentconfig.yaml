@@ -83,21 +83,11 @@ objects:
             initialDelaySeconds: 1
             periodSeconds: 60
             successThreshold: 1
-            timeoutSeconds: 8
+            timeoutSeconds: 20
           name: sogis-qgis-server
           ports:
           - containerPort: 80
             protocol: TCP
-          readinessProbe:
-            failureThreshold: 1
-            httpGet:
-              path: index.html
-              port: 80
-              scheme: HTTP
-            initialDelaySeconds: 1
-            periodSeconds: 30
-            successThreshold: 1
-            timeoutSeconds: 5
           resources:
             limits:
               cpu: ${CPU_LIMIT}
