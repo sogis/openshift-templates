@@ -39,7 +39,7 @@ objects:
         - name: ${APPNAME}
           envFrom:
           - secretRef:
-              name: simi-schemareader-db-secret
+              name: simi-schemareader-db-credentials
           readinessProbe:
             failureThreshold: 3
             httpGet:
