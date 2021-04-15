@@ -13,12 +13,12 @@ Then, in each environment (test, integration, production).
 oc create -f FILENAME
 ```
 
-simi-db-secret.yaml
+simi-db-credentials.yaml
 ```
 apiVersion: v1
 kind: Secret
 metadata:
-  name: simi-db-secret
+  name: simi-db-credentials
   labels:
     app: simi
 type: Opaque
@@ -27,15 +27,15 @@ stringData:
   CUBA_DATASOURCE_PASSWORD: xy
   CUBA_DATASOURCE_DBNAME: xy
   CUBA_DATASOURCE_PORT: xy
-  CUBA_DATASOURCE_HOST  
+  CUBA_DATASOURCE_HOST: xy  
 ```
 
-simi-ldap-secret.yaml
+simi-ldap-credentials.yaml
 ```
 apiVersion: v1
 kind: Secret
 metadata:
-  name: simi-db-secret
+  name: simi-ldap-credentials
   labels:
     app: simi
 type: Opaque
@@ -47,12 +47,12 @@ stringData:
   CUBA_WEB_LDAP_USERLOGINFIELD: xy
 ```
 
-simi-schemareader-db-secret.yaml
+simi-schemareader-db-credentials.yaml
 ```
 apiVersion: v1
 kind: Secret
 metadata:
-  name: simi-schemareader-db-secret
+  name: simi-schemareader-db-credentials
   labels:
     app: simi-schemareader
 type: Opaque
