@@ -16,7 +16,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-        name: sogis/${IMAGENAME}:${TAG}
+        name: ${IMAGENAME}:${TAG}
       importPolicy:
         scheduled: ${{IMPORT_POLICY_SCHEDULED}}
       name: ${TAG}
