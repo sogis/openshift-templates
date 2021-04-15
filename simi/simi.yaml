@@ -16,7 +16,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-        name: sogis/${IMAGENAME}:${TAG}
+        name: ${IMAGENAME}:${TAG}
       importPolicy:
         scheduled: ${{IMPORT_POLICY_SCHEDULED}}
       name: ${TAG}
@@ -39,7 +39,9 @@ objects:
         - name: ${APPNAME}
           envFrom:
           - secretRef:
-              name: cuba-db-user
+              name: simi-db-credentials
+          - secretRef:
+              name: simi-ldap-credentials
           env:
           - name: CUBA_WEB_REQUIREPASSWORDFORNEWUSERS
             value: false
@@ -151,3 +153,5 @@ parameters:
 - name: MEMORY_LIMIT
   description: "The maximum amount of memory the container is allowed to use when running."
   value: 600Mi
+- name: SIMI_SCHEMAREADER_URL
+  description: "Url to the simi-schemareader"
