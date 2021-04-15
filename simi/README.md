@@ -57,7 +57,7 @@ metadata:
     app: simi-schemareader
 type: Opaque
 stringData:
-  SPRING_APPLICATION_JSON: {"dbs":[{"key":"edit","url":"jdbc:postgresql://localhost:5432/edit_datenbank","user":"xy","pass":"xy"},{"key":"pub","url":"jdbc:postgresql://localhost:5432/pub_datenbank","user":"xy","pass":"xy"}]}
+  SPRING_APPLICATION_JSON: "{'dbs':[{'key':'edit','url':'jdbc:postgresql://localhost:5432/edit_datenbank','user':'xy','pass':'xy'},{'key':'pub','url':'jdbc:postgresql://localhost:5432/pub_datenbank','user':'xy','pass':'xy'}]}"
 ```
 
 Deploy in Test environment
