@@ -44,13 +44,13 @@ objects:
               name: simi-ldap-credentials
           env:
           - name: CUBA_WEB_REQUIREPASSWORDFORNEWUSERS
-            value: false
+            value: "false"
           - name: CUBA_WEB_STANDARDAUTHENTICATIONUSERS
             value: admin
           - name: CUBA_WEB_PRODUCTIONMODE
-            value: true
+            value: "true"
           - name: SIMI_CONFIG_STOPONINCOMPLETE
-            value: false
+            value: "false"
           - name: SIMI_GITSEARCH_URL
             value: https://api.github.com/search/code
           - name: SIMI_GITSEARCH_REPOS
