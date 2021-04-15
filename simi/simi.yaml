@@ -58,7 +58,7 @@ objects:
           - name: SIMI_PUBLISHJOB_BASEURL
             value: fuu
           - name: SIMI_PUBLISHJOB_POLLTIMEOUT
-            value: 5
+            value: "5"
           - name: SIMI_PUBLISHJOB_SECTOKEN
             value: secret
           - name: SIMI_SCHEMAREADER_URL
