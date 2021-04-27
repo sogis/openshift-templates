@@ -1,31 +1,107 @@
 apiVersion: v1
 kind: Template
 metadata:
-  creationTimestamp: null
-  name: interlis-repository
-  annotations:
-    openshift.io/display-name: "Official SO!GIS INTERLIS repository"
-    description: >-
-      "Creates all necessary components for Official SO!GIS INTERLIS repository"
-    openshift.io/long-description: >-
-      "Creates all necessary components for Official SO!GIS INTERLIS repository"
-    tags: "agi,gdi,avgbs2mtab,java"
-    iconClass: icon-java
+  name: ${APPNAME}-template
 labels:
-  createdBy: interlis-repository-template
+  template: ${APPNAME}-template
+  app: ${APPNAME}
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      name: ${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}
+  spec:
+    replicas: ${{REPLICA_COUNT}}
+    selector:
+      app: ${APPNAME}
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+      spec:
+        containers:
+        - name: ${APPNAME}
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /version.txt
+              port: 8080
+              schema: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /version.txt
+              port: 8080
+              schema: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange  
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}
+  spec:
+    ports:
+    - name: 80-tcp
+      port: 80 
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: ${APPNAME}
 parameters:
-  - description: Name for Environment
-    name: env 
+  - name: APPNAME
+    description: "Name of the app"
     required: true
-    value: test
-  - description: Version of Image
-    name: version
+  - name: IMAGENAME
+    description: "Name of the docker image"
     required: true
-    value:
-  - description: scheduled "true/false"
-    name: scheduled
-    required: true
+  - name: TAG
+    description: "The docker image tag to use (e.g. latest)"
+    value: latest
+  - name: IMPORT_POLICY_SCHEDULED
+    description: "Regularly check for changed image?"
     value: "false"
+  - name: REPLICA_COUNT
+    description: "Number of replicas to run"
+    value: "1"
   - name: CPU_LIMIT
     description: "Set Limit for cpu"
     required: true
@@ -38,101 +114,3 @@ parameters:
   - name: MEMORY_REQUEST
     description: "Set Request for Memory"
     required: true
-objects:
-- apiVersion: v1
-  kind: DeploymentConfig
-  metadata:
-    annotations:
-      description: Image Stream of the application
-    labels:
-      application: interlis-repository  
-    creationTimestamp: null
-    generation: 1
-    name: interlis-repository
-  spec:
-    replicas: 1
-    revisionHistoryLimit: 10
-    selector:
-      deploymentconfig: interlis-repository
-    strategy:
-      activeDeadlineSeconds: 21600
-      resources: {}
-      rollingParams:
-        intervalSeconds: 1
-        maxSurge: 10%
-        maxUnavailable: 10%
-        timeoutSeconds: 60
-        updatePeriodSeconds: 1
-      type: Rolling
-    template:
-      metadata:
-        annotations:
-          openshift.io/generated-by: OpenShiftNewApp
-        creationTimestamp: null
-        labels:
-          application: interlis-repository
-          deploymentconfig: interlis-repository
-      spec:
-        containers:
-        - image: sogis/interlis-repository
-          imagePullPolicy: IfNotPresent
-          name: interlis-repository
-          ports:
-          - containerPort: 8080
-            protocol: TCP
-          resources:
-            limits:
-              cpu: ${CPU_LIMIT}
-              memory: ${MEMORY_LIMIT}
-            requests:
-              cpu: ${CPU_REQUEST}
-              memory: ${MEMORY_REQUEST}
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        schedulerName: default-scheduler
-        securityContext: {}
-        terminationGracePeriodSeconds: 30
-    test: false
-    triggers:
-    - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - interlis-repository
-        from:
-          kind: ImageStreamTag
-          name: interlis-repository:${version}
-          namespace: agi-apps-${env}
-      type: ImageChange
-- apiVersion: v1
-  kind: Service
-  metadata:
-    name: interlis-repository-service
-    annotations:
-      description: http port of application
-    labels:
-      application: interlis-repository
-  spec:
-    selector:
-      deploymentconfig: interlis-repository
-    ports:
-    - protocol: TCP
-      name: "80"
-      port: 80
-      targetPort: 8080
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    name: interlis-repository
-    labels:
-      application: interlis-repository
-  spec:
-    tags:
-    - from:
-        kind: DockerImage
-        name: sogis/interlis-repository:${version}
-      name: ${version}
-      importPolicy:
-        scheduled: ${{scheduled}}
