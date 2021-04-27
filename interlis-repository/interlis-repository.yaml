@@ -67,7 +67,7 @@ objects:
     triggers:
     - type: ConfigChange
     - type: ImageChange  
-    - imageChangeParams:
+      imageChangeParams:
         automatic: true
         containerNames:
         - ${APPNAME}
