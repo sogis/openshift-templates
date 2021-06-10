@@ -21,7 +21,7 @@ parameters:
   value: 3.14.1-fpm
 - name: NGINX_DOCKERFILE_REPO
   description: Nginx Dockerfile source repository
-  value: https://github.com/tobru/piwik-openshift.git
+  value: https://github.com/sogis/piwik-openshift.git
 - name: PVC_SIZE_CONFIG
   description: PVC size for config files
   value: 1Gi
