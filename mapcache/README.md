@@ -203,3 +203,32 @@ oc process -f mapcache/seeder-job-template.yaml \
 ```
 
 (If any of these jobs already exists, you might need to delete it using the command `oc delete job JOB-NAME`.)
+
+If you want to just seed the area of the municipalities
+that have been imported the day before,
+use the following commands (production environment):
+```
+oc project agi-mapcache-production
+oc process -f mapcache/seeder-job-template-latest-municipalities.yaml \
+  -p NAMESPACE=agi-mapcache-production \
+  -p PVC_NAME=gdi-mapcache-lowback \
+  -p VARIANT=farbig \
+  -p ZOOM_LEVELS=11,14 \
+  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
+  -p PGHOST=xy \
+  -p PGDATABASE=pub \
+  -p PGUSER=ogc_server \
+  -p PGPASSWORD=xy \
+  | oc create -f -
+oc process -f mapcache/seeder-job-template-latest-municipalities.yaml \
+  -p NAMESPACE=agi-mapcache-production \
+  -p PVC_NAME=gdi-mapcache-lowback \
+  -p VARIANT=sw \
+  -p ZOOM_LEVELS=11,14 \
+  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
+  -p PGHOST=xy \
+  -p PGDATABASE=pub \
+  -p PGUSER=ogc_server \
+  -p PGPASSWORD=xy \
+  | oc create -f -
+```
