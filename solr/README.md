@@ -311,3 +311,11 @@ Anschliessend zunächst einen der beiden solr Pods deleten (es ist egal welchen)
 
 Bei Zookeeper sollte es keine Probleme geben, wenn mehr als ein Pod zeitgleich weg ist. Zwar kann dann vorübergehend kein Leader mehr gewählt werden, die fehlenden Pods sollten aber schnell
 wieder gestartet werden und das System heilt sich dann selbst. Probleme kann es lediglich geben, wenn mehr als ein Pod dauerhaft nicht mehr hoch kommt.
+
+#### .snapshot Ordner im pvc
+
+Solr kann nicht starten, wenn sich im gemounteten PVC ein .snapshot Ordner befindet.
+Deshalb wurde auf dem gemounteten PVCs solr-claim-solr-0 und solr-claim-solr-1 die Snapshot Ordner entfernt. Snapshots werden hier folgerichtig nicht gemacht.
+
+Diese Massnahmen wurden am 30.7.2019 mit dem AIO (Robert Ming) besprochen und beim Umbau des Network Attached Storage am 28.6. nochmals, da nach der Umstellung wieder ein .snapshot Ordner vorhanden war.
+
