@@ -103,6 +103,7 @@ oc process -f mapcache/qgis-server_resources.yaml \
 oc process -f mapcache/qgis-server_deploymentconfig.yaml \
   -p QGIS_SERVER_IMAGESTREAM_NAMESPACE=gdi-test \
   -p TAG=latest \
+  -p QGS_RESOURCES_PVC_NAME=qgs-resources-claim1 \
   -p GEODATA_PVC_NAME=datensogispicmir-claim-test \
   -p REPLICAS=1 \
   -p CPU_REQUEST=0 \
@@ -125,6 +126,7 @@ oc process -f mapcache/qgis-server_resources.yaml \
 oc process -f mapcache/qgis-server_deploymentconfig.yaml \
   -p QGIS_SERVER_IMAGESTREAM_NAMESPACE=gdi-production \
   -p TAG=latest \
+  -p QGS_RESOURCES_PVC_NAME=qgs-resources-claim \
   -p GEODATA_PVC_NAME=datensogispicmir-claim2 \
   -p REPLICAS=1 \
   -p CPU_REQUEST=1 \

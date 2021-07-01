@@ -9,6 +9,8 @@ parameters:
     name: QGIS_SERVER_IMAGESTREAM_NAMESPACE
   - description: Image Stream Tag
     name: TAG
+  - description: The name of the qgs resources persistent volume claim
+    name: QGS_RESOURCES_PVC_NAME
   - description: The name of the geodata persistent volume claim
     name: GEODATA_PVC_NAME
   - description: Number of Replicas
@@ -120,7 +122,7 @@ objects:
           name: qgis-server-config-claim
         - name: qgs-resources
           persistentVolumeClaim:
-            claimName: qgs-resources-claim1
+            claimName: ${QGS_RESOURCES_PVC_NAME}
         - name: datensogispicmir
           persistentVolumeClaim:
             claimName: ${GEODATA_PVC_NAME}
