@@ -18,7 +18,7 @@ parameters:
   value: matomo
 - name: MATOMO_IMAGE_TAG
   description: Tag of the Matomo Docker Image to deploy
-  value: 3.14.1-fpm
+  value: 4.3.1-fpm
 - name: NGINX_DOCKERFILE_REPO
   description: Nginx Dockerfile source repository
   value: https://github.com/sogis/piwik-openshift.git
@@ -267,7 +267,7 @@ objects:
               - -c
               - tar cf - --one-file-system -C /usr/src/matomo . | tar xf - --no-overwrite-dir
                 && php -f /var/www/html/console core:archive
-              image: docker-registry.default.svc:5000/agi-infrastructure/agi-matomo:${MATOMO_IMAGE_TAG}
+              image: ${MATOMO_IMAGE_SOURCE}:${MATOMO_IMAGE_TAG}
               imagePullPolicy: Always
               name: cron
               resources: {}
