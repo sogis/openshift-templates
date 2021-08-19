@@ -99,7 +99,7 @@ Deploy integration environment:
 ```
 oc project agi-oereb-integration
 oc process -f oereb/oereb-wms.yaml \
-  -p TAG=31 \
+  -p TAG=7 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p CPU_REQUEST=200m \
   -p CPU_LIMIT=1 \
@@ -123,7 +123,7 @@ Deploy production environment:
 ```
 oc project agi-oereb-production
 oc process -f oereb/oereb-wms.yaml \
-  -p TAG=31 \
+  -p TAG=7 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p REPLICA_COUNT=2 \
   -p CPU_REQUEST=200m \
