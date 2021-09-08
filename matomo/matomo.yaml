@@ -75,7 +75,6 @@ objects:
 - apiVersion: v1
   kind: BuildConfig
   metadata:
-    creationTimestamp: null
     labels:
       build: nginx
       app: matomo
@@ -189,6 +188,9 @@ objects:
           volumeMounts:
           - mountPath: /var/www/html
             name: matomo-source
+          - mountPath: /etc/nginx/nginx.conf
+            name: nginx-config-claim
+            subPath: nginx.conf
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         securityContext: {}
@@ -199,6 +201,12 @@ objects:
         - name: app-config
           persistentVolumeClaim:
             claimName: app-config
+        - configMap:
+            name: nginx-conf
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+          name: nginx-config-claim
     test: false
     triggers:
     - imageChangeParams:
@@ -293,3 +301,137 @@ objects:
                 claimName: app-config
     schedule: '05 * * * *'
     suspend: false
+- apiVersion: v1
+  data:
+    nginx.conf: |
+      # user www-data;
+      worker_processes 1;
+      error_log /dev/stdout alert;
+      pid /tmp/nginx.pid;
+
+      events {
+        worker_connections 1024;
+      }
+
+      http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+        server_tokens off;
+
+        upstream php-handler {
+          server localhost:9000;
+        }
+
+        server {
+          listen *:8080 default_server;
+          listen [::]:8080 default_server;
+          server_name _;
+          access_log /dev/stdout;
+
+          # Docker default IP range
+          set_real_ip_from 172.16.0.0/12;
+          real_ip_header X-Forwarded-For;
+
+          # Path to the root of your installation
+          root /var/www/html/;
+          index index.php;
+
+          ## deny access to all other .php files
+          location ~* ^.+\.php$ {
+              deny all;
+              return 403;
+          }
+
+          ## serve all other files normally
+          location / {
+              try_files $uri $uri/ =404;
+          }
+
+          ## disable all access to the following directories
+          location ~ ^/(config|tmp|core|lang) {
+              deny all;
+              return 403; # replace with 404 to not show these directories exist
+          }
+          
+          location ~ /\.ht {
+              deny  all;
+              return 403;
+          }
+
+          location ~ js/container_.*_preview\.js$ {
+              expires off;
+              add_header Cache-Control 'private, no-cache, no-store';
+          }
+
+          location ~ \.(gif|ico|jpg|png|svg|js|css|htm|html|mp3|mp4|wav|ogg|avi|ttf|eot|woff|woff2|json)$ {
+              allow all;
+              ## Cache images,CSS,JS and webfonts for an hour
+              ## Increasing the duration may improve the load-time, but may cause old files to show after an Matomo upgrade
+              expires 1h;
+              add_header Pragma public;
+              add_header Cache-Control "public";
+          }
+
+          location ~ ^/(libs|vendor|plugins|misc|node_modules) {
+              deny all;
+              return 403;
+          }
+
+          ## properly display textfiles in root directory
+          location ~/(.*\.md|LEGALNOTICE|LICENSE) {
+              default_type text/plain;
+          }
+
+          ## Relay all index.php requests to fastcgi.
+          location = /index.php {
+              fastcgi_split_path_info ^(.+\.php)(/.*)$;
+              include fastcgi_params;
+              fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+              fastcgi_param PATH_INFO $fastcgi_path_info;
+              fastcgi_param HTTPS on;
+              fastcgi_param REMOTE_ADDR $http_x_forwarded_for;
+              #Avoid sending the security headers twice
+              fastcgi_param modHeadersAvailable true;
+              fastcgi_param front_controller_active true;
+              fastcgi_pass php-handler;
+              fastcgi_intercept_errors on;
+              fastcgi_request_buffering off;
+              ## cache ui for 5m (set the same interval of your crontab)
+              #include apps/piwik/fcgi_piwik_cache.conf;
+          }
+
+          ## Relay all piwik.php requests to fastcgi.
+          location = /piwik.php {
+              fastcgi_split_path_info ^(.+\.php)(/.*)$;
+              include fastcgi_params;
+              fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+              fastcgi_param PATH_INFO $fastcgi_path_info;
+              fastcgi_param HTTPS on;
+              fastcgi_param REMOTE_ADDR $http_x_forwarded_for;
+              #Avoid sending the security headers twice
+              fastcgi_param modHeadersAvailable true;
+              fastcgi_param front_controller_active true;
+              fastcgi_pass php-handler;
+              fastcgi_intercept_errors on;
+              fastcgi_request_buffering off;
+              #include apps/piwik/fcgi_piwik_long_cache.conf;
+          }
+
+          # Add headers to serve security related headers
+          # Before enabling Strict-Transport-Security headers please read into this
+          # topic first.
+          # add_header Strict-Transport-Security "max-age=15768000;
+          #add_header Strict-Transport-Security "max-age=15768000; includeSubDomains" always;
+          # includeSubDomains; preload;";
+          #
+        }
+      }
+  kind: ConfigMap
+  metadata:
+    name: nginx-conf
