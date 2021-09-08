@@ -33,7 +33,7 @@ parameters:
   value: "50m"
   required: true
 - name: LOGGING_LEVEL
-  value: "INFO"
+  value: "WARN"
   required: true
 - name: DBSERVER
   value: geodb-t.rootso.org
@@ -85,7 +85,7 @@ objects:
     serviceName: solr-headless
     replicas: 2
     updateStrategy:
-          type: OnDelete
+          type: RollingUpdate
 
     template:
       metadata:
@@ -185,7 +185,7 @@ objects:
 
             livenessProbe:
               initialDelaySeconds: 30
-              periodSeconds: 10
+              periodSeconds: 20
               httpGet:
                 scheme: "HTTP"
                 path: /solr/admin/info/system
