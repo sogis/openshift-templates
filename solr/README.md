@@ -193,12 +193,7 @@ zurückliefern
 ```
 oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","livenessProbe":{"httpGet":{"path":"/solr/gdi/select?q=id%3Adummy&rows=1","port":8983}}}]}}}}'
 ```
-Anschliessend beide solr Pods deleten
-### Readiness Probe anpassen
-```
-oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","readinessProbe":{"httpGet":{"path":"/solr/gdi/select?q=id%3Adummy&rows=1","port":8983}}}]}}}}'
-```
-Anschliessend zunächst den solr-1 Pod deleten, warten bis er wieder läuft und dann den solr-0 Pod deleten.
+Mit der gesetzten *updateStrategy* *RollingUpdate* werden die Pods in umgekehrter Reihenfolge automatisch gestartet.
 
 ### AGI configSet hochladen
 
@@ -240,9 +235,14 @@ curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?acti
 ## Unterhalt
 ### Anpassung Statefulset
 
-Nach der Anpassung eines Statefulsets müssen die zugehörigen Pods gelöscht werden, damit die Anpassung wirksam wird.
-Um einen unterbruchsfreien Betrieb zu gewährleisten sollte immer nur ein Pod gelöscht werden. Erst wenn dieser wieder ready ist kann man den nächsten Pod löschen.
-Bei Solr ist es sogar unbedingt erforderlich beide Pods nacheinander zu löschen. Löscht man diese gleichzeitig können die Pods auf Grund der Readiness Probe nicht mehr starten.
+Nach der Anpassung eines Statefulsets innerhalb von *spec.template* sollten die Pods aufgrund der in *updateStrategy* gesetzten *RollingUpdate* Strategie in umgekehrter Reihenfolge automatisch neu gestartet werden.
+Sollte dies nicht geschehen die Pods in umgekehrter Reihenfolge löschen. Bitte immer nur ein Pod nach dem anderen löschen und warten bis dieser wieder *ready* ist.
+Dies ist bisher nur für das Solr Statefulset umgesetzt.
+Falls es bei Solr zu Problemen mit dem Starten der Pods kommen mit *oc patch* die ReadinessProbe entfernen. Sollte dies nicht ausreichen die *updateStrategy* mit
+```
+oc patch statefulset solr -p '{"spec":{"updateStrategy":{"type":"OnDelete"}}}'
+```
+auf *OnDelete* setzen und anschliessend die Pods von Hand löschen.
 
 ### Update configSet
 
@@ -297,7 +297,10 @@ curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?acti
 
 ## Disaster Recovery
 Wenn aus irgendeinem Grund beide solr Pods gleichzeitig vorübergehend gelöscht wurden (mussten) oder in keinen State ready mehr kommen, dann können diese wegen der Readiness Probe nicht mehr starten.
-Diese schlägt dann beim solr-0 Pod fehl. solr-1 startet dann gar nicht erst.
+Diese schlägt dann beim solr-0 Pod fehl. solr-1 startet dann gar nicht erst. 
+
+**alte Methode mit *updateStrategy OnDelete*-**
+
 In diesem Fall muss die Readiness Probe folgendermassen entfernt werden
 ```
 oc patch statefulset/solr --type json -p '[{ "op": "remove", "path": "/spec/template/spec/containers/0/readinessProbe" }]'
@@ -309,6 +312,32 @@ oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name"
 ```
 Anschliessend zunächst einen der beiden solr Pods deleten (es ist egal welchen), warten bis dieser gestartet und ready ist und dann den anderen solr Pod deleten.
 
+**Neue Methode mit der eingestellten *updateStrategy RollingUpdate*-**
+
+In diesem Fall muss die Readiness Probe folgendermassen entfernt werden
+```
+oc patch statefulset/solr --type json -p '[{ "op": "remove", "path": "/spec/template/spec/containers/0/readinessProbe" }]'
+```
+Anschliessend sollte der solr-0 Pod automatisch und erfolgreich neu starten und anschliessend auch der solr-1 Pod.
+Wenn beide Pods wieder oben sind kann die Readiness Probe wieder hinzugefügt werden.
+```
+oc patch statefulset/solr -p '{"spec":{"template":{"spec":{"containers":[{"name":"solr","readinessProbe":{"httpGet":{"path":"/solr/admin/info/system","port":8983}}}]}}}}'
+
+```
+Anschliessend starten die Pods in umgekehrter Reihenfolge neu. Sollte dies nicht funktionieren mit
+```
+oc patch statefulset solr -p '{"spec":{"updateStrategy":{"type":"OnDelete"}}}'
+```
+zur alten Methode wechseln.
+
+**Anmerkung**
+
+Die hier beschriebenen Probleme sollten zukünftig nicht mehr auftreten, da die frühere Anpassung der Readiness Probe auf den path */solr/gdi/select?q=id%3Adummy&rows=1* 
+nicht mehr verwendet wird,sondern es bleibt bei der im Lucid Helm Chart vorhandenen Readiness Probe. 
+Die Ursache für das nicht mehr starten der Pods nach einem Neustart des Openshift Clusters liegt vermutlich in dieser fehlerhaften Readiness Probe. Die Readiness Probe
+aus dem Lucid Helm Chart scheint dagegen zu funktionieren, zumindest tut sie dies wenn man beide Pods gleichzeitig löscht. Eine Verifikation dieser Hypothese steht noch aus,
+da ein Cluster Shutdown nicht simuliert werden kann.
+
 Bei Zookeeper sollte es keine Probleme geben, wenn mehr als ein Pod zeitgleich weg ist. Zwar kann dann vorübergehend kein Leader mehr gewählt werden, die fehlenden Pods sollten aber schnell
 wieder gestartet werden und das System heilt sich dann selbst. Probleme kann es lediglich geben, wenn mehr als ein Pod dauerhaft nicht mehr hoch kommt.
 
@@ -319,3 +348,9 @@ Deshalb wurde auf dem gemounteten PVCs solr-claim-solr-0 und solr-claim-solr-1 d
 
 Diese Massnahmen wurden am 30.7.2019 mit dem AIO (Robert Ming) besprochen und beim Umbau des Network Attached Storage am 28.6. nochmals, da nach der Umstellung wieder ein .snapshot Ordner vorhanden war.
 
+## Hilfreiche Befehle
+
+Skalieren eines Statefulsets
+```
+oc scale sts name --replicas=2
+```
