@@ -113,6 +113,7 @@ objects:
         initContainers:
           - name: check-zookeeper
             image: busybox:latest
+            imagePullPolicy: IfNotPresent
             command:
               - 'sh'
               - '-c'
@@ -132,6 +133,7 @@ objects:
                 exit 1;
           - name: "cp-solr-xml"
             image: busybox:latest
+            imagePullPolicy: IfNotPresent
             command: ['sh', '-c', 'cp /tmp/solr.xml /tmp-config/solr.xml']
             volumeMounts:
             - name: "solr-xml"
