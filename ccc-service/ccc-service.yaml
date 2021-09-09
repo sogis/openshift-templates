@@ -47,7 +47,7 @@ objects:
             failureThreshold: 3
             httpGet:
               path: /actuator/health
-              port: 8081
+              port: 8080
               scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 10
@@ -57,7 +57,7 @@ objects:
             failureThreshold: 3
             httpGet:
               path: /actuator/health
-              port: 8081
+              port: 8080
               scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 10
