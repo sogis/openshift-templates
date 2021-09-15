@@ -16,7 +16,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-        name: ${PROJECT}/${IMAGENAME}:${TAG}
+        name: sogis/${IMAGENAME}:${TAG}
       importPolicy:
         scheduled: ${{IMPORT_POLICY_SCHEDULED}}
       name: ${TAG}
@@ -109,15 +109,12 @@ parameters:
 - name: APPNAME
   description: "Name of the App"
   required: true
-  value: "ccc-service"
 - name: IMAGENAME
   description: "Name of the docker image"
   required: true
-  value: "ccc-service"
-- name: PROJECT
-  description: "project of the docker image"
 - name: TAG
   description: "The Docker image tag to use (e.g. latest)"
+  value: latest
 - name: IMPORT_POLICY_SCHEDULED
   description: "Regularly check for changed image?"
   value: "false"
