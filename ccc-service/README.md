@@ -1,5 +1,18 @@
 # ccc-service
 
+## Create a Docker image pull secret
+
+This step is needed only if this is the first installation, or if any value of the secret needs to be changed.
+
+Create a secret for pulling the Docker images, and link this secret to the default service account:
+```
+oc create secret docker-registry sogis-pull-secret --docker-username=xx --docker-password=yy
+oc secrets link default sogis-pull-secret --for=pull
+```
+
+Run these commands in the test, integration and production OpenShift projects.
+
+
 ## First install in an Openshift Environment
 
 Deploy test environment (for the test environment, the default values of the template parameters are usually fine):
