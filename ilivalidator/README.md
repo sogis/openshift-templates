@@ -16,9 +16,9 @@ aws-secret-ilivalidator.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: aws-secret-gb2av
+  name: aws-secret-ilivalidator
   labels:
-    app: gb2av
+    app: ilivalidator
 type: Opaque
 stringData:
   AWS_ACCESS_KEY_ID: xy
