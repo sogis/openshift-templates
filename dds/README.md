@@ -14,14 +14,6 @@ cd openshift-templates
 git pull
 ```
 
-Create the following three secret YAML files locally,
-in a directory outside the checked out Git repository.
-Then, in each environment (test, integration, production)
-
-```
-oc create -f FILENAME
-```
-
 Deploy test environment:
 
 ```
