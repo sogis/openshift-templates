@@ -19,7 +19,7 @@ Deploy test environment:
 ```
 oc project agi-apps-test
 oc process -f dds/dds.yaml \
-  -p env=test \
+  -p ENV=test \
   -p TAG=latest \
   -p IMPORT_POLICY_SCHEDULED=true \
   -p CPU_LIMIT="0" \
@@ -34,7 +34,7 @@ Deploy integration environment:
 ```
 oc project agi-apps-integration
 oc process -f dds/dds.yaml \
-  -p env=int \
+  -p ENV=int \
   -p TAG=X.X \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p CPU_LIMIT="750m" \
@@ -49,7 +49,7 @@ Deploy production environment:
 ```
 oc project agi-apps-production
 oc process -f dds/dds.yaml \
-  -p env=prod \
+  -p ENV=prod \
   -p TAG=X.X \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p CPU_LIMIT="750m" \
