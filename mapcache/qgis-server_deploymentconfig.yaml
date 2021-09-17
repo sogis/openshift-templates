@@ -67,6 +67,7 @@ objects:
           service: qgis-server
           app: qgis-server
       spec:
+        serviceAccountName: qgis-server
         containers:
         - env:
           - name: LOG_LEVEL
