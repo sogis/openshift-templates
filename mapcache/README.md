@@ -151,7 +151,7 @@ oc process -f mapcache/seeder-cronjob-template.yaml \
   -p NAMESPACE=agi-mapcache-production \
   -p PVC_NAME=gdi-mapcache-lowback \
   -p ZOOM_LEVELS=11,14 \
-  -p SCHEDULE='00 03 * * *' \
+  -p SCHEDULE='00 01 * * *' \
   -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
   -p PGHOST=xy \
   -p PGDATABASE=pub \
