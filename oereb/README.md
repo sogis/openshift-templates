@@ -34,8 +34,8 @@ stringData:
 
 Switch to the right OpenShift project (e.g. `oc project agi-oereb-test`) and create the secret(s) by running the following commands:
 ```
-oc create -f oereb-wms-secret.yaml
-oc create -f oereb-web-service.yaml
+oc apply -f oereb-wms-secret.yaml
+oc apply -f oereb-web-service-secret.yaml
 ```
 
 Run this command in the *agi-oereb-test*, *agi-oereb-integration* and *agi-oereb-production* OpenShift projects.
