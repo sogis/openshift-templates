@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   creationTimestamp: null
@@ -173,7 +173,7 @@ objects:
       application: oereb-web-service
     name: oereb-web-service
   spec:
-    host: oereb-web-service-${env}.dev.so.ch
+    host: oereb-web-service-${env}.apps.ocp.so.ch
     port:
       targetPort: 8080
     to:
