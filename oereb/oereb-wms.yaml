@@ -29,6 +29,7 @@ objects:
           app: oereb-wms
           deploymentconfig: oereb-wms
       spec:
+        serviceAccountName: qgis-server
         containers:
         - name: oereb-wms
           env:
