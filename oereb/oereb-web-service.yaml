@@ -132,7 +132,6 @@ objects:
         from:
           kind: ImageStreamTag
           name: oereb-web-service:${version}
-          namespace: agi-oereb-${env}
       type: ImageChange
 - apiVersion: v1
   kind: Service
