@@ -2,7 +2,7 @@
 # Source: solr/templates/solr-xml-configmap.yaml
 ---
 kind: Template
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 metadata:
   name: solr
   annotations:
