@@ -20,19 +20,19 @@ git pull
 Deploy test environment:
 ```
 oc project agi-apps-test
-oc process -f wgc-embedded.yaml \
+oc process -f wgc_embedded.yaml \
   -p version=latest \
   -p env=test \
-  -p CPU_LIMIT="500m" \
-  -p MEMORY_LIMIT="512Mi" \
-  -p CPU_REQUEST="250m" \
-  -p MEMORY_REQUEST="258Mi" \
+  -p CPU_LIMIT="0" \
+  -p MEMORY_LIMIT="0" \
+  -p CPU_REQUEST="0" \
+  -p MEMORY_REQUEST="0" \
   | oc apply -f -
 ```
 Deploy integration environment:
 ```
 oc project agi-apps-integration
-oc process -f wgc-embedded.yaml \
+oc process -f wgc_embedded.yaml \
   -p version=latest \
   -p env=integration \
   -p CPU_LIMIT="500m" \
@@ -44,7 +44,7 @@ oc process -f wgc-embedded.yaml \
 Deploy production environment:
 ```
 oc project agi-apps-production
-oc process -f wgc-embedded.yaml \
+oc process -f wgc_embedded.yaml \
   -p version=latest \
   -p env=production \
   -p CPU_LIMIT="500m" \
