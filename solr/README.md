@@ -26,7 +26,7 @@ You can upload, download, and edit configuration files, so that all cores belong
 
 https://lucene.apache.org/solr/guide/6_6/solrcloud.html
 ZooKeeper is mostly a black-box technology that you don’t need to worry about too much other than the initial configuration.(Solr in Action S.415f).
-Zookeeper manages cluster state (as in solr Web GUI http://solr-headless-solr-cloud-production.dev.so.ch/solr/#/~cloud?view=graph) and distributes configuration files to nodes joining the cluster.
+Zookeeper manages cluster state (as in solr Web GUI http://solr-headless-solr-cloud-production.apps.ocp.so.ch/solr/#/~cloud?view=graph) and distributes configuration files to nodes joining the cluster.
 It's a kind of centralized configuration store. Centralized configuration allows all nodes in the cluster to download their configurations from a central location instead of a system
 administrator having to push configuration changes to multiple nodes.
 
@@ -150,9 +150,9 @@ Es sollte etwas in der Art
 INFO  - 2019-06-25 17:34:40.825; org.apache.solr.common.cloud.ConnectionManager; zkClient has connected
 ```
 erscheinen
-### Collection erstellen mit 2 solr Pods (solr-headless-solr-cloud-integration.dev.so.ch ist zu ersetzen mit der Url der Solr Cloud)
+### Collection erstellen mit 2 solr Pods (solr-headless-solr-cloud-integration.apps.ocp.so.ch ist zu ersetzen mit der Url der Solr Cloud)
 ```
-curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=CREATE&name=gdi&numShards=1&replicationFactor=2"
+curl "http://solr-headless-solr-cloud-test.apps.ocp.so.ch/solr/admin/collections?action=CREATE&name=gdi&numShards=1&replicationFactor=2"
 ```
 Sollte etwas in der Art 
 ```
@@ -177,7 +177,7 @@ zurückliefern
 
 ### Dokument mit id dummy hinzufügen. (Bitte die Url auf Umgebung anpassen)
 ```
-curl -X POST -H 'Content-Type: application/json' 'http://solr-headless-solr-cloud-test.dev.so.ch/solr/gdi/update/json/docs?commit=true' --data-binary '{ "id": "dummy" }'
+curl -X POST -H 'Content-Type: application/json' 'http://solr-headless-solr-cloud-test.apps.ocp.so.ch/solr/gdi/update/json/docs?commit=true' --data-binary '{ "id": "dummy" }'
 ```
 Sollte etwas in der Art
 ```
@@ -229,7 +229,7 @@ oc rsh solr-0 /bin/bash
 ### configName der collection zu gdi korrigieren
 Notwendig, da beim Create Befehl für die Collection weiter oben gdi.AUTOCREATED als configName verwendet wird.
 ```
-curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=MODIFYCOLLECTION&collection=gdi&collection.configName=gdi"
+curl "http://solr-headless-solr-cloud-test.apps.ocp.so.ch/solr/admin/collections?action=MODIFYCOLLECTION&collection=gdi&collection.configName=gdi"
 ```
 
 ## Unterhalt
@@ -292,7 +292,7 @@ Wenn mehrere Dateien angepasst wurden kann mit dem folgenden Befehl das gesamte 
 Aus Solr Pod ausloggen und folgenden Curl Befehl ausführen, um die Collection neu zu laden.
 
 ```
-curl "http://solr-headless-solr-cloud-test.dev.so.ch/solr/admin/collections?action=RELOAD&name=gdi"
+curl "http://solr-headless-solr-cloud-test.apps.ocp.so.ch/solr/admin/collections?action=RELOAD&name=gdi"
 ```
 
 ## Disaster Recovery

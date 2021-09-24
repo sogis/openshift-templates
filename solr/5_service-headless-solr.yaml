@@ -2,7 +2,7 @@
 # Source: solr/templates/service-headless.yaml
 ---
 kind: Template
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 metadata:
   name: zookeeper
   annotations:
@@ -67,7 +67,7 @@ objects:
       release: solr
     name: solr-headless
   spec:
-    host: solr-headless-solr-cloud-${ENV}.dev.so.ch
+    host: solr-headless-solr-cloud-${ENV}.apps.ocp.so.ch
     port:
       targetPort: solr-headless
     to:

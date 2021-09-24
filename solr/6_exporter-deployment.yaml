@@ -1,5 +1,5 @@
 kind: Template
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 metadata:
   name: solr-exporter
   annotations:
@@ -53,6 +53,9 @@ objects:
         timeoutSeconds: 60
         updatePeriodSeconds: 1
       type: Rolling
+    securityContext:
+      runAsUser: 8983
+      fsGroup: 8983
     template:
       metadata:
         labels:
