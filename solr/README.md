@@ -212,6 +212,9 @@ mkdir /opt/solr/server/home/gdi
 exit
 ```
 
+Anschliessend ins solr Repo wechseln und die Dateien *dih_geodata_config.xml.orig* und *dih_metadata_config.xml.orig* nach *dih_geodata_config.xml* und *dih_metadata_config.xml* kopieren und 
+an die entsprechende Umgebung anpassen (DB Connection und DB User und Passwort setzen).
+
 Dann das configSet hochladen
 ```
 git clone https://github.com/sogis/solr.git
