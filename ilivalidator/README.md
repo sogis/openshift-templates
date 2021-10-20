@@ -38,7 +38,7 @@ oc process -p env=test -p version=latest \
 ```
 oc process -p env=integration -p version=1.3.97 \
   -p CPU_LIMIT="1000m" \
-  -p MEMORY_LIMIT="800Mi" \
+  -p MEMORY_LIMIT="2Gi" \
   -p CPU_REQUEST="500m" \
   -p MEMORY_REQUEST="400Mi" \
   -f ilivalidator-web-service.yaml  \
