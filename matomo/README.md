@@ -8,16 +8,12 @@ The matomo.yaml file is from the github repository of Tobias Brunner. Get it by 
 Before installing mariadb in the environment of the cantone of Solothurn you need a mariadb named pvc.
 The necessary passwords and usernames are saved in the gdi keepass.
 Because of the .snapshot directory in the persistent volume it is not possible to use the in openshift included mariadb template directly.
-A view changes in the template are necessary:
+A few changes in the template are necessary:
 First you have to change the my.cnf file and add ignore-db-dirs = .snapshot
 Make a configMap from the my.cnf file add it to the template and add the mount for the configMap to /etc/mysql.
 Thereby mariadb knows where to find the my.cfg file you have to set an additional ENV variable MYSQL_DEFAULTS_FILE in the template.
 ```
-oc new-app mariadb-persistent.yaml -p MEMORY_LIMIT=2048Mi -p MYSQL_USER=mysql_user -p MYSQL_PASSWORD=mysql_pw -p MYSQL_ROOT_PASSWORD=root_pw -p MYSQL_DATABASE=matomo -p MARIADB_VERSION=10.2 -p VOLUME_CAPACITY=5Gi
-```
-After this change the mountPath of the volume in  the deployment config if you use a snapshoted pvc
-```
-oc set volume dc/mariadb --add --overwrite --name=mariadb-data --mount-path=/var/lib/mysql
+oc process -f mariadb-persistent.yaml -p MEMORY_LIMIT=2048Mi -p MYSQL_USER=mysql_user -p MYSQL_PASSWORD=mysql_pw -p MYSQL_ROOT_PASSWORD=root_pw -p MYSQL_DATABASE=matomo -p MARIADB_VERSION=10.3 -p VOLUME_CAPACITY=5Gi -p NAMESPACE=agi-infrastructure-integration | oc apply -f-
 ```
 
 ### Install matomo
