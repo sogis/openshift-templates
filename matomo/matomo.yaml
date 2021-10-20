@@ -58,7 +58,6 @@ objects:
   kind: ImageStream
   metadata:
     labels:
-      build: nginx
       app: matomo
     name: nginx
   spec:
@@ -66,40 +65,12 @@ objects:
     - annotations: null
       from:
         kind: DockerImage
-        name: nginx:latest
+        name: nginxinc/nginx-unprivileged:stable
       generation: null
       importPolicy: {}
-      name: latest
+      name: stable
       referencePolicy:
         type: ""
-- apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    labels:
-      build: nginx
-      app: matomo
-    name: nginx
-  spec:
-    nodeSelector: null
-    output:
-      to:
-        kind: ImageStreamTag
-        name: nginx:latest
-    postCommit: {}
-    resources: {}
-    runPolicy: Serial
-    source:
-      git:
-        uri: ${NGINX_DOCKERFILE_REPO}
-      type: Git
-    strategy:
-      dockerStrategy:
-        from:
-          kind: DockerImage
-          name: nginx:alpine
-      type: Docker
-    triggers:
-    - type: ConfigChange
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -161,7 +132,7 @@ objects:
           - mountPath: /var/www/html/config
             name: app-config
             subPath: config
-        - image: nginx
+        - image: nginxinc/nginx-unprivileged:stable
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
@@ -223,7 +194,7 @@ objects:
         - nginx
         from:
           kind: ImageStreamTag
-          name: nginx:latest
+          name: nginx:stable
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1

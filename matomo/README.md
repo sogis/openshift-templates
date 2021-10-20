@@ -23,7 +23,7 @@ The matomo.yaml file is a slightly changed version of the one from tobru repo.
 Changes are needed for MATOMO_IMAGE_SOURCE and MATOMO_IMAGE_TAG and for the apiVersion in CronJob.
 Then run
 ```
-oc process -f matomo.yaml -p APP_URL=analytics-i.dev.so.ch | oc apply -f-
+oc process -f matomo.yaml -p APP_URL=analytics-i.apps.ocp.so.ch | oc apply -f-
 ```
 
 ### Setup matomo
