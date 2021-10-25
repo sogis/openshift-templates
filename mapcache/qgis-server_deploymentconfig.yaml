@@ -5,8 +5,6 @@ metadata:
   annotations:
     description: "Creates deploymentConfig for qgis-server"
 parameters:
-  - description: The OpenShift Namespace where the QGIS Server ImageStream resides
-    name: QGIS_SERVER_IMAGESTREAM_NAMESPACE
   - description: Image Stream Tag
     name: TAG
   - description: The name of the qgs resources persistent volume claim
@@ -76,6 +74,7 @@ objects:
             value: ${QGIS_FCGI_MIN_PROCESSES}
           - name: QGIS_FCGI_MAX_PROCESSES
             value: ${QGIS_FCGI_MAX_PROCESSES}
+          image: sogis/qgis-server:${TAG}
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
@@ -126,12 +125,3 @@ objects:
     test: false
     triggers:
     - type: ConfigChange
-    - type: ImageChange
-      imageChangeParams:
-        automatic: true
-        containerNames:
-        - sogis-qgis-server
-        from:
-          kind: ImageStreamTag
-          name: qgis-server:${TAG}
-          namespace: ${QGIS_SERVER_IMAGESTREAM_NAMESPACE}
