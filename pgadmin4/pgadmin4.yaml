@@ -118,8 +118,10 @@ objects:
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
-        securityContext: {}
+        securityContext:
+          runAsUser: 5050
         terminationGracePeriodSeconds: 30
+        serviceAccountName: pgwatch2
         volumes:
         - name: pgadmin4
           persistentVolumeClaim:
