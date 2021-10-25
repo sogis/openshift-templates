@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: pgwatch2-template 
@@ -13,6 +13,8 @@ objects:
         labels:
           name: "pgwatch2"
       spec:
+        securityContext:
+          runAsUser: 10001
         containers:
           - name: "pgwatch2"
             image: "cybertec/pgwatch2-nonroot"
@@ -93,13 +95,14 @@ objects:
         volumes:
         - name: pgwatch2-config
           persistentVolumeClaim:
-            claimName: pw2-pgwatch-${ENV}-claim
+            claimName: pw2-pgwatch-${ENV}-claim-lowback
         - name: pgwatch2-postgresql
           persistentVolumeClaim:
-            claimName: pw2-postgresql-${ENV}-claim
+            claimName: pw2-postgresql-${ENV}-claim-lowback
         - name: pgwatch2-influx
           persistentVolumeClaim:
-            claimName: pw2-influxdb-${ENV}-claim
+            claimName: pw2-influxdb-${ENV}-claim-lowback
+        serviceAccountName: pgwatch2
     replicas: 1
     strategy:
       type: "Recreate"

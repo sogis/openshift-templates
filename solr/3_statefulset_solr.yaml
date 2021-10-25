@@ -68,7 +68,7 @@ objects:
           <int name="connTimeout">${connTimeout:60000}</int>
         </shardHandlerFactory>
       </solr>
-- apiVersion: apps/v1beta1
+- apiVersion: apps/v1
   kind: StatefulSet
   metadata:
     name: solr
@@ -98,6 +98,7 @@ objects:
 
       spec:
         securityContext:
+          runAsUser: 8983
           fsGroup: 8983
         affinity:
           {}
@@ -202,7 +203,7 @@ objects:
             volumeMounts:
               - name: solr-claim
                 mountPath: /opt/solr/server/home
-
+        serviceAccountName: solr
     volumeClaimTemplates:
       - metadata:
           name: solr-claim
