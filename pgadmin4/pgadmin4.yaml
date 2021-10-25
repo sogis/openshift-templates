@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: pgadmin4-template
@@ -123,7 +123,7 @@ objects:
         volumes:
         - name: pgadmin4
           persistentVolumeClaim:
-            claimName: pgadmin4-claim
+            claimName: pgadmin4-claim-lowback
     test: false
     triggers:
     - type: ConfigChange
@@ -155,14 +155,14 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: pgadmin4-claim
+    name: pgadmin4-claim-lowback
   spec:
     accessModes:
     - ReadWriteOnce
     resources:
       requests:
         storage: 1Gi
-    storageClassName: nfs 
+    storageClassName: netapp
 - apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
@@ -172,7 +172,7 @@ objects:
       application: pgadmin4
     name: pgadmin4
   spec:
-    host: pgadmin4${env}.dev.so.ch
+    host: pgadmin4${env}.apps.ocp.so.ch
     port:
       targetPort: 80
     to:
