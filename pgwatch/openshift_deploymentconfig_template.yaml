@@ -17,6 +17,13 @@ objects:
           runAsUser: 10001
         containers:
           - name: "pgwatch2"
+            resources:
+              limits:
+                cpu: 800m
+                memory: 4Gi
+              requests:
+                cpu: 100m
+                memory: 800Mi
             image: "cybertec/pgwatch2-nonroot"
             ports:
               - containerPort: 8080
