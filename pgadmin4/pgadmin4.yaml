@@ -175,8 +175,9 @@ objects:
     name: pgadmin4
   spec:
     host: pgadmin4${env}.apps.ocp.so.ch
-    port:
-      targetPort: 80
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
     to:
       kind: Service
       name: pgadmin4-service

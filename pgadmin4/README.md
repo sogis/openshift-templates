@@ -2,7 +2,7 @@
 
 ## First install and update of app in an Openshift Environment
 
-First create secret pgadmin4-secret 
+First create secret pgadmin4-secret for pgadmin4 admin user (username and password in keepass) 
 
 ```
 apiVersion: v1
