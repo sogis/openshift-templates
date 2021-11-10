@@ -255,8 +255,6 @@ objects:
               resources: {}
               terminationMessagePath: /dev/termination-log
               volumeMounts:
-              - mountPath: /var/www/html
-                name: matomo-source
               - mountPath: /var/www/html/misc
                 name: app-config
                 subPath: misc
