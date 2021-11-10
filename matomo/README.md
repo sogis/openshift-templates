@@ -27,7 +27,7 @@ oc process -f matomo.yaml -p APP_URL=analytics-i.apps.ocp.so.ch | oc apply -f-
 ```
 
 ### Setup matomo
-Open http://analytics-i.dev.so.ch and follow the setup instructions
+Open http://analytics-i.apps.ocp.so.ch and follow the setup instructions
 #### DB Connection
 For the IP use the IP address of the mariadb service
 Username and password are saved in keepass
@@ -42,7 +42,7 @@ Url geo-i.so.ch
 ## Update Matomo
 To update matomo change parameter MATOMO_IMAGE_TAG in matomo.yaml and run
 ```
-oc process -f matomo.yaml -p APP_URL=analytics-i.dev.so.ch | oc apply -f-
+oc process -f matomo.yaml -p APP_URL=analytics-i.apps.ocp.so.ch | oc apply -f-
 ```
 ### Comment bjsvwpfe 24.9.2020
 With actual version 3.14.1-fpm the cronjob doesn't work anymore. As a workaround added a own builded image to openshift registry (agi-matomo).
