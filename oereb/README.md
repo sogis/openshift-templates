@@ -107,7 +107,7 @@ oc process -f oereb/oereb-wms.yaml \
   -p MEMORY_LIMIT=500Mi \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
-  -p version=66 \
+  -p version=1.0.7 \
   -p env=integration \
   -p dbenv=geodb-i \
   -p dbschema=live \
@@ -132,7 +132,7 @@ oc process -f oereb/oereb-wms.yaml \
   -p MEMORY_LIMIT=500Mi \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
-  -p version=66 \
+  -p version=1.0.7 \
   -p env=production \
   -p dbenv=geodb \
   -p dbschema=live \
