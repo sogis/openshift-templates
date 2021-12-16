@@ -90,7 +90,7 @@ Deploy integration environment:
 oc project agi-apps-integration
 oc process -f gb2av/gb2av.yaml \
   -p ENVIRONMENT_SHORT=int \
-  -p TAG=1.1.5 \
+  -p TAG=1.1.6 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p CPU_LIMIT="750m" \
   -p MEMORY_LIMIT="600Mi" \
@@ -105,7 +105,7 @@ Deploy production environment:
 oc project agi-apps-production
 oc process -f gb2av/gb2av.yaml \
   -p ENVIRONMENT_SHORT=prod \
-  -p TAG=1.1.5 \
+  -p TAG=1.1.6 \
   -p IMPORT_POLICY_SCHEDULED=false \
   -p CPU_LIMIT="750m" \
   -p MEMORY_LIMIT="600Mi" \
