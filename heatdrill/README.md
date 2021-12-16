@@ -12,6 +12,7 @@ oc process -f heatdrill.yaml \
   -p DB_PW=password \
   -p env=test \
   -p version=latest \
+  -p scheduled=true
   -p CPU_LIMIT="0" \
   -p MEMORY_LIMIT="0" \
   -p CPU_REQUEST="0" \
@@ -21,7 +22,7 @@ oc process -f heatdrill.yaml \
   -p DB_SERVER=geodb.verw.rootso.org \
   -p DB_PW=password \
   -p env=integration \
-  -p version=11 \
+  -p version=1.0.1 \
   -p CPU_LIMIT="800m" \
   -p MEMORY_LIMIT="800Mi" \
   -p CPU_REQUEST="20m" \
@@ -31,7 +32,7 @@ oc process -f heatdrill.yaml \
   -p DB_SERVER=geodb.verw.rootso.org \
   -p DB_PW=password \
   -p env=production \
-  -p version=11 \
+  -p version=1.0.1 \
   -p CPU_LIMIT="800m" \
   -p MEMORY_LIMIT="800Mi" \
   -p CPU_REQUEST="20m" \

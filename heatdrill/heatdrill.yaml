@@ -71,7 +71,7 @@ objects:
     name: heatdrill-service
   spec:
     replicas: 1
-    revisionHistoryLimit: 10
+    revisionHistoryLimit: 0
     selector:
       deploymentconfig: heatdrill-service
     strategy:
