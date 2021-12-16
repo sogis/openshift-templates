@@ -12,7 +12,7 @@ oc process -f heatdrill.yaml \
   -p DB_PW=password \
   -p env=test \
   -p version=latest \
-  -p scheduled=true
+  -p scheduled=true \
   -p CPU_LIMIT="0" \
   -p MEMORY_LIMIT="0" \
   -p CPU_REQUEST="0" \
