@@ -101,7 +101,7 @@ objects:
                 port: 9983
         initContainers:
           - name: solr-init
-            image: "solr:7.7.1"
+            image: "solr:7.7.3"
             imagePullPolicy: IfNotPresent
             command:
               - 'sh'
