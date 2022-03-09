@@ -12,7 +12,7 @@ oc process -p env=production -p version=1.0.2 -p CPU_LIMIT="800m" -p CPU_REQUEST
 
 ## Betrieb
 
-Update Index of (an) entity(ies) with the following Post Request. Replace *ch.so.name.der.entity* with the name of the entity/entities.
+Update Index of (an) entity(ies) with the following Request. Replace *ch.so.name.der.entity* with the name of the entity/entities.
 
 ```
 curl -i --max-time 20 'http://indexupdater-production.apps.ocp.so.ch/queue?ds=ch.so.name.der.entity'
