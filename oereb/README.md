@@ -75,7 +75,7 @@ Deploy test environment:
 ```
 oc project agi-oereb-test
 oc process -f oereb/oereb-wms.yaml \
-  -p TAG=latest \
+  -p TAG=1 \
   -p IMPORT_POLICY_SCHEDULED=true \
   -p CPU_REQUEST=0 \
   -p CPU_LIMIT=0 \
