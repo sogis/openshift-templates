@@ -83,7 +83,7 @@ oc process -f oereb/oereb-wms.yaml \
   -p MEMORY_LIMIT=0 \
   | oc apply -f -
 oc process -f oereb/oereb-web-service.yaml \
-  -p version=latest \
+  -p version=1.0.8 \
   -p env=test \
   -p dbenv=geodb-t \
   -p dbschema=live \
