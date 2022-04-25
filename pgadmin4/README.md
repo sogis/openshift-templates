@@ -31,7 +31,7 @@ oc process -f pgadmin4.yaml \
   -p MEMORY_REQUEST="400Mi" \
   | oc apply -f-
 oc process -f pgadmin4.yaml \
-  -p version=6.0 \
+  -p version=6.8 \
   -p CPU_LIMIT="800m" \
   -p MEMORY_LIMIT="800Mi" \
   -p CPU_REQUEST="20m" \
