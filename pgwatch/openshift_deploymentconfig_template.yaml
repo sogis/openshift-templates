@@ -24,7 +24,7 @@ objects:
               requests:
                 cpu: 100m
                 memory: 800Mi
-            image: "cybertec/pgwatch2-nonroot"
+            image: "cybertec/pgwatch2-nonroot:1.8.5"
             ports:
               - containerPort: 8080
                 protocol: "TCP"
