@@ -1,5 +1,5 @@
 apiVersion: template.openshift.io/v1
-kind: Template
+ind: Template
 metadata:
   creationTimestamp: null
   name: wgc-embedded-template
@@ -72,7 +72,7 @@ objects:
         containers:
         - env:
             - name: SPRING_PROFILES_ACTIVE
-              value: 'test'
+              value: 'int'
           image: wgc-embedded:${version}
           imagePullPolicy: IfNotPresent
           name: wgc-embedded
