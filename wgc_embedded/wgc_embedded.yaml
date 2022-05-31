@@ -1,5 +1,5 @@
 apiVersion: template.openshift.io/v1
-ind: Template
+kind: Template
 metadata:
   creationTimestamp: null
   name: wgc-embedded-template
