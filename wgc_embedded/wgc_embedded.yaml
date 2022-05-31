@@ -72,7 +72,7 @@ objects:
         containers:
         - env:
             - name: SPRING_PROFILES_ACTIVE
-              value: 'int'
+              value: 'prod'
           image: wgc-embedded:${version}
           imagePullPolicy: IfNotPresent
           name: wgc-embedded
