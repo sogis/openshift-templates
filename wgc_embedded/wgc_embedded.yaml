@@ -34,6 +34,9 @@ parameters:
   - description: Memory request
     name: MEMORY_REQUEST
     value:
+  - description: Spring Profile
+    name: SPRING_PROFILES_ACTIVE
+    value:
 objects:
 - apiVersion: v1
   kind: DeploymentConfig
@@ -72,7 +75,7 @@ objects:
         containers:
         - env:
             - name: SPRING_PROFILES_ACTIVE
-              value: 'prod'
+              value: ${SPRING_PROFILES_ACTIVE}
           image: wgc-embedded:${version}
           imagePullPolicy: IfNotPresent
           name: wgc-embedded

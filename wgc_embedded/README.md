@@ -27,6 +27,7 @@ oc process -f wgc_embedded.yaml \
   -p MEMORY_LIMIT="0" \
   -p CPU_REQUEST="0" \
   -p MEMORY_REQUEST="0" \
+  -p SPRING_PROFILES_ACTIVE=Test \ 
   | oc apply -f -
 ```
 Deploy integration environment:
@@ -35,10 +36,11 @@ oc project agi-apps-integration
 oc process -f wgc_embedded.yaml \
   -p version=latest \
   -p env=integration \
-  -p CPU_LIMIT="500m" \
-  -p MEMORY_LIMIT="512Mi" \
-  -p CPU_REQUEST="250m" \
-  -p MEMORY_REQUEST="258Mi" \
+  -p CPU_LIMIT="200m" \
+  -p MEMORY_LIMIT="200Mi" \
+  -p CPU_REQUEST="10m" \
+  -p MEMORY_REQUEST="100Mi" \
+  -p SPRING_PROFILES_ACTIVE=Int \ 
   | oc apply -f -
 ```
 Deploy production environment:
@@ -47,9 +49,10 @@ oc project agi-apps-production
 oc process -f wgc_embedded.yaml \
   -p version=latest \
   -p env=production \
-  -p CPU_LIMIT="500m" \
-  -p MEMORY_LIMIT="512Mi" \
-  -p CPU_REQUEST="250m" \
-  -p MEMORY_REQUEST="258Mi" \
+  -p CPU_LIMIT="200m" \
+  -p MEMORY_LIMIT="200Mi" \
+  -p CPU_REQUEST="100m" \
+  -p MEMORY_REQUEST="100Mi" \
+  -p SPRING_PROFILES_ACTIVE=Prod \
   | oc apply -f -
 ```
