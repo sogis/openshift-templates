@@ -50,7 +50,7 @@ objects:
     name: wgc-embedded
   spec:
     replicas: 1
-    revisionHistoryLimit: 10
+    revisionHistoryLimit: 1
     selector:
       deploymentconfig: wgc-embedded
     strategy:
