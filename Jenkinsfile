@@ -14,7 +14,7 @@ pipeline {
         stage('Update ImageStream tags') {
             when { expression { !params.RESTART_ONLY } }
             steps {
-                sh "oc import-image ${appName} --all -o name -n ${params.NAMESPACE}"
+                sh "oc import-image ${appName} --all --confirm -o name -n ${params.NAMESPACE}"
             }
         }
         stage('Apply configuration') {
