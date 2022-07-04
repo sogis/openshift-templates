@@ -4,6 +4,19 @@ def environment = params.NAMESPACE.substring(params.NAMESPACE.lastIndexOf('-') +
 pipeline {
     agent any
     stages {
+        stage('Checkout branch') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "*/${params.BRANCH}"]],
+                    extensions: [
+                        [$class: 'CloneOption', noTags: true, shallow: true],
+                        [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: appName]]]
+                    ],
+                    userRemoteConfigs: [[url: env.GIT_URL]]
+                ])
+            }
+        }
         stage('Restart the pods') {
             when { expression { params.RESTART_ONLY } }
             steps {
