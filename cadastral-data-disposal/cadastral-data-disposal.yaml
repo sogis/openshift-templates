@@ -1,36 +1,41 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: av-datenabgabe
+  name: cadstral-data-disposal
 labels:
-  template: av-datenabgabe-template
-  app: cadastral-data-disposal
+  template: cadastral-data-disposal-template
+  app: ${APPNAME}
 objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: cadastral-data-disposal
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
   spec:
     tags:
     - from:
         kind: DockerImage
-        name: sogis/cadastral-data-disposal:${TAG}
+        name: ${IMAGENAME}:${TAG}
       importPolicy:
         scheduled: ${{IMPORT_POLICY_SCHEDULED}}
-      name: latest
+      name: ${TAG}
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    name: cadastral-data-disposal
+    name: ${APPNAME}
   spec:
+    replicas: {{$REPLICA_COUNT}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
     template:
       metadata:
         labels:
-          app: cadastral-data-disposal
-          deploymentconfig: cadastral-data-disposal
+          app: ${APPNAME}
       spec:
         containers:
-        - name: cadastral-data-disposal
+        - name: ${APPNAME}
           env:
           - name: SPRING_PROFILES_ACTIVE
             value: ${ENVIRONMENT_SHORT} 
@@ -44,26 +49,16 @@ objects:
             value: ${ITF_CH_BUCKET_NAME}
           - name: DXF_BUCKET_NAME
             value: ${DXF_BUCKET_NAME}
-          - name: AWS_ACCESS_KEY
+          - name: AWS_ACCESS_KEY_ID
             valueFrom:
               secretKeyRef:
                 name: aws-secret
-                key: aws_access_key
-          - name: AWS_SECRET_KEY
+                key: aws_access_key_id
+          - name: AWS_SECRET_ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: aws-secret
-                key: aws_secret_key
-          resources:
-            limits:
-              cpu: ${CPU_LIMIT}
-              memory: ${MEMORY_LIMIT}
-            requests:
-              cpu: ${CPU_REQUEST}
-              memory: ${MEMORY_REQUEST}
-          volumeMounts:
-          - mountPath: /tmp
-            name: cadastral-data-disposal-volume-1
+                key: aws_secret_access_key
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -84,64 +79,71 @@ objects:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+          volumeMounts:
+          - mountPath: /tmp
+            name: ${APPNAME}-volume-1
         volumes:
         - emptyDir: {}
-          name: cadastral-data-disposal-volume-1
-    replicas: ${{REPLICA_COUNT}}
+          name: ${APPNAME}-volume-1
     triggers:
     - type: ConfigChange
     - type: ImageChange
       imageChangeParams:
         automatic: true
         containerNames:
-        - cadastral-data-disposal
+        - ${APPNAME}
         from:
           kind: ImageStreamTag
-          name: cadastral-data-disposal:latest
-    selector:
-      app: cadastral-data-disposal
-      deploymentconfig: cadastral-data-disposal
-    strategy:
-      type: Rolling
-    revisionHistoryLimit: 10
+          name: ${APPNAME}:${TAG}
 - apiVersion: v1
   kind: Service
   metadata:
-    name: cadastral-data-disposal
+    name: ${APPNAME}
   spec:
     ports:
     - port: 80
       protocol: TCP
       targetPort: 8080
     selector:
-      app: cadastral-data-disposal
-      deploymentconfig: cadastral-data-disposal
-    type: ClusterIP
+      app: ${APPNAME}
 parameters:
+- name: APPNAME
+  description: "Name of the App"
+  required: true
+- name: IMAGENAME
+  description: "Name of the docker image (e.g. sogis/my-image)"
+  required: true
 - name: ENVIRONMENT_SHORT
   description: "The short name of the environment the template is processed for (one of dev, test, int, prod)"
-  value: int
+  required: true
 - name: TAG
   description: "The Docker image tag to use (e.g. latest, 1.0.5)"
-  value: latest
+  required: true
 - name: IMPORT_POLICY_SCHEDULED
   description: "Regularly check for changed image (default: true)"
-  value: "true"
+  required: true
 - name: REPLICA_COUNT
   description: "Number of replicas to run"
-  value: "1"
+  required: true
 - name: URL
   description: "Url of the Environment"
-  value: geo-t
+  required: true
 - name: ITF_SO_BUCKET_NAME
   description: "itf SO bucket name (ch.so.agi.av.dm01avso24lv95 for prod and int, ch.so.agi.av.dm01avso24lv95-test for test)"
-  value: ch.so.agi.av.dm01avso24lv95-test
+  required: true
 - name: ITF_CH_BUCKET_NAME
   description: "itf CH bucket name (ch.so.agi.av.dm01avch24lv95d for prod and int, ch.so.agi.av.dm01avch24lv95d-test for test)"
-  value: ch.so.agi.av.dm01avch24lv95d-test
+  required: true
 - name: DXF_BUCKET_NAME
   description: "dxf bucket name (ch.so.agi.av.dxfgeobau for prod and int, ch.so.agi.av.dxfgeobau-test for test)"
-  value: ch.so.agi.av.dxfgeobau-test
+  required: true
 - name: CPU_LIMIT
   description: "Set Limit for cpu"
   required: true
