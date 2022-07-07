@@ -1,64 +1,34 @@
-# Install or update the Standortkarte application in OpenShift
+# Deploying Standortkarte in OpenShift
 
-## Install or update the application
+## Create and configure project
 
-Checkout the openshift-templates repository:
-
+Create project
 ```
-git clone https://github.com/sogis/openshift-templates.git
-cd openshift-templates
+oc new-project my-namespace
 ```
 
-Or, if already checked out, update the OpenShift templates repository:
-
+Set secret for pulling images from image registry (optional)
 ```
-cd openshift-templates
-git pull
-```
-
-
-Deploy test environment:
-
-```
-oc project agi-apps-test
-oc process -f standortkarte/standortkarte.yaml \
-  -p TAG=latest \
-  -p IMPORT_POLICY_SCHEDULED=true \
-  -p CPU_LIMIT="0" \
-  -p MEMORY_LIMIT="0" \
-  -p CPU_REQUEST="0" \
-  -p MEMORY_REQUEST="0" \
-  -p ENVIRONMENT_SHORT=test \
-  | oc apply -f -
+oc create secret docker-registry dockerhub-pull-secret --docker-username=xy --docker-password=xy -n my-namespace
+oc secrets link default dockerhub-pull-secret --for=pull -n my-namespace
 ```
 
-Deploy integration environment:
-
+Grant permissions for deploying the app
+from a Jenkins instance running in a different namespace (optional);
+replace JENKINS-NAMESPACE with the name of the namespace
+where Jenkins is deployed
 ```
-oc project agi-apps-integration
-oc process -f standortkarte/standortkarte.yaml \
-  -p TAG=2.0.22 \
-  -p IMPORT_POLICY_SCHEDULED=false \
-  -p CPU_LIMIT="200m" \
-  -p MEMORY_LIMIT="200Mi" \
-  -p CPU_REQUEST="10m" \
-  -p MEMORY_REQUEST="100Mi" \
-  -p ENVIRONMENT_SHORT=int \
-  | oc apply -f -
+oc policy add-role-to-user edit system:serviceaccount:JENKINS-NAMESPACE:jenkins -n my-namespace
 ```
 
-Deploy production environment:
+Grant permissions on project (optional)
+```
+oc policy add-role-to-user admin ... -n my-namespace
+oc policy add-role-to-user view ... -n my-namespace
+```
+
+## Apply template
 
 ```
-oc project agi-apps-production
-oc process -f standortkarte/standortkarte.yaml \
-  -p TAG=2.0.22 \
-  -p IMPORT_POLICY_SCHEDULED=false \
-  -p REPLICA_COUNT=2 \
-  -p CPU_LIMIT="200m" \
-  -p MEMORY_LIMIT="200Mi" \
-  -p CPU_REQUEST="10m" \
-  -p MEMORY_REQUEST="100Mi" \
-  -p ENVIRONMENT_SHORT=prod \
-  | oc apply -f -
+oc process -f standortkarte/standortkarte.yaml --param-file=standortkarte/standortkarte_test.params | oc apply -f - -n my-namespace
 ```
