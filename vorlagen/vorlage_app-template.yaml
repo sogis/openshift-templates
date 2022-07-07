@@ -128,31 +128,31 @@ objects:
       name: ${APPNAME}
 parameters:
 - name: APPNAME
-  description: "Name of the App"
+  description: Name of the App
   required: true
 - name: IMAGENAME
-  description: "Name of the docker image (e.g. sogis/my-image)"
+  description: Name of the docker image (e.g. sogis/my-image)
   required: true
 - name: TAG
-  description: "The Docker image tag to use (e.g. latest)"
+  description: The Docker image tag to use (e.g. latest)
   value: latest
 - name: IMPORT_POLICY_SCHEDULED
-  description: "Regularly check for changed image?"
-  value: "false"
+  description: Regularly check for changed image?
+  value: 'false'
 - name: REPLICA_COUNT
-  description: "Number of replicas to run"
-  value: "1"
+  description: Number of replicas to run
+  value: '1'
 - name: CPU_REQUEST
-  description: "The minimum amount of CPU the container is guaranteed."
+  description: The minimum amount of CPU the container is guaranteed.
   required: true
 - name: CPU_LIMIT
-  description: "The maximum amount of CPU the container is allowed to use when running."
+  description: The maximum amount of CPU the container is allowed to use when running.
   required: true
 - name: MEMORY_REQUEST
-  description: "The minimum amount of memory the container is guaranteed."
+  description: The minimum amount of memory the container is guaranteed.
   required: true
 - name: MEMORY_LIMIT
-  description: "The maximum amount of memory the container is allowed to use when running."
+  description: The maximum amount of memory the container is allowed to use when running.
   required: true
 - name: HOSTNAME
-  description: "The hostname for the route"
+  description: The hostname for the route
