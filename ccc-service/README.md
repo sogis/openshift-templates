@@ -1,38 +1,34 @@
-# ccc-service
+# Deploying CCC Service in OpenShift
 
-## Create a Docker image pull secret
+## Create and configure project
 
-This step is needed only if this is the first installation, or if any value of the secret needs to be changed.
-
-Create a secret for pulling the Docker images, and link this secret to the default service account:
+Create project
 ```
-oc create secret docker-registry sogis-pull-secret --docker-username=xx --docker-password=yy
-oc secrets link default sogis-pull-secret --for=pull
+oc new-project my-namespace
 ```
 
-Run these commands in the test, integration and production OpenShift projects.
+Set secret for pulling images from image registry (optional)
+```
+oc create secret docker-registry dockerhub-pull-secret --docker-username=xy --docker-password=xy -n my-namespace
+oc secrets link default dockerhub-pull-secret --for=pull -n my-namespace
+```
 
+Grant permissions for deploying the app
+from a Jenkins instance running in a different namespace (optional);
+replace JENKINS-NAMESPACE with the name of the namespace
+where Jenkins is deployed
+```
+oc policy add-role-to-user edit system:serviceaccount:JENKINS-NAMESPACE:jenkins -n my-namespace
+```
 
-## First install in an Openshift Environment
+Grant permissions on project (optional)
+```
+oc policy add-role-to-user admin ... -n my-namespace
+oc policy add-role-to-user view ... -n my-namespace
+```
 
-Deploy test environment (for the test environment, the default values of the template parameters are usually fine):
+## Apply template
+
 ```
-oc project agi-ccc-service-test
-oc process -f ccc-service.yaml \
-  --param-file=parameters_test.env  \
-  | oc apply -f-
-```
-Deploy integration environment:
-```
-oc project agi-ccc-service-integration
-oc process -f ccc-service.yaml \
-  --param-file=parameters_integration.env  \
-  | oc apply -f-
-```
-Deploy production environment:
-```
-oc project agi-ccc-service-production
-oc process -f ccc-service.yaml \
-  --param-file=parameters_production.env  \
-  | oc apply -f-
+oc process -f ccc-service/ccc-service.yaml --param-file=ccc-service/ccc-service_test.params | oc apply -f - -n my-namespace
 ```
