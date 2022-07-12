@@ -127,7 +127,7 @@ parameters:
   description: The Docker image tag to use (e.g. latest, 1.0.5)
   required: true
 - name: IMPORT_POLICY_SCHEDULED
-  description: Regularly check for changed image (default: true)
+  description: Regularly check for changed image?
   required: true
 - name: REPLICA_COUNT
   description: Number of replicas to run
