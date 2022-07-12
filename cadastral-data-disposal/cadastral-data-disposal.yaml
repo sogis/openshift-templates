@@ -62,7 +62,7 @@ objects:
           livenessProbe:
             failureThreshold: 3
             httpGet:
-              path: /av_datenabgabe/actuator/health
+              path: /actuator/health
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 15
@@ -72,7 +72,7 @@ objects:
           readinessProbe:
             failureThreshold: 3
             httpGet:
-              path: /av_datenabgabe/actuator/health
+              path: /actuator/health
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 15
