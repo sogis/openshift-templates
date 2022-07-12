@@ -25,7 +25,7 @@ objects:
   metadata:
     name: ${APPNAME}
   spec:
-    replicas: {{$REPLICA_COUNT}}
+    replicas: ${{REPLICA_COUNT}}
     revisionHistoryLimit: 3
     selector:
       app: ${APPNAME}
@@ -115,44 +115,44 @@ objects:
       app: ${APPNAME}
 parameters:
 - name: APPNAME
-  description: "Name of the App"
+  description: Name of the App
   required: true
 - name: IMAGENAME
-  description: "Name of the docker image (e.g. sogis/my-image)"
+  description: Name of the docker image (e.g. sogis/my-image)
   required: true
 - name: ENVIRONMENT_SHORT
-  description: "The short name of the environment the template is processed for (one of dev, test, int, prod)"
+  description: The short name of the environment the template is processed for (one of dev, test, int, prod)
   required: true
 - name: TAG
-  description: "The Docker image tag to use (e.g. latest, 1.0.5)"
+  description: The Docker image tag to use (e.g. latest, 1.0.5)
   required: true
 - name: IMPORT_POLICY_SCHEDULED
-  description: "Regularly check for changed image (default: true)"
+  description: Regularly check for changed image (default: true)
   required: true
 - name: REPLICA_COUNT
-  description: "Number of replicas to run"
+  description: Number of replicas to run
   required: true
 - name: URL
-  description: "Url of the Environment"
+  description: Url of the Environment
   required: true
 - name: ITF_SO_BUCKET_NAME
-  description: "itf SO bucket name (ch.so.agi.av.dm01avso24lv95 for prod and int, ch.so.agi.av.dm01avso24lv95-test for test)"
+  description: itf SO bucket name (ch.so.agi.av.dm01avso24lv95 for prod and int, ch.so.agi.av.dm01avso24lv95-test for test)
   required: true
 - name: ITF_CH_BUCKET_NAME
-  description: "itf CH bucket name (ch.so.agi.av.dm01avch24lv95d for prod and int, ch.so.agi.av.dm01avch24lv95d-test for test)"
+  description: itf CH bucket name (ch.so.agi.av.dm01avch24lv95d for prod and int, ch.so.agi.av.dm01avch24lv95d-test for test)
   required: true
 - name: DXF_BUCKET_NAME
-  description: "dxf bucket name (ch.so.agi.av.dxfgeobau for prod and int, ch.so.agi.av.dxfgeobau-test for test)"
+  description: dxf bucket name (ch.so.agi.av.dxfgeobau for prod and int, ch.so.agi.av.dxfgeobau-test for test)
   required: true
 - name: CPU_LIMIT
-  description: "Set Limit for cpu"
+  description: Set Limit for cpu
   required: true
 - name: MEMORY_LIMIT
-  description: "Set Limit for Memory Usage"
+  description: Set Limit for Memory Usage
   required: true
 - name: CPU_REQUEST
-  description: "Set Request for cpu"
+  description: Set Request for cpu
   required: true
 - name: MEMORY_REQUEST
-  description: "Set Request for Memory"
+  description: Set Request for Memory
   required: true
