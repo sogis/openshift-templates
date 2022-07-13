@@ -1,6 +1,6 @@
 APPNAME=avgbs2mtab-web-service
 IMAGENAME=sogis/avgbs2mtab-web-service
-TAG=1.2.23
+TAG=1.2.24
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=200m
