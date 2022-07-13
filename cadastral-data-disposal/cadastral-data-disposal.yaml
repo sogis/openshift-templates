@@ -1,9 +1,9 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: cadstral-data-disposal
+  name: ${APPNAME}-template
 labels:
-  template: cadastral-data-disposal-template
+  template: ${APPNAME}-template
   app: ${APPNAME}
 objects:
 - apiVersion: v1
