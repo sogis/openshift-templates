@@ -38,6 +38,22 @@ objects:
       spec:
         containers:
         - name: ${APPNAME} 
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 1
           resources:
             limits:
               cpu: ${CPU_LIMIT}
