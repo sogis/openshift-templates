@@ -1,0 +1,263 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${APPNAME}-template
+labels:
+  template: ${APPNAME}-template
+  app: ${APPNAME}
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
+  spec:
+    lookupPolicy:
+      local: true
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: batch/v1
+  kind: CronJob
+  metadata:
+    name: ${APPNAME}
+  spec:
+    schedule: ${SCHEDULE}
+    jobTemplate:
+      spec:
+        activeDeadlineSeconds: 30
+        template:
+          metadata:
+            labels:
+              parent: cronjob-${APPNAME}
+          spec:
+            restartPolicy: Never
+            containers:
+            - name: ${APPNAME}
+              image: ${APPNAME}:${TAG}
+              env:
+              - name: PGSERVICE
+                value: ldap2pg
+              - name: PGSERVICEFILE
+                value: /workspace/pg_service/pg_service.conf
+              envFrom:
+              - secretRef:
+                  name: ldap2pg-ldap-secret
+              args:
+              - --real
+              livenessProbe:
+                exec:
+                  command: [ldap2pg, --version]
+                initialDelaySeconds: 0
+                periodSeconds: 10
+                timeoutSeconds: 1
+              resources:
+                limits:
+                  cpu: ${CPU_LIMIT}
+                  memory: ${MEMORY_LIMIT}
+                requests:
+                  cpu: ${CPU_REQUEST}
+                  memory: ${MEMORY_REQUEST}
+              volumeMounts:
+              - name: ldap2pg-configmap-volume
+                mountPath: /workspace
+                readOnly: true
+              - name: ldap2pg-db-secret-volume
+                mountPath: /workspace/pg_service/
+                readOnly: true
+            volumes:
+            - name: ldap2pg-configmap-volume
+              configMap:
+                name: ldap2pg-configmap
+            - name: ldap2pg-db-secret-volume
+              secret:
+                secretName: ldap2pg-db-secret
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: ldap2pg-configmap
+  data:
+    ldap2pg.yml: |
+      # ldap2pg-Konfigurationsfile des AGI
+      # Basiert auf https://github.com/dalibo/ldap2pg/blob/5.8/ldap2pg.yml
+
+
+      # ldap2pg config file format version
+      version: 5
+
+
+      # Angaben zu den DBs
+      postgres:
+        # Liste der Rollen, die von ldap2pg verwaltet werden.
+        # Im AGI sind dies diejenigen Rollen, die der Gruppe ldap_roles zugewiesen sind.
+        managed_roles_query: |
+          SELECT DISTINCT role.rolname
+          FROM pg_roles AS role
+          LEFT OUTER JOIN pg_auth_members AS ms ON ms.member = role.oid
+          LEFT OUTER JOIN pg_roles AS ldap_roles
+            ON ldap_roles.rolname = 'ldap_roles' AND ldap_roles.oid = ms.roleid
+          WHERE role.rolname = 'ldap_roles'
+              OR ldap_roles.oid IS NOT NULL
+          ORDER BY 1;
+
+        # Liste der Rollen, die Objekte innnerhalb von Schemen anlegen dürfen.
+        # Wird im AGI nicht benötigt, da die Objekt-Owner keine LDAP-User sind.
+        # owners_query: |
+        #   SELECT DISTINCT role.rolname
+        #   FROM pg_catalog.pg_roles AS role
+        #   JOIN pg_catalog.pg_auth_members AS ms ON ms.member = role.oid
+        #   JOIN pg_catalog.pg_roles AS owners
+        #     ON owners.rolname = 'owners' AND owners.oid = ms.roleid
+        #   ORDER BY 1;
+
+        # Liste der Schemen, die von ldap2pg verwaltet werden
+        # (d.h. auf denen ldap2pg z.B. ALTER DEFAULT PRIVILEGES ausführen darf).
+        # Wird im AGI nicht benötigt,
+        # da die Berechtigungen durch die Schema-Jobs verwaltet werden.
+        # schemas_query: |
+        #   SELECT nspname FROM pg_catalog.pg_namespace
+        #   WHERE nspname NOT LIKE 'pg_%' AND nspname <> 'information_schema'
+        #   ORDER BY 1;
+
+        # Datenbanken, in welchen z.B. GRANTs aufgehoben werden sollen,
+        # wenn eine Rolle gelöscht wird.
+        databases_query: [edit, pub]
+
+
+      # In diesem Abschnitt könnten Privileges ("Rechte-Gruppen") definiert werden,
+      # die dann DB-Rollen zugewiesen werden können.
+      # Wird im AGI nicht eingesetzt.
+      # privileges:
+      #   # Define `ro` privilege group with read-only grants
+      #   ro:
+      #   - __connect__
+      #   - __select_on_tables__
+      #   - __select_on_sequences__
+      #   - __usage_on_schemas__
+      #   - __usage_on_types__
+
+      #   # `rw` privilege group lists write-only grants
+      #   rw:
+      #   - __temporary__
+      #   - __all_on_tables__
+      #   - __all_on_sequences__
+
+      #   # `ddl` privilege group lists DDL only grants.
+      #   ddl:
+      #   - __create_on_schemas__
+
+
+      # In der Syncronisation Map können einerseits "statische" DB-Rollen definiert werden.
+      # Andererseits können Rollen gemäss LDAP angelegt
+      # und diese gleichzeitig auch Gruppen zugeordnet werden
+      sync_map:
+      # Rolle/Gruppe ldap_roles anlegen.
+      # Weiter unten werden wir sicherstellen,
+      # dass alle von ldap2pg erstellten Rollen Mitglied dieser Gruppe sind.
+      - description: "Setup static roles"
+        roles:
+        - name: ldap_roles
+          options: NOLOGIN
+
+      - description: "Query LDAP to create a group role for each LDAP group found"
+        # Eine Gruppe pro Amt anlegen und sie der oben definierten Rolle ldap_roles zuweisen.
+        # Fürs AfU wird nur die Gruppe bdafu berücksichtigt, fürs AGI nur die Gruppe bjsvw.
+        # Zusätzlich wird auch die Gruppe extern mitberücksichtigt.
+        ldapsearch:
+          base: ou=groups,ou=sogis,dc=ldap,dc=rootso,dc=org
+          # Der gewählte Ansatz ist, dass ausdrücklich nur die aufgelisteten Gruppen abgefragt werden.
+          # (Die Alternative wäre, alle Gruppen zu abzufragen und nicht gewünschte Gruppen auszuschliessen.)
+          # Der Operator "|" steht für "OR", der Operator "&" steht für "AND", der Operator "!" steht für "NOT"
+          # Doku für LDAP-Suchfilter: https://access.redhat.com/documentation/en-us/red_hat_directory_server/11/html/administration_guide/finding_directory_entries-ldap_search_filters
+          filter: "
+            (|
+              (cn=barpa)
+              (cn=bdafu)
+              (cn=bdhba)
+              (cn=bdsek)
+              (cn=bjsvw)
+              (cn=bvtaa)
+              (cn=edden)
+              (cn=extern)
+              (cn=fdaio)
+              (cn=fdstv)
+              (cn=ffivw)
+              (cn=ikapo)
+              (cn=ioszk)
+              (cn=vdgem)
+              (cn=vkfaa)
+              (cn=vlwaa)
+            )"
+        role:
+          name_attribute: cn
+          options: NOLOGIN
+          parent:
+          - ldap_roles
+          comment: "{description} - Managed by ldap2pg"
+
+      - description: "Query LDAP to create users"
+        # Alle aufgelisteten Amtsgruppen abfragen,
+        # ihre jeweiligen Mitglieder (deren Name steht im Feld memberUid) als DB-User anlegen,
+        # sie der oben definierten Rolle ldap_roles zuweisen
+        # und sie gemäss dem abgefragten Gruppennamen
+        # ihrer Amtsgruppe zuweisen (über die Variable {cn}).
+        ldapsearch:
+          base: ou=groups,ou=sogis,dc=ldap,dc=rootso,dc=org
+          # Der Filter muss derselbe sein wie oben:
+          filter: "
+            (|
+              (cn=barpa)
+              (cn=bdafu)
+              (cn=bdhba)
+              (cn=bdsek)
+              (cn=bjsvw)
+              (cn=bvtaa)
+              (cn=edden)
+              (cn=extern)
+              (cn=fdaio)
+              (cn=fdstv)
+              (cn=ffivw)
+              (cn=ikapo)
+              (cn=ioszk)
+              (cn=vdgem)
+              (cn=vkfaa)
+              (cn=vlwaa)
+            )"
+        role:
+          name_attribute: memberUid
+          options: LOGIN
+          parent:
+          - ldap_roles
+          - '{cn}'
+parameters:
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The Docker image tag to use (e.g. latest)
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  value: 'false'
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+- name: SCHEDULE
+  description: Schedule of the cron job (cron format, e.g. 00 11 * * *)
+  required: true
