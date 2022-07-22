@@ -126,7 +126,7 @@ objects:
 
         # Datenbanken, in welchen z.B. GRANTs aufgehoben werden sollen,
         # wenn eine Rolle gelöscht wird.
-        databases_query: [edit, pub]
+        databases_query: [none]
 
 
       # In diesem Abschnitt könnten Privileges ("Rechte-Gruppen") definiert werden,
