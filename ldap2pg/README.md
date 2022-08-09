@@ -82,5 +82,5 @@ If you want to manually trigger a run of the cron job,
 run the following commands:
 
 ```
-oc delete job ldap2pg-manual ; oc create job ldap2pg-manual --from=cronjob/ldap2pg -n my-namespace
+oc delete job ldap2pg-manual -n my-namespace ; oc create job ldap2pg-manual --from=cronjob/ldap2pg -n my-namespace
 ```
