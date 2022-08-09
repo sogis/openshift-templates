@@ -20,7 +20,7 @@ pipeline {
         stage('Run job immediately') {
             when { expression { params.RUN_JOB_ONLY } }
             steps {
-                sh "oc delete job ${appName}-manual || echo Job ${appName}-manual does not exist yet"
+                sh "oc delete job ${appName}-manual -n ${params.NAMESPACE} || echo Job ${appName}-manual does not exist"
                 sh "oc create job ${appName}-manual --from=cronjob/${appName} -n ${params.NAMESPACE}"
             }
         }
