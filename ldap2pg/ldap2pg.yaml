@@ -31,6 +31,7 @@ objects:
     jobTemplate:
       spec:
         activeDeadlineSeconds: 30
+        backoffLimit: 0
         template:
           metadata:
             labels:
