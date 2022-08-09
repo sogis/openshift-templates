@@ -76,11 +76,11 @@ stringData:
 oc process -f ldap2pg/ldap2pg.yaml --param-file=ldap2pg/ldap2pg_test.params | oc apply -f - -n my-namespace
 ```
 
-# Starting the cron job manually
+# Starting the job manually
 
 If you want to manually trigger a run of the cron job,
-run the following command:
+run the following commands:
 
 ```
-oc delete job mapcache-seeder-manual ; oc create job mapcache-seeder-manual --from=cronjob/mapcache-seeder -n my-namespace
+oc delete job ldap2pg-manual ; oc create job ldap2pg-manual --from=cronjob/ldap2pg -n my-namespace
 ```
