@@ -16,6 +16,7 @@ Set secret for pulling images from image registry (optional)
 ```
 oc create secret docker-registry dockerhub-pull-secret --docker-username=xy --docker-password=xy -n my-namespace
 oc secrets link default dockerhub-pull-secret --for=pull -n my-namespace
+oc secrets link jenkins dockerhub-pull-secret --for=pull -n my-namespace
 ```
 
 Grant permissions for deploying the app
