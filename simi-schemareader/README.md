@@ -42,7 +42,7 @@ metadata:
     app: simi-schemareader
 type: Opaque
 stringData:
-  SPRING_APPLICATION_JSON: '{"dbs":[{"key":"edit","url":"jdbc:postgresql://localhost:5432/dbname","user":"dbuser","pass":"password"},{"key":"pub","url":"jdbc:postgresql://localhost:5432/dbname,"user":"dbuser","pass":"password"},{"key":"oereb","url":"jdbc:postgresql://localhost:5432/dbname","user":"dbuser","pass":"password"},{"key":"sogis","url":"jdbc:postgresql://localhost:5432/dbname","user":"dbuser","pass": "password"}]}'
+  SPRING_APPLICATION_JSON: '{"dbs":[{"key":"edit","url":"jdbc:postgresql://localhost:5432/dbname","user":"dbuser","pass":"password"},{"key":"pub","url":"jdbc:postgresql://localhost:5432/dbname","user":"dbuser","pass":"password"},{"key":"oereb","url":"jdbc:postgresql://localhost:5432/dbname","user":"dbuser","pass":"password"},{"key":"sogis","url":"jdbc:postgresql://localhost:5432/dbname","user":"dbuser","pass":"password"}]}'
 ```
 
 ## Apply template
