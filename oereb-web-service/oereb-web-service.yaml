@@ -63,6 +63,8 @@ objects:
             value: ${MININTERSECTION}
           - name: TMPDIR
             value: /tmp
+          - name: TOMCAT_THREADS_MAX
+            value: ${TOMCAT_THREADS_MAX}
           - name: LOG_LEVEL_DB_CONNECTION_POOL
             value: ${LOG_LEVEL_DB_CONNECTION_POOL}
           - name: LOG_LEVEL_DB_CONNECTION
@@ -156,6 +158,9 @@ parameters:
 - name: MININTERSECTION
   description: Discard intersection areas/lines smaller than MININTERSECTION map units
   value: '0.5'
+- name: TOMCAT_THREADS_MAX
+  description: Maximum number of threads that can be created by Tomcat
+  value: '200'
 - name: LOG_LEVEL_DB_CONNECTION_POOL
   description: The log level of the DB connection pool
   value: info
