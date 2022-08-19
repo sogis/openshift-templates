@@ -1,10 +1,159 @@
 apiVersion: template.openshift.io/v1
 kind: Template
-labels:
-  app: gretl-platform
 metadata:
-  name: gretl-platform
+  name: gretl-platform-template
+labels:
+  template: gretl-platform-template
+  app: gretl-platform
 objects:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: ${APPNAME}
+    annotations:
+      serviceaccounts.openshift.io/oauth-redirectreference.jenkins: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${APPNAME}"}}'
+- apiVersion: v1
+  kind: RoleBinding
+  metadata:
+    name: ${APPNAME}_edit
+  roleRef:
+    name: edit
+  subjects:
+  - kind: ServiceAccount
+    name: ${APPNAME}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}
+  spec:
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+      spec:
+        serviceAccountName: ${APPNAME}
+        containers:
+        - name: ${APPNAME}
+          ## List the necessary envirionment variables below
+          env:
+          - name: OPENSHIFT_ENABLE_OAUTH
+            value: ${ENABLE_OAUTH}
+          - name: OPENSHIFT_ENABLE_REDIRECT_PROMPT
+            value: 'true'
+          - name: KUBERNETES_MASTER
+            value: https://kubernetes.default:443
+          - name: KUBERNETES_TRUST_CERTIFICATES
+            value: 'true'
+          - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
+            value: 'true'
+          - name: JENKINS_SERVICE_NAME
+            value: ${APPNAME}
+          - name: JNLP_SERVICE_NAME
+            value: ${APPNAME}-jnlp
+          - name: GRETL_JOB_REPO_URL
+            value: ${GRETL_JOB_REPO_URL}
+          - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
+            value: 'true'
+          ## Define HealthChecks. Ideally the timeoutSeconds for the readiness Probe should be shorter than for the liveness Probe or you have different Probes for the checks
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 240
+          livenessProbe:
+            httpGet:
+              path: /login
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 420
+            periodSeconds: 360
+            timeoutSeconds: 240
+          ## Define the desired Resources for your container in the paramter file. They should be different in test, int and prod environment
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+          ## Define the required volume mounts
+          volumeMounts:
+          - name: ${APPNAME}-data
+            mountPath: /var/lib/jenkins
+        ## Define the required volumes
+        volumes:
+        - name: ${APPNAME}-data
+          persistentVolumeClaim:
+            claimName: ${APPNAME}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}
+  spec:
+    ## Define the ports exposed by the app
+    ports:
+    - name: web
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: ${APPNAME}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}-jnlp
+  spec:
+    ## Define the ports exposed by the app
+    ports:
+    - name: agent
+      port: 50000
+      protocol: TCP
+      targetPort: 50000
+    selector:
+      app: ${APPNAME}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}
+  spec:
+    host: ${HOSTNAME}
+    port:
+      targetPort: web
+    to:
+      kind: Service
+      name: ${APPNAME}
+## The following objects are needed as pod templates for the Jenkins agents
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
@@ -287,6 +436,48 @@ objects:
         </yaml>
       </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
 parameters:
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The Docker image tag to use (e.g. latest)
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  value: 'false'
+- name: REPLICA_COUNT
+  description: Number of replicas to run
+  value: '1'
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
+- name: HOSTNAME
+  description: The hostname for the route
+- name: ENABLE_OAUTH
+  displayName: Enable OAuth in Jenkins
+  description: Whether to enable OAuth OpenShift integration. If false, the static
+    account 'admin' will be initialized with the password 'password'.
+  value: 'true'
+- name: JENKINS_CONFIGURATION_REPO_URL
+  displayName: Jenkins configuration Git repo
+  description: Url of the Git repo holding the Jenkins configuration.
+  value: https://github.com/sogis/openshift-jenkins.git
+- name: GRETL_JOB_REPO_URL
+  displayName: Git repo containing GRETL jobs
+  description: Url of the Git repo holding the GRETL Job configurations.
+  value: https://github.com/sogis/gretljobs.git
 - name: JENKINS_AGENT_IMAGE_TAG
   description: Jenkins agent image tag to be pulled from Quay.io
   required: true

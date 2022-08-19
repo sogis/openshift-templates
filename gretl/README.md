@@ -47,8 +47,32 @@ containing a ConfigMap according to the template
 https://github.com/sogis/gretl/blob/master/openshift/templates/gretl-resources-example.yaml.
 Then run `oc apply -f path/to/gretl-resources.yaml -n my-namespace`.
 
+## Create Persistent Volume Claim
+
+In a separate folder, create a file `jenkins-pvc.yaml`
+containing the definition of a Persistent Volume Claim
+according to the following template:
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins
+labels:
+  app: gretl-platform
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+```
+Then run `oc apply -f path/to/jenkins-pvc.yaml -n my-namespace`.
+
 ## Apply template
 
 ```
-oc process -f gretl/gretl-pod-template.yaml --param-file=gretl/gretl_test.params | oc apply -f - -n my-namespace
+oc process -f gretl/gretl.yaml --param-file=gretl/gretl_test.params \
+  -p HOSTNAME='' \
+  -p ENABLE_OAUTH=true \
+  | oc apply -f - -n my-namespace
 ```

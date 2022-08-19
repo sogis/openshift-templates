@@ -1,5 +1,5 @@
-// Jenkinsfile adapted for GRETL pod template
-def appName = 'gretl'
+// Jenkinsfile adapted for GRETL platform
+def appName = 'jenkins'
 def templateFilename = env.JOB_BASE_NAME
 def environment = params.NAMESPACE.substring(params.NAMESPACE.lastIndexOf('-') + 1)
 
@@ -19,15 +19,30 @@ pipeline {
                 ])
             }
         }
+        stage('Restart the pods') {
+            when { expression { params.RESTART_ONLY } }
+            steps {
+                sh "oc rollout latest dc/${appName} -n ${params.NAMESPACE}"
+            }
+        }
         // Update the ImageStream tags (needed for tracking tags like "latest" or "v2.1")
         stage('Update ImageStream tags') {
+            when { expression { !params.RESTART_ONLY } }
             steps {
                 sh "oc import-image ${appName} --all --confirm -o name -n ${params.NAMESPACE}"
+                sh "oc import-image jenkins-agent --all --confirm -o name -n ${params.NAMESPACE}"
+                sh "oc import-image gretl --all --confirm -o name -n ${params.NAMESPACE}"
             }
         }
         stage('Apply configuration') {
+            when { expression { !params.RESTART_ONLY } }
             steps {
                 sh "oc process -f ${templateFilename}/${templateFilename}.yaml --param-file=${templateFilename}/${templateFilename}_${environment}.params | oc apply -f - -n ${params.NAMESPACE}"
+            }
+        }
+        stage('Wait for rollout to finish') {
+            steps {
+                sh "sleep 2 && oc rollout status dc/${appName} --timeout=90s -n ${params.NAMESPACE}"
             }
         }
     }
