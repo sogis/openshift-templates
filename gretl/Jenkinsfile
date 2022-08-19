@@ -1,5 +1,6 @@
 // Jenkinsfile adapted for GRETL pod template
-def appName = env.JOB_BASE_NAME
+def appName = 'gretl'
+def templateFilename = env.JOB_BASE_NAME
 def environment = params.NAMESPACE.substring(params.NAMESPACE.lastIndexOf('-') + 1)
 
 pipeline {
@@ -12,7 +13,7 @@ pipeline {
                     branches: [[name: "*/${params.BRANCH}"]],
                     extensions: [
                         [$class: 'CloneOption', noTags: true, shallow: true],
-                        [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: appName]]]
+                        [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: templateFilename]]]
                     ],
                     userRemoteConfigs: [[url: env.GIT_URL]]
                 ])
@@ -26,7 +27,7 @@ pipeline {
         }
         stage('Apply configuration') {
             steps {
-                sh "oc process -f ${appName}/gretl-pod-template.yaml --param-file=${appName}/${appName}_${environment}.params | oc apply -f - -n ${params.NAMESPACE}"
+                sh "oc process -f ${templateFilename}/${templateFilename}.yaml --param-file=${templateFilename}/${templateFilename}_${environment}.params | oc apply -f - -n ${params.NAMESPACE}"
             }
         }
     }
