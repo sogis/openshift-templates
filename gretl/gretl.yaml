@@ -491,6 +491,10 @@ parameters:
   displayName: Copy plugins of the image to persistent volume
   description: Overwrite the plugins installed in the jenkins persistent volume with the plugins installed in the Jenkins image.
   value: 'true'
+- name: CASC_JENKINS_CONFIG
+  displayName: Path or URL to Configuration as Code config file
+  description: Path or URL to the config file for the Jenkins Configuration as Code plugin.
+  value: https://raw.githubusercontent.com/sogis/openshift-templates/master/gretl/configuration-as-code.yaml
 - name: GRETL_JOB_REPO_URL
   displayName: Git repo containing GRETL jobs
   description: Url of the Git repo holding the GRETL Job configurations.
