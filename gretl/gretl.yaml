@@ -62,6 +62,8 @@ objects:
             value: https://kubernetes.default:443
           - name: KUBERNETES_TRUST_CERTIFICATES
             value: 'true'
+          - name: INSTALL_PLUGINS
+            value: ${INSTALL_PLUGINS}
           - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
             value: 'true'
           - name: JENKINS_SERVICE_NAME
@@ -470,10 +472,10 @@ parameters:
   description: Whether to enable OAuth OpenShift integration. If false, the static
     account 'admin' will be initialized with the password 'password'.
   value: 'true'
-- name: JENKINS_CONFIGURATION_REPO_URL
-  displayName: Jenkins configuration Git repo
-  description: Url of the Git repo holding the Jenkins configuration.
-  value: https://github.com/sogis/openshift-jenkins.git
+- name: INSTALL_PLUGINS
+  displayName: Jenkins plug-ins to install
+  description: List of additional Jenkins plug-ins to install.
+  value: email-ext:2.83,envinject:2.4.0,groovy:2.4,ldap:2.7,job-dsl:1.77,matrix-auth:2.6.8
 - name: GRETL_JOB_REPO_URL
   displayName: Git repo containing GRETL jobs
   description: Url of the Git repo holding the GRETL Job configurations.
