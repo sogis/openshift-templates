@@ -475,7 +475,16 @@ parameters:
 - name: INSTALL_PLUGINS
   displayName: Jenkins plug-ins to install
   description: List of additional Jenkins plug-ins to install.
-  value: email-ext:2.83,envinject:2.4.0,groovy:2.4,ldap:2.7,job-dsl:1.77,matrix-auth:2.6.8
+  value:
+    cloudbees-disk-usage-simple:0.10,
+    email-ext:2.83,
+    envinject:2.4.0,
+    groovy:2.4,
+    ldap:2.7,
+    job-dsl:1.77,
+    mailer:414.vcc4c33714601,
+    matrix-auth:2.6.8,
+    script-security:1138.v8e727069a_025
 - name: GRETL_JOB_REPO_URL
   displayName: Git repo containing GRETL jobs
   description: Url of the Git repo holding the GRETL Job configurations.
