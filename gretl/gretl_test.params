@@ -9,6 +9,10 @@ MEMORY_REQUEST=0
 MEMORY_LIMIT=0
 HOSTNAME=gretl-t.so.ch
 ENABLE_OAUTH=false
+# Comment out the following line on first deployment and when updating Jenkins or plugins:
+INSTALL_PLUGINS=''
+# Comment out the following line on first deployment and when updating Jenkins or plugins:
+OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS=false
 JENKINS_AGENT_IMAGE_TAG=4.7
 JENKINS_AGENT_IMAGE_IMPORT_POLICY_SCHEDULED=true
 GRETL_IMAGE_TAG=latest

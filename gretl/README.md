@@ -70,9 +70,8 @@ Then run `oc apply -f path/to/jenkins-pvc.yaml -n my-namespace`.
 
 ## Apply template
 
+(For local usage a particular `gretl_development.params` file is available.)
+
 ```
-oc process -f gretl/gretl.yaml --param-file=gretl/gretl_test.params \
-  -p HOSTNAME='' \
-  -p ENABLE_OAUTH=true \
-  | oc apply -f - -n my-namespace
+oc process -f gretl/gretl.yaml --param-file=gretl/gretl_development.params | oc apply -f - -n my-namespace
 ```

@@ -65,7 +65,9 @@ objects:
           - name: INSTALL_PLUGINS
             value: ${INSTALL_PLUGINS}
           - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
-            value: 'true'
+            value: ${OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS}
+          - name: CASC_JENKINS_CONFIG
+            value: ${CASC_JENKINS_CONFIG}
           - name: JENKINS_SERVICE_NAME
             value: ${APPNAME}
           - name: JNLP_SERVICE_NAME
@@ -485,6 +487,10 @@ parameters:
     mailer:414.vcc4c33714601,
     matrix-auth:2.6.8,
     script-security:1138.v8e727069a_025
+- name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
+  displayName: Copy plugins of the image to persistent volume
+  description: Overwrite the plugins installed in the jenkins persistent volume with the plugins installed in the Jenkins image.
+  value: 'true'
 - name: GRETL_JOB_REPO_URL
   displayName: Git repo containing GRETL jobs
   description: Url of the Git repo holding the GRETL Job configurations.
