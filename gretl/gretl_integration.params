@@ -9,9 +9,7 @@ MEMORY_REQUEST=1.2Gi
 MEMORY_LIMIT=2Gi
 HOSTNAME=gretl-i.so.ch
 ENABLE_OAUTH=false
-# Comment out the following line on first deployment and when updating Jenkins or plugins:
-INSTALL_PLUGINS=''
-# Comment out the following line on first deployment and when updating Jenkins or plugins:
+# Set to true when installing/updating plugins, set to false for faster Jenkins startup:
 OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS=false
 JENKINS_AGENT_IMAGE_TAG=4.7
 JENKINS_AGENT_IMAGE_IMPORT_POLICY_SCHEDULED=true
