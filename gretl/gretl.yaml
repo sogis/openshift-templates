@@ -19,6 +19,37 @@ objects:
         scheduled: ${{IMPORT_POLICY_SCHEDULED}}
       name: ${TAG}
 - apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: configuration-as-code
+    labels:
+      app: gretl-platform
+  data:
+    configuration-as-code.yaml: |
+      jobs:
+        - script: |
+            job('gretl_job_generator') {
+              description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
+              logRotator(-1, 14)
+              scm {
+                git {
+                  remote {
+                    url('${GRETL_JOB_REPO_URL}')
+                  }
+                  branch('*/main')
+                }
+              }
+              triggers {
+                cron('H H/8 * * *')
+              }
+              steps {
+                dsl {
+                  external('gretl_job_generator.groovy')
+                  removeAction('DELETE')
+                }
+              }
+            }
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     name: ${APPNAME}
@@ -90,11 +121,17 @@ objects:
           volumeMounts:
           - name: ${APPNAME}-data
             mountPath: /var/lib/jenkins
+          - name: configuration-as-code-volume
+            mountPath: /opt/configuration-as-code
+            readOnly: true
         ## Define the required volumes
         volumes:
         - name: ${APPNAME}-data
           persistentVolumeClaim:
             claimName: ${APPNAME}
+        - name: configuration-as-code-volume
+          configMap:
+            name: configuration-as-code
     triggers:
     - type: ConfigChange
     - type: ImageChange
@@ -479,7 +516,7 @@ parameters:
 - name: CASC_JENKINS_CONFIG
   displayName: Path or URL to Configuration as Code config file
   description: Path or URL to the config file for the Jenkins Configuration as Code plugin.
-  value: https://raw.githubusercontent.com/sogis/openshift-templates/master/gretl/configuration-as-code.yaml
+  value: /opt/configuration-as-code/configuration-as-code.yaml
 - name: GRETL_JOB_REPO_URL
   displayName: Git repo containing GRETL jobs
   description: Url of the Git repo holding the GRETL Job configurations.
