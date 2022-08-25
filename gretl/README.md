@@ -47,6 +47,34 @@ containing a ConfigMap according to the template
 https://github.com/sogis/gretl/blob/master/openshift/templates/gretl-resources-example.yaml.
 Then run `oc apply -f path/to/gretl-resources.yaml -n my-namespace`.
 
+## Create service account and role binding
+
+In a separate folder, create a file `jenkins-sa.yaml`
+containing the following definition of a service account and a role binding:
+```
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins
+  labels:
+    app: gretl-platform
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.jenkins: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"jenkins"}}'
+---
+apiVersion: authorization.openshift.io/v1
+kind: RoleBinding
+metadata:
+  name: jenkins_edit
+  labels:
+    app: gretl-platform
+roleRef:
+  name: edit
+subjects:
+- kind: ServiceAccount
+  name: jenkins
+```
+Then run `oc apply -f path/to/jenkins-sa.yaml -n my-namespace`.
+
 ## Create Persistent Volume Claim
 
 In a separate folder, create a file `jenkins-pvc.yaml`

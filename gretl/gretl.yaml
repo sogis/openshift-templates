@@ -7,21 +7,6 @@ labels:
   app: gretl-platform
 objects:
 - apiVersion: v1
-  kind: ServiceAccount
-  metadata:
-    name: ${APPNAME}
-    annotations:
-      serviceaccounts.openshift.io/oauth-redirectreference.jenkins: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${APPNAME}"}}'
-- apiVersion: v1
-  kind: RoleBinding
-  metadata:
-    name: ${APPNAME}_edit
-  roleRef:
-    name: edit
-  subjects:
-  - kind: ServiceAccount
-    name: ${APPNAME}
-- apiVersion: v1
   kind: ImageStream
   metadata:
     name: ${APPNAME}
