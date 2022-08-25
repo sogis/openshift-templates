@@ -36,21 +36,52 @@ oc policy add-role-to-user view ... -n my-namespace
 ## Create secret
 
 In a separate folder, create a file `gretl-secrets.yaml`
-containing secrets according to the template
-https://github.com/sogis/gretl/blob/master/openshift/templates/gretl-secrets-example.yaml.
+containing secrets according to the following template.
 Then run `oc apply -f path/to/gretl-secrets.yaml -n my-namespace`.
+
+```
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: gretl-secrets
+  labels:
+    app: gretl-platform
+stringData:
+  ORG_GRADLE_PROJECT_dbUserEdit: myusername1
+  ORG_GRADLE_PROJECT_dbPwdEdit: mypassword1
+  ORG_GRADLE_PROJECT_dbUserPub: myusername2
+  ORG_GRADLE_PROJECT_dbPwdPub: mypassword2
+```
 
 ## Create ConfigMap
 
 In a separate folder, create a file `gretl-resources.yaml`
-containing a ConfigMap according to the template
-https://github.com/sogis/gretl/blob/master/openshift/templates/gretl-resources-example.yaml.
+containing a ConfigMap according to the following template.
 Then run `oc apply -f path/to/gretl-resources.yaml -n my-namespace`.
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gretl-resources
+  labels:
+    app: gretl-platform
+data:
+  ORG_GRADLE_PROJECT_dbUriEdit: jdbc:postgresql://localhost/edit?sslmode=require&ApplicationName=GRETL
+  ORG_GRADLE_PROJECT_dbUriPub: jdbc:postgresql://localhost/pub?sslmode=require&ApplicationName=GRETL
+  ORG_GRADLE_PROJECT_ili2dbModeldir: '%ILI_FROM_DB;%XTF_DIR;https://geo.so.ch/models/;%JAR_DIR'
+  ORG_GRADLE_PROJECT_ilivalidatorModeldir: '%ITF_DIR;https://geo.so.ch/models/;%JAR_DIR'
+  ORG_GRADLE_PROJECT_geoservicesHostName: geo-t.so.ch
+  ORG_GRADLE_PROJECT_gretlEnvironment: test
+```
 
 ## Create service account and role binding
 
 In a separate folder, create a file `jenkins-sa.yaml`
-containing the following definition of a service account and a role binding:
+containing the following definition of a service account and a role binding.
+Then run `oc apply -f path/to/jenkins-sa.yaml -n my-namespace`.
+
 ```
 apiVersion: v1
 kind: ServiceAccount
@@ -73,13 +104,14 @@ subjects:
 - kind: ServiceAccount
   name: jenkins
 ```
-Then run `oc apply -f path/to/jenkins-sa.yaml -n my-namespace`.
 
 ## Create Persistent Volume Claim
 
 In a separate folder, create a file `jenkins-pvc.yaml`
 containing the definition of a Persistent Volume Claim
-according to the following template:
+according to the following template.
+Then run `oc apply -f path/to/jenkins-pvc.yaml -n my-namespace`.
+
 ```
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -94,7 +126,6 @@ spec:
     requests:
       storage: 2Gi
 ```
-Then run `oc apply -f path/to/jenkins-pvc.yaml -n my-namespace`.
 
 ## Apply template
 
