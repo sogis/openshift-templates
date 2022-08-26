@@ -155,14 +155,14 @@ objects:
             value: ${APPNAME}
           - name: JNLP_SERVICE_NAME
             value: ${APPNAME}-jnlp
-          - name: GRETL_JOB_REPO_URL
-            value: ${GRETL_JOB_REPO_URL}
           - name: JENKINS_JAVA_OVERRIDES
             value: '-Dcom.sun.jndi.ldap.connect.pool.timeout=1200000'
           - name: CONTAINER_HEAP_PERCENT
             value: '0.75'
           - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
             value: 'true'
+          - name: GRETL_JOB_REPO_URL
+            value: ${GRETL_JOB_REPO_URL}
           - name: GRETL_JOB_REPO_URL_OEREB
             value: ${GRETL_JOB_REPO_URL_OEREB}
           - name: GRETL_JOB_REPO_URL_OEREB_V2
@@ -595,8 +595,8 @@ parameters:
   description: Path or URL to the config file for the Jenkins Configuration as Code plugin.
   value: /opt/configuration-as-code/configuration-as-code.yaml
 - name: GRETL_JOB_REPO_URL
-  displayName: Git repo containing GRETL jobs
-  description: Url of the Git repo holding the GRETL Job configurations.
+  displayName: Git repo containing GRETL Jobs
+  description: URL of the Git repo holding the GRETL Job configurations.
   value: https://github.com/sogis/gretljobs.git
 - name: GRETL_JOB_REPO_URL_OEREB
   displayName: Git repo containing OEREB GRETL Jobs
