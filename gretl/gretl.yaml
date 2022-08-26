@@ -49,6 +49,73 @@ objects:
                 }
               }
             }
+        - script: |
+            job('gretl_job_generator-oereb') {
+              description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
+              logRotator(-1, 14)
+              scm {
+                git {
+                  remote {
+                    url('${GRETL_JOB_REPO_URL_OEREB}')
+                  }
+                  branch('*/master')
+                }
+              }
+              triggers {
+                cron('H H/8 * * *')
+              }
+              steps {
+                dsl {
+                  external('gretl_job_generator.groovy')
+                  removeAction('DELETE')
+                }
+              }
+            }
+        - script: |
+            job('gretl_job_generator-oerebv2') {
+              description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
+              logRotator(-1, 14)
+              scm {
+                git {
+                  remote {
+                    url('${GRETL_JOB_REPO_URL_OEREB_V2}')
+                  }
+                  branch('*/main')
+                }
+              }
+              triggers {
+                cron('H H/8 * * *')
+              }
+              steps {
+                dsl {
+                  external('gretl_job_generator.groovy')
+                  removeAction('DELETE')
+                }
+              }
+            }
+        - script: |
+            job('gretl_job_generator-schema') {
+              description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
+              logRotator(-1, 14)
+              scm {
+                git {
+                  remote {
+                    url('${GRETL_JOB_REPO_URL_SCHEMA}')
+                    credentials('TODO')
+                  }
+                  branch('*/main')
+                }
+              }
+              triggers {
+                cron('H H/8 * * *')
+              }
+              steps {
+                dsl {
+                  external('gretl_job_generator.groovy')
+                  removeAction('DELETE')
+                }
+              }
+            }
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -96,6 +163,12 @@ objects:
             value: '0.75'
           - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
             value: 'true'
+          - name: GRETL_JOB_REPO_URL_OEREB
+            value: ${GRETL_JOB_REPO_URL_OEREB}
+          - name: GRETL_JOB_REPO_URL_OEREB_V2
+            value: ${GRETL_JOB_REPO_URL_OEREB_V2}
+          - name: GRETL_JOB_REPO_URL_SCHEMA
+            value: ${GRETL_JOB_REPO_URL_SCHEMA}
           ## Define HealthChecks. Ideally the timeoutSeconds for the readiness Probe should be shorter than for the liveness Probe or you have different Probes for the checks
           readinessProbe:
             httpGet:
@@ -524,6 +597,18 @@ parameters:
 - name: GRETL_JOB_REPO_URL
   displayName: Git repo containing GRETL jobs
   description: Url of the Git repo holding the GRETL Job configurations.
+  value: https://github.com/sogis/gretljobs.git
+- name: GRETL_JOB_REPO_URL_OEREB
+  displayName: Git repo containing OEREB GRETL Jobs
+  description: URL of the Git repo holding the OEREB GRETL Job configurations.
+  value: https://github.com/sogis/oereb-gretljobs.git
+- name: GRETL_JOB_REPO_URL_OEREB_V2
+  displayName: Git repo containing OEREB V2 GRETL Jobs
+  description: URL of the Git repo holding the OEREB V2 GRETL Job configurations.
+  value: https://github.com/sogis/oereb-gretljobs.git
+- name: GRETL_JOB_REPO_URL_SCHEMA
+  displayName: Git repo containing Schema Jobs
+  description: URL of the Git repo holding the Schema Job configurations.
   value: https://github.com/sogis/gretljobs.git
 - name: JENKINS_AGENT_IMAGE_TAG
   description: Jenkins agent image tag to be pulled from Quay.io
