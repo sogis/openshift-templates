@@ -126,10 +126,10 @@ parameters:
   required: true
 - name: CONNECT_TIMEOUT
   description: Connect timeout
-  value: '5000'
+  required: true
 - name: READ_TIMEOUT
   description: Read timeout
-  value: '5000'
+  required: true
 - name: REPOSITORIES
   description: Comma separated list of INTERLIS repositories
   value:
@@ -157,4 +157,4 @@ parameters:
     https://vsa.ch/models/
 - name: CHECK_CRON_EXPRESSION
   description: Cron expression for repsitory check
-  value: 0 0 */2 * * *
+  required: true
