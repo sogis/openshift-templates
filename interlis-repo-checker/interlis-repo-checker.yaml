@@ -1,0 +1,162 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${APPNAME}-template
+labels:
+  template: ${APPNAME}-template
+  app: ${APPNAME}
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}
+  spec:
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+      spec:
+        containers:
+        - name: ${APPNAME}
+          ## List the necessary envirionment variables below
+          env:
+          - name: CONNECT_TIMEOUT
+            value: ${CONNECT_TIMEOUT}
+          - name: READ_TIMEOUT
+            value: ${READ_TIMEOUT}
+          - name: REPOSITORIES
+            value: ${REPOSITORIES}
+          - name: CHECK_CRON_EXPRESSION
+            value: ${CHECK_CRON_EXPRESSION}
+          - name: TZ
+            value: Europe/Zurich
+          ## Define HealthChecks. Ideally the timeoutSeconds for the readiness Probe should be shorter than for the liveness Probe or you have different Probes for the checks
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 1
+          ## Define the desired Resources for your container in the paramter file. They should be different in test, int and prod environment
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}
+  spec:
+    ## Define the ports exposed by the app
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: ${APPNAME}
+parameters:
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The Docker image tag to use (e.g. latest)
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  value: 'false'
+- name: REPLICA_COUNT
+  description: Number of replicas to run
+  value: '1'
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
+- name: CONNECT_TIMEOUT
+  description: Connect timeout
+  required: true
+- name: READ_TIMEOUT
+  description: Read timeout
+  required: true
+- name: REPOSITORIES
+  description: Comma separated list of INTERLIS repositories
+  value:
+    http://models.interlis.ch/,
+    https://models.geo.admin.ch,
+    http://models.geo.kgk-cgc.ch/,
+    http://models.geo.ai.ch/,
+    https://models.geo.ar.ch/,
+    https://models.geo.be.ch/,
+    http://models.geo.bl.ch/,
+    https://models.geo.bs.ch/,
+    https://models.geo.gl.ch/,
+    https://models.geo.gr.ch/,
+    https://models.geo.lu.ch/,
+    https://models.geo.sg.ch/,
+    http://models.geo.sh.ch/,
+    https://geo.so.ch/models/,
+    http://models.geo.sz.ch,
+    http://models.geo.ti.ch,
+    https://models.geo.zg.ch,
+    http://models.geo.zh.ch,
+    https://webgis.lisag.ch/models,
+    https://models.geo.llv.li/,
+    https://405.sia.ch/models/,
+    https://vsa.ch/models/
+- name: CHECK_CRON_EXPRESSION
+  description: Cron expression for repsitory check
+  required: true
