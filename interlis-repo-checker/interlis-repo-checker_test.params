@@ -1,0 +1,10 @@
+APPNAME=interlis-repo-checker
+IMAGENAME=sogis/interlis-repo-checker
+TAG=latest
+IMPORT_POLICY_SCHEDULED=true
+REPLICA_COUNT=1
+CPU_REQUEST=0
+CPU_LIMIT=0
+MEMORY_REQUEST=0
+MEMORY_LIMIT=0
+
