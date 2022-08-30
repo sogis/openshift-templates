@@ -609,7 +609,7 @@ parameters:
 - name: GRETL_JOB_REPO_URL_SCHEMA
   displayName: Git repo containing Schema Jobs
   description: URL of the Git repo holding the Schema Job configurations.
-  value: https://github.com/sogis/gretljobs.git
+  value: https://github.com/sogis/schema-jobs.git
 - name: JENKINS_AGENT_IMAGE_TAG
   description: Jenkins agent image tag to be pulled from Quay.io
   required: true
