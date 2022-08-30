@@ -4,9 +4,9 @@ TAG=4.7
 IMPORT_POLICY_SCHEDULED=true
 REPLICA_COUNT=1
 CPU_REQUEST=0
-CPU_LIMIT=0.5
+CPU_LIMIT=1
 MEMORY_REQUEST=0
-MEMORY_LIMIT=0
+MEMORY_LIMIT=2Gi
 HOSTNAME=
 ENABLE_OAUTH=true
 # Set to true when installing/updating plugins, set to false for faster Jenkins startup:
