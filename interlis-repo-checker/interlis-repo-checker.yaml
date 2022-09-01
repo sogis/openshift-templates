@@ -40,6 +40,10 @@ objects:
         - name: ${APPNAME}
           ## List the necessary envirionment variables below
           env:
+          - name: LOG_LEVEL_SPRING
+            value: ${LOG_LEVEL_SPRING}
+          - name: LOG_LEVEL_APP
+            value: ${LOG_LEVEL_APP}
           - name: CONNECT_TIMEOUT
             value: ${CONNECT_TIMEOUT}
           - name: READ_TIMEOUT
@@ -126,6 +130,12 @@ parameters:
 - name: MEMORY_LIMIT
   description: The maximum amount of memory the container is allowed to use when running.
   required: true
+- name: LOG_LEVEL_SPRING
+  description: Log level for Spring framework
+  value: INFO
+- name: LOG_LEVEL_APP
+  description: Log level for application
+  value: INFO
 - name: CONNECT_TIMEOUT
   description: Connect timeout
   required: true
