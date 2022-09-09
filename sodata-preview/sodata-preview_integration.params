@@ -1,6 +1,6 @@
 APPNAME=sodata-preview
 IMAGENAME=sogis/sodata-preview
-TAG=0.0.97
+TAG=0.0.98
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=50m
