@@ -86,7 +86,7 @@ apiVersion: v1
 metadata:
   name: mapcache-seeder-db-secret
   labels:
-    app: mapcache-seeder
+    app: mapcache
 stringData:
   pg_service.conf: |-
     [pub]
