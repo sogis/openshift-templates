@@ -36,7 +36,6 @@ Set secret for pulling images from image registry (optional)
 ```
 oc create secret docker-registry dockerhub-pull-secret --docker-username=xy --docker-password=xy -n my-namespace
 oc secrets link default dockerhub-pull-secret --for=pull -n my-namespace
-oc secrets link qgis-server dockerhub-pull-secret --for=pull -n my-namespace
 ```
 
 Grant permissions for deploying the app
@@ -102,4 +101,37 @@ stringData:
 
 ```
 oc process -f mapcache/mapcache.yaml --param-file=mapcache/mapcache_development.params | oc apply -f - -n my-namespace
+```
+
+
+# Deploying QGIS Server (for seeding WMTS tiles) in OpenShift
+
+## Notes on the QGIS Server template
+
+The QGIS Server template is based on the template in
+https://github.com/sogis/pipelines/tree/master/api_webgisclient/qgis-server.
+
+TODO: Der folgende Befehl ist nicht mehr nötig. in den Betriebsumgebungen zurückbauen.
+```
+oc policy add-role-to-user system:image-puller system:serviceaccount:MY-NAMESPACE:default --rolebinding-name puller-MY-NAMESPACE -n gdi-test
+```
+
+## Create Persistent Volume Claims
+
+TODO (qgs-resources and datensogispicmir)
+
+## Create secret
+
+TODO (name: qgis-server-db-secret)
+
+## Apply template
+
+```
+oc process -f mapcache/qgis-server.yaml --param-file=mapcache/qgis-server_development.params | oc apply -f - -n my-namespace
+```
+
+## Set secret for pulling images from image registry on _qgis-server_ Service Account as well (optional)
+
+```
+oc secrets link qgis-server dockerhub-pull-secret --for=pull -n my-namespace
 ```
