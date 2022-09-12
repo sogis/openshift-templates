@@ -116,18 +116,79 @@ TODO: Der folgende Befehl ist nicht mehr nötig. in den Betriebsumgebungen zurü
 oc policy add-role-to-user system:image-puller system:serviceaccount:MY-NAMESPACE:default --rolebinding-name puller-MY-NAMESPACE -n gdi-test
 ```
 
+## Enable running image with any UID
+
+Enable QGIS Server image to be run wit any UID.
+Note that the second command must be run as an administrator.
+```
+oc create sa qgis-server -n my-namespace
+oc adm policy add-scc-to-user anyuid -z qgis-server -n my-namespace
+```
+
 ## Create Persistent Volume Claims
 
-TODO (qgs-resources and datensogispicmir)
+In a separate folder, create a file `qgis-server-pvc.yaml`
+containing the definition of a Persistent Volume Claim
+according to the following template.
+Then run `oc apply -f path/to/qgis-server-pvc.yaml -n my-namespace`.
+
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qgis-server-resources
+labels:
+  app: qgis-server
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qgis-server-geodata
+labels:
+  app: qgis-server
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+```
+
 
 ## Create secret
 
-TODO (name: qgis-server-db-secret)
+In a separate folder, create a file `qgis-server-db-secret.yaml`
+containing a secret according to the following template.
+Then run `oc apply -f path/to/qgis-server-db-secret.yaml -n my-namespace`.
+
+```
+kind: Secret
+apiVersion: v1
+metadata:
+  name: qgis-server-db-secret
+  labels:
+    app: qgis-server
+stringData:
+  pg_service.conf: |-
+    [sogis_pub]
+    host=xy
+    port=5432
+    dbname=xy
+    user=xy
+    password=xy
+    sslmode=require
+```
 
 ## Apply template
 
 ```
-oc process -f mapcache/qgis-server.yaml --param-file=mapcache/qgis-server_development.params | oc apply -f - -n my-namespace
+oc process -f mapcache/qgis-server.yaml --param-file=mapcache/qgis-server_test.params | oc apply -f - -n my-namespace
 ```
 
 ## Set secret for pulling images from image registry on _qgis-server_ Service Account as well (optional)

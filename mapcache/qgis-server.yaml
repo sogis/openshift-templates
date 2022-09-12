@@ -53,8 +53,8 @@ objects:
               path: index.html
               port: 80
               scheme: HTTP
-            initialDelaySeconds: 5
-            periodSeconds: 30
+            initialDelaySeconds: 1
+            periodSeconds: 60
             timeoutSeconds: 1
           livenessProbe:
             httpGet:
@@ -62,7 +62,7 @@ objects:
               port: 80
               scheme: HTTP
             initialDelaySeconds: 10
-            periodSeconds: 30
+            periodSeconds: 60
             timeoutSeconds: 1
           ## Define the desired Resources for your container in the paramter file. They should be different in test, int and prod environment
           resources:
@@ -76,9 +76,9 @@ objects:
           volumeMounts:
           - name: qgs-resources
             mountPath: /data
-          - name: datensogispicmir
+          - name: geodata
             mountPath: /geodata
-          - name: qgis-server-config-claim
+          - name: qgis-server-db-secret-volume
             mountPath: /etc/postgresql-common
             readOnly: true
         ## Define the required volumes
@@ -86,15 +86,12 @@ objects:
         - name: qgs-resources
           persistentVolumeClaim:
             claimName: ${QGS_RESOURCES_PVC_NAME}
-        - name: datensogispicmir
+        - name: geodata
           persistentVolumeClaim:
             claimName: ${GEODATA_PVC_NAME}
-        - name: qgis-server-config-claim
+        - name: qgis-server-db-secret-volume
           secret:
-            secretName: qgis-server-seeder-secret
-            items:
-            - key: pg_service.conf
-              path: pg_service.conf
+            secretName: qgis-server-db-secret
     triggers:
     - type: ConfigChange
     - type: ImageChange
@@ -155,3 +152,9 @@ parameters:
 - name: QGIS_FCGI_MAX_PROCESSES
   description: Maximum QGIS Server FCGI processes
   value: '4'
+- name: QGS_RESOURCES_PVC_NAME
+  description: Name of the PVC containing resources for QGIS Server
+  required: true
+- name: GEODATA_PVC_NAME
+  description: Name of the PVC containing geodata for QGIS Server
+  required: true
