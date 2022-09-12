@@ -120,6 +120,7 @@ objects:
     name: ${APPNAME}-seeder
   spec:
     schedule: ${SCHEDULE_SEEDER}
+    concurrencyPolicy: Forbid
     jobTemplate:
       spec:
         activeDeadlineSeconds: 21600
