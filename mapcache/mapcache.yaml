@@ -179,16 +179,16 @@ objects:
               volumeMounts:
               - name: tiles
                 mountPath: /tiles
-              - name: mapcache-seeder-secret-volume
+              - name: mapcache-seeder-db-secret-volume
                 mountPath: /mapcache/postgresql
                 readOnly: true
             volumes:
             - name: tiles
               persistentVolumeClaim:
                 claimName: ${TILES_PVC_NAME}
-            - name: mapcache-seeder-secret-volume
+            - name: mapcache-seeder-db-secret-volume
               secret:
-                secretName: mapcache-seeder-secret
+                secretName: mapcache-seeder-db-secret
 parameters:
 - name: APPNAME
   description: Name of the App

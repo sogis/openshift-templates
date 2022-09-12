@@ -76,15 +76,15 @@ spec:
 
 ## Create secret
 
-In a separate folder, create a file `mapcache-seeder-secret.yaml`
+In a separate folder, create a file `mapcache-seeder-db-secret.yaml`
 containing a secret according to the following template.
-Then run `oc apply -f path/to/mapcache-seeder-secret.yaml -n my-namespace`.
+Then run `oc apply -f path/to/mapcache-seeder-db-secret.yaml -n my-namespace`.
 
 ```
 kind: Secret
 apiVersion: v1
 metadata:
-  name: mapcache-seeder-secret
+  name: mapcache-seeder-db-secret
   labels:
     app: mapcache-seeder
 stringData:
