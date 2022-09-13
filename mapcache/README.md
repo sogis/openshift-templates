@@ -90,6 +90,7 @@ metadata:
 stringData:
   pg_service.conf: |-
     [pub]
+    host=xy
     port=5432
     dbname=xy
     user=xy

@@ -137,8 +137,6 @@ objects:
               env:
               - name: SOURCE_URL
                 value: ${SOURCE_URL}
-              - name: PGHOST
-                value: ${PGHOST_SEEDER}
               - name: PGSERVICE
                 value: pub
               - name: PGSERVICEFILE
@@ -245,6 +243,3 @@ parameters:
 - name: ZOOM_LEVELS_SEEDER
   description: The zoom levels to be seeded (e.g. 0,14)
   value: 11,14
-- name: PGHOST_SEEDER
-  description: DB server hostname or IP
-  required: true
