@@ -1,0 +1,160 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${APPNAME}-template
+labels:
+  template: ${APPNAME}-template
+  app: ${APPNAME}
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}
+  spec:
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+      spec:
+        serviceAccountName: qgis-server
+        containers:
+        - name: ${APPNAME}
+          ## List the necessary envirionment variables below
+          env:
+          - name: LOG_LEVEL
+            value: ${LOG_LEVEL}
+          - name: QGIS_FCGI_MIN_PROCESSES
+            value: ${QGIS_FCGI_MIN_PROCESSES}
+          - name: QGIS_FCGI_MAX_PROCESSES
+            value: ${QGIS_FCGI_MAX_PROCESSES}
+          ## Define HealthChecks. Ideally the timeoutSeconds for the readiness Probe should be shorter than for the liveness Probe or you have different Probes for the checks
+          readinessProbe:
+            httpGet:
+              path: index.html
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 1
+            periodSeconds: 60
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: index.html
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 60
+            timeoutSeconds: 1
+          ## Define the desired Resources for your container in the paramter file. They should be different in test, int and prod environment
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+          ## Define the required volume mounts
+          volumeMounts:
+          - name: qgs-resources
+            mountPath: /data
+          - name: geodata
+            mountPath: /geodata
+          - name: qgis-server-db-secret-volume
+            mountPath: /etc/postgresql-common
+            readOnly: true
+        ## Define the required volumes
+        volumes:
+        - name: qgs-resources
+          persistentVolumeClaim:
+            claimName: ${QGS_RESOURCES_PVC_NAME}
+        - name: geodata
+          persistentVolumeClaim:
+            claimName: ${GEODATA_PVC_NAME}
+        - name: qgis-server-db-secret-volume
+          secret:
+            secretName: qgis-server-db-secret
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}
+  spec:
+    ## Define the ports exposed by the app
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: ${APPNAME}
+parameters:
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The Docker image tag to use (e.g. latest)
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  value: 'false'
+- name: REPLICA_COUNT
+  description: Number of replicas to run
+  value: '1'
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
+- name: LOG_LEVEL
+  description: Log level for QGIS Server
+  value: '2'
+- name: QGIS_FCGI_MIN_PROCESSES
+  description: Minimum QGIS Server FCGI processes
+  value: '0'
+- name: QGIS_FCGI_MAX_PROCESSES
+  description: Maximum QGIS Server FCGI processes
+  value: '4'
+- name: QGS_RESOURCES_PVC_NAME
+  description: Name of the PVC containing resources for QGIS Server
+  required: true
+- name: GEODATA_PVC_NAME
+  description: Name of the PVC containing geodata for QGIS Server
+  required: true

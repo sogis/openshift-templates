@@ -1,0 +1,245 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${APPNAME}-template
+labels:
+  template: ${APPNAME}-template
+  app: ${APPNAME}
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
+  spec:
+    lookupPolicy:
+      local: true
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}
+  spec:
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+      spec:
+        containers:
+        - name: ${APPNAME}
+          ## List the necessary envirionment variables below
+          env:
+          - name: SERVICE_URL
+            value: ${SERVICE_URL}
+          - name: SOURCE_URL
+            value: ${SOURCE_URL}
+          ## Define HealthChecks. Ideally the timeoutSeconds for the readiness Probe should be shorter than for the liveness Probe or you have different Probes for the checks
+          readinessProbe:
+            httpGet:
+              path: mapcache/wmts/1.0.0/ch.so.agi.hintergrundkarte_sw/default/2056/2/0/0.png
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: mapcache/wmts/1.0.0/ch.so.agi.hintergrundkarte_sw/default/2056/2/0/0.png
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            timeoutSeconds: 1
+          ## Define the desired Resources for your container in the paramter file. They should be different in test, int and prod environment
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+          ## Define the required volume mounts
+          volumeMounts:
+          - name: tiles
+            mountPath: /tiles
+        ## Define the required volumes
+        volumes:
+        - name: tiles
+          persistentVolumeClaim:
+            claimName: ${TILES_PVC_NAME}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}
+  spec:
+    ## Define the ports exposed by the app
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: ${APPNAME}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}
+  spec:
+    host: ${HOSTNAME}
+    port:
+      targetPort: 80-tcp
+    to:
+      kind: Service
+      name: ${APPNAME}
+- apiVersion: batch/v1
+  kind: CronJob
+  metadata:
+    name: ${APPNAME}-seeder
+  spec:
+    schedule: ${SCHEDULE_SEEDER}
+    concurrencyPolicy: Forbid
+    jobTemplate:
+      spec:
+        activeDeadlineSeconds: 21600
+        backoffLimit: 0
+        template:
+          metadata:
+            labels:
+              parent: cronjob-${APPNAME}-seeder
+          spec:
+            restartPolicy: Never
+            containers:
+            - name: ${APPNAME}-seeder
+              image: ${APPNAME}:${TAG}
+              env:
+              - name: SOURCE_URL
+                value: ${SOURCE_URL}
+              - name: PGSERVICE
+                value: pub
+              - name: PGSERVICEFILE
+                value: /mapcache/postgresql/pg_service.conf
+              - name: ZOOM_LEVELS_SEEDER
+                value: ${ZOOM_LEVELS_SEEDER}
+              - name: SQL_EXPRESSION
+                value: >
+                  SELECT ST_Union(geometrie) as geometrie
+                  FROM agi_mopublic_pub.mopublic_gemeindegrenze
+                  WHERE date_trunc('day', importdatum) =
+                    (
+                      SELECT max(date_trunc('day', importdatum))
+                      FROM agi_mopublic_pub.mopublic_gemeindegrenze
+                    )
+                  GROUP BY date_trunc('day', importdatum)
+              args:
+                [
+                  /bin/bash,
+                  -c,
+                  mapcache_seed -c /mapcache/mapcache.xml -t ch.so.agi.hintergrundkarte_sw
+                    -f -z $ZOOM_LEVELS_SEEDER -n 4 -d PG:service=pub -s "$SQL_EXPRESSION" ;
+                    mapcache_seed -c /mapcache/mapcache.xml -t ch.so.agi.hintergrundkarte_farbig
+                    -f -z $ZOOM_LEVELS_SEEDER -n 4 -d PG:service=pub -s "$SQL_EXPRESSION"
+                ]
+              livenessProbe:
+                exec:
+                  command: [ls, /tiles]
+                initialDelaySeconds: 0
+                periodSeconds: 60
+                timeoutSeconds: 1
+              resources:
+                limits:
+                  cpu: ${CPU_LIMIT_SEEDER}
+                  memory: ${MEMORY_LIMIT_SEEDER}
+                requests:
+                  cpu: ${CPU_REQUEST_SEEDER}
+                  memory: ${MEMORY_REQUEST_SEEDER}
+              volumeMounts:
+              - name: tiles
+                mountPath: /tiles
+              - name: mapcache-seeder-db-secret-volume
+                mountPath: /mapcache/postgresql
+                readOnly: true
+            volumes:
+            - name: tiles
+              persistentVolumeClaim:
+                claimName: ${TILES_PVC_NAME}
+            - name: mapcache-seeder-db-secret-volume
+              secret:
+                secretName: mapcache-seeder-db-secret
+parameters:
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The Docker image tag to use (e.g. latest)
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  value: 'false'
+- name: REPLICA_COUNT
+  description: Number of replicas to run
+  value: '1'
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
+- name: HOSTNAME
+  description: The hostname for the route
+- name: SERVICE_URL
+  description: The base URL of the MapCache service (e.g. https://geo-t.so.ch/api)
+- name: SOURCE_URL
+  description: The base URL of the source WMS (e.g. http://qgis-server.agi-mapcache-test.svc/ows/somap)
+  required: true
+- name: TILES_PVC_NAME
+  description: The name of the Persisent Volume Claim containing the tiles
+  required: true
+- name: CPU_REQUEST_SEEDER
+  description: The minimum amount of CPU the seeder container is guaranteed.
+  required: true
+- name: CPU_LIMIT_SEEDER
+  description: The maximum amount of CPU the seeder container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST_SEEDER
+  description: The minimum amount of memory the seeder container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT_SEEDER
+  description: The maximum amount of memory the seeder container is allowed to use when running.
+  required: true
+- name: SCHEDULE_SEEDER
+  required: true
+- name: ZOOM_LEVELS_SEEDER
+  description: The zoom levels to be seeded (e.g. 0,14)
+  value: 11,14
