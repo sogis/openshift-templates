@@ -107,16 +107,6 @@ oc process -f mapcache/mapcache.yaml --param-file=mapcache/mapcache_development.
 
 # Deploying QGIS Server (for seeding WMTS tiles) in OpenShift
 
-## Notes on the QGIS Server template
-
-The QGIS Server template is based on the template in
-https://github.com/sogis/pipelines/tree/master/api_webgisclient/qgis-server.
-
-TODO: Der folgende Befehl ist nicht mehr nötig. in den Betriebsumgebungen zurückbauen.
-```
-oc policy add-role-to-user system:image-puller system:serviceaccount:MY-NAMESPACE:default --rolebinding-name puller-MY-NAMESPACE -n gdi-test
-```
-
 ## Enable running image with any UID
 
 Enable QGIS Server image to be run wit any UID.
@@ -189,7 +179,7 @@ stringData:
 ## Apply template
 
 ```
-oc process -f mapcache/qgis-server.yaml --param-file=mapcache/qgis-server_test.params | oc apply -f - -n my-namespace
+oc process -f mapcache/qgis-server.yaml --param-file=mapcache/qgis-server_development.params | oc apply -f - -n my-namespace
 ```
 
 ## Set secret for pulling images from image registry on _qgis-server_ Service Account as well (optional)
