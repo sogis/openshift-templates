@@ -115,18 +115,6 @@ objects:
       targetPort: 8080
     selector:
       app: ${APPNAME}
-- apiVersion: route.openshift.io/v1
-  kind: Route
-  metadata:
-    name: ${APPNAME}
-  spec:
-    host: ${HOSTNAME}
-    tls:
-      termination: edge
-      insecureEdgeTerminationPolicy: Redirect
-    to:
-      kind: Service
-      name: ${APPNAME}
 parameters:
 - name: APPNAME
   description: Name of the App
@@ -155,7 +143,5 @@ parameters:
 - name: MEMORY_LIMIT
   description: The maximum amount of memory the container is allowed to use when running.
   required: true
-- name: HOSTNAME
-  description: The hostname for the route
 - name: SIMI_SCHEMAREADER_URL
   description: URL to simi-schemareader

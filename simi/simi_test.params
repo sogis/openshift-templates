@@ -7,5 +7,4 @@ CPU_REQUEST=0
 CPU_LIMIT=0
 MEMORY_REQUEST=0
 MEMORY_LIMIT=0
-HOSTNAME=simi-test.apps.ocp.so.ch
 SIMI_SCHEMAREADER_URL=simi-schemareader.gdi-test.svc

@@ -7,5 +7,4 @@ CPU_REQUEST=500m
 CPU_LIMIT=1
 MEMORY_REQUEST=500Mi
 MEMORY_LIMIT=1Gi
-HOSTNAME=simi-integration.apps.ocp.so.ch
 SIMI_SCHEMAREADER_URL=simi-schemareader.gdi-integration.svc
