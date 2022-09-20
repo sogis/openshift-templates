@@ -65,7 +65,7 @@ objects:
       spec:
         containers:
           - name: exporter
-            image: 'solr:7.7.1'
+            image: 'solr:7.7.3'
             imagePullPolicy: IfNotPresent
             resources:
               limits:
