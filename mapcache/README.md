@@ -34,7 +34,8 @@ proceed as follows:
     Remove one of the commands in the `args:` section,
     and make sure to also remove the semicolon between the two commands
   * For seeding the whole canton area:
-    Remove the `-s "$SQL_EXPRESSION"` options from both commands
+    Remove the `-d PG:service=pub` and `-s "$SQL_EXPRESSION"` options
+    from both commands
 * Create and start the manual job from the modified YAML file:
   ```
   oc apply -f manual-seed-job.yaml
