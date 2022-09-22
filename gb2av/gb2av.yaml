@@ -1,48 +1,50 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: gb2av
+  name: ${APPNAME}-template
 labels:
-  template: gb2av-template
-  app: gb2av
+  template: ${APPNAME}-template
+  app: ${APPNAME}
 objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: gb2av
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
   spec:
     tags:
     - from:
         kind: DockerImage
-        name: sogis/gb2av:${TAG}
+        name: ${IMAGENAME}:${TAG}
       importPolicy:
         scheduled: ${{IMPORT_POLICY_SCHEDULED}}
       name: ${TAG}
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    name: gb2av
+    name: ${APPNAME}
   spec:
     template:
       metadata:
         labels:
-          app: gb2av
-          deploymentconfig: gb2av
+          app: ${APPNAME}
+          deploymentconfig: ${APPNAME}
       spec:
         containers:
-        - name: gb2av
+        - name: ${APPNAME}
           env:
           - name: SPRING_PROFILES_ACTIVE
             value: ${ENVIRONMENT_SHORT}
           - name: TZ
             value: Europe/Amsterdam
           envFrom:
+          - secretRef: 
+              name: ${APPNAME}-aws-secret
           - secretRef:
-              name: aws-secret-gb2av
+              name: ${APPNAME}-infogrips-secret
           - secretRef:
-              name: infogrips-secret
-          - secretRef:
-              name: db-secret-gretl
+              name: ${APPNAME}-db-secret
           ports:
           - containerPort: 8080
             protocol: TCP
@@ -80,52 +82,61 @@ objects:
       imageChangeParams:
         automatic: true
         containerNames:
-        - gb2av
+        - ${APPNAME}
         from:
           kind: ImageStreamTag
-          name: gb2av:${TAG}
+          name: ${APPNAME}:${TAG}
     selector:
-      app: gb2av
-      deploymentconfig: gb2av
+      app: ${APPNAME}
+      deploymentconfig: ${APPNAME}
     strategy:
       type: Rolling
     revisionHistoryLimit: 10
 - apiVersion: v1
   kind: Service
   metadata:
-    name: gb2av
+    name: ${APPNAME}
     annotations:
       description: http port of application
     labels:
-      app: gb2av
-      deploymentconfig: gb2av
+      app: ${APPNAME}
+      deploymentconfig: ${APPNAME}
   spec:
-    selector:
-      deploymentconfig: gb2av
+    ## Define the ports exposed by the app
     ports:
-    - protocol: TCP
-      name: "80"
+    - name: "80"
       port: 80
+      protocol: TCP
       targetPort: 8080
+    selector:
+      app: ${APPNAME}
 parameters:
-- name: ENVIRONMENT_SHORT
-  description: "The short name of the environment the template is processed for (one of dev, test, int, prod)"
-  value: test
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
 - name: TAG
-  description: "The Docker image tag to use (e.g. latest, 1.0.11)"
+  description: The Docker image tag to use (e.g. latest)
   value: latest
 - name: IMPORT_POLICY_SCHEDULED
-  description: "Regularly check for changed image (default: false)"
-  value: "false"
-- name: CPU_LIMIT
-  description: "Set Limit for cpu"
-  required: true
-- name: MEMORY_LIMIT
-  description: "Set Limit for Memory Usage"
-  required: true
+  description: Regularly check for changed image?
+  value: 'false'
+- name: REPLICA_COUNT
+  description: Number of replicas to run
+  value: '1'
 - name: CPU_REQUEST
-  description: "Set Request for cpu"
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
   required: true
 - name: MEMORY_REQUEST
-  description: "Set Request for Memory"
+  description: The minimum amount of memory the container is guaranteed.
   required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
+
+              name: ${APPNAME}-aws-secret
