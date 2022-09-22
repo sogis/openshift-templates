@@ -40,6 +40,8 @@ proceed as follows:
   ```
   oc apply -f manual-seed-job.yaml
   ```
+  If such a manual job already exists, you need to delete it beforehand with
+  `oc delete job manual-seed-job`.
 
 The `hintergrundkarte_ortho` tile set and the zoom levels 0 to 10
 of the `ch.so.agi.hintergrundkarte_farbig` and the `ch.so.agi.hintergrundkarte_sw` tile set
