@@ -33,38 +33,55 @@ In a separate folder, create a file `gb2av.yaml`
 containing a secret according to the following template.
 Then run `oc apply -f path/to/gb2av.yaml -n my-namespace`.
 
+
 ```
+apiVersion: v1
 kind: Secret
-apiVersion: v1
 metadata:
-  name: oereb-web-service-secret
+  name: gb2av-aws-secret
   labels:
-    app: oereb-web-service
+    app: gb2av
+type: Opaque
 stringData:
-  username: xy
-  password: xy
+  awsAccessKey: xy
+  awsSecretKey: xy
 ```
 
-## Create ConfigMap
-
-In a separate folder, create a file `oereb-web-service-configmap.yaml`
-containing a ConfigMap according to the following template.
-(Replace HOSTNAME with the DB server host name or IP address.)
-Then run `oc apply -f path/to/oereb-web-service-configmap.yaml -n my-namespace`.
-
 ```
-kind: ConfigMap
 apiVersion: v1
+kind: Secret
 metadata:
-  name: oereb-web-service-configmap
+  name: gb2av-infogrips-secret
   labels:
-    app: oereb-web-service
-data:
-  dburl: jdbc:postgresql://HOSTNAME/oereb_v2?sslmode=require
+    app: gb2av
+type: Opaque
+stringData:
+  ftpUserInfogrips: xy
+  ftpPwdInfogrips: xy
 ```
+
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gb2av-db-secret
+  labels:
+    app: gb2av
+type: Opaque
+stringData:
+  dbUser: xy
+  dbPwd: xy
+```
+
 
 ## Apply template
 
 ```
 oc process -f gb2av/gb2av.yaml --param-file=gb2av/gb2av_test.params | oc apply -f - -n my-namespace
+```
+```
+oc process -f gb2av/gb2av.yaml --param-file=gb2av/gb2av_integration.params | oc apply -f - -n my-namespace
+```
+```
+oc process -f gb2av/gb2av.yaml --param-file=gb2av/gb2av_production.params | oc apply -f - -n my-namespace
 ```
