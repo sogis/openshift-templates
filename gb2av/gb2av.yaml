@@ -138,5 +138,3 @@ parameters:
 - name: MEMORY_LIMIT
   description: The maximum amount of memory the container is allowed to use when running.
   required: true
-
-              name: ${APPNAME}-aws-secret
