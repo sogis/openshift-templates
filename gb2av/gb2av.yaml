@@ -111,6 +111,9 @@ objects:
     selector:
       app: ${APPNAME}
 parameters:
+- name: ENVIRONMENT_SHORT
+  description: "The short name of the environment the template is processed for (one of dev, test, int, prod)"
+  value: test
 - name: APPNAME
   description: Name of the App
   required: true
