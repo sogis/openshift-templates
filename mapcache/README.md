@@ -35,7 +35,10 @@ proceed as follows:
     and make sure to also remove the semicolon between the two commands
   * For seeding the whole canton area:
     Remove the `-d PG:service=pub` and `-s "$SQL_EXPRESSION"` options
-    from both commands
+    from both commands;
+    additionally remove the `activeDeadlineSeconds: 21600` entry
+    from the job spec (or increase the value),
+    as the seeding will last longer in this case
 * Create and start the manual job from the modified YAML file:
   ```
   oc apply -f manual-seed-job.yaml
