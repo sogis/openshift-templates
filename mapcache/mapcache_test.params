@@ -1,5 +1,5 @@
 APPNAME=mapcache
-IMAGENAME=sogis/docker-mapcache
+IMAGENAME=sogis/mapcache
 TAG=latest
 IMPORT_POLICY_SCHEDULED=true
 REPLICA_COUNT=1
@@ -10,6 +10,7 @@ MEMORY_LIMIT=0
 HOSTNAME=geo-wmts-t.so.ch
 SERVICE_URL=https://geo-t.so.ch/api
 SOURCE_URL=http://qgis-server.agi-mapcache-test.svc/ows/somap
+APACHE_ACCESS_LOG_ENABLED=false
 TILES_PVC_NAME=gditest-mapcache-lowback
 CPU_REQUEST_SEEDER=0
 CPU_LIMIT_SEEDER=0
