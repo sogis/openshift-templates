@@ -95,6 +95,9 @@ objects:
     to:
       kind: Service
       name: ${APPNAME}
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
 parameters:
 - name: APPNAME
   description: Name of the App
