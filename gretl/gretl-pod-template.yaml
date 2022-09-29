@@ -102,7 +102,7 @@ objects:
               cpu: 200m
               memory: 256Mi
             limits:
-              cpu: "0"
+              cpu: "1"
               memory: 512Mi
         - name: gretl
           resources:
@@ -110,7 +110,7 @@ objects:
               cpu: 200m
               memory: 1Gi
             limits:
-              cpu: "0"
+              cpu: "1"
               memory: 3.5Gi
           envFrom:
             - configMapRef:
@@ -189,7 +189,7 @@ objects:
               cpu: 200m
               memory: 256Mi
             limits:
-              cpu: "0"
+              cpu: "1"
               memory: 512Mi
         - name: gretl
           resources:
@@ -197,7 +197,7 @@ objects:
               cpu: 200m
               memory: 1Gi
             limits:
-              cpu: "0"
+              cpu: "1"
               memory: 3.5Gi
           envFrom:
             - configMapRef:
@@ -269,7 +269,7 @@ objects:
               cpu: 200m
               memory: 256Mi
             limits:
-              cpu: "0"
+              cpu: "1"
               memory: 512Mi
         - name: gretl
           resources:
@@ -277,7 +277,7 @@ objects:
               cpu: 200m
               memory: 1Gi
             limits:
-              cpu: "0"
+              cpu: "1"
               memory: 3.5Gi
           envFrom:
             - configMapRef:
