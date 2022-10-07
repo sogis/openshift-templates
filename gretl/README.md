@@ -127,6 +127,29 @@ spec:
       storage: 2Gi
 ```
 
+## Create secret for checking out a private Git repository sogis/schema-jobs
+
+For enabling the GRETL jobs to check out the sogis/schema-jobs Git repository,
+which is a private repository,
+in a separate folder create a file `github-access-token-schema-jobs-pvc.yaml`
+containing a secret according to the following template.
+Then run `oc apply -f path/to/github-access-token-schema-jobs-pvc.yaml -n my-namespace`.
+
+```
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: github-access-token-schema-jobs
+  labels:
+    app: gretl-platform
+    credential.sync.jenkins.openshift.io: "true"
+stringData:
+  username: myMachineUsername
+  password: myAccessToken
+```
+
+
 ## Apply template
 
 (For local usage a particular `gretl_development.params` file is available.)

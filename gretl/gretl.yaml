@@ -101,7 +101,7 @@ objects:
                 git {
                   remote {
                     url('${GRETL_JOB_REPO_URL_SCHEMA}')
-                    credentials('TODO')
+                    credentials('${PROJECT_NAME}-github-access-token-schema-jobs')
                   }
                   branch('*/main')
                 }
