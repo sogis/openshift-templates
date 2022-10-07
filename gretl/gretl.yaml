@@ -461,7 +461,7 @@ objects:
 - apiVersion: v1
   kind: ConfigMap
   metadata:
-    name: gretl-${GRETL_ADDITIONAL_IMAGE_TAG}-pod-template
+    name: ${GRETL_ADDITIONAL_POD_TEMPLATE_NAME}-pod-template
     labels:
       app: gretl-platform
       role: jenkins-slave
@@ -469,10 +469,10 @@ objects:
     template: |-
       <org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
         <inheritFrom></inheritFrom>
-        <name>gretl-${GRETL_ADDITIONAL_IMAGE_TAG}</name>
+        <name>${GRETL_ADDITIONAL_POD_TEMPLATE_NAME}</name>
         <instanceCap>4</instanceCap>
         <idleMinutes>0</idleMinutes>
-        <label>gretl-${GRETL_ADDITIONAL_IMAGE_TAG}</label>
+        <label>${GRETL_ADDITIONAL_POD_TEMPLATE_NAME}</label>
         <serviceAccount>jenkins</serviceAccount>
         <nodeSelector></nodeSelector>
         <containers>
@@ -628,6 +628,9 @@ parameters:
 - name: GRETL_ADDITIONAL_IMAGE_IMPORT_POLICY_SCHEDULED
   description: Regularly check for changed image (for additional GRETL version)
   value: 'false'
+- name: GRETL_ADDITIONAL_POD_TEMPLATE_NAME
+  description: Name for the pod template providing the additional GRETL version
+  required: true
 - name: TMP_PVC_NAME
   description: Name of the PVC used for temporary file storage (for gretl-bigtmp pod template only)
   required: true
