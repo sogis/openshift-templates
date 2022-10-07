@@ -1,6 +1,7 @@
-APPNAME=simi-schemareader
-IMAGENAME=sogis/simi_schemareader
-TAG=2.0
+APPNAME=gb2av
+IMAGENAME=sogis/gb2av
+ENVIRONMENT_SHORT=test
+TAG=latest
 IMPORT_POLICY_SCHEDULED=true
 REPLICA_COUNT=1
 CPU_REQUEST=0

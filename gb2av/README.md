@@ -1,36 +1,44 @@
-# Install or update the gb2av import service in OpenShift
+# Deploying gb2av import service in OpenShift
 
-Checkout the openshift-templates repository:
+## Create and configure project
 
+Create project
 ```
-git clone https://github.com/sogis/openshift-templates.git
-cd openshift-templates
-```
-
-Or, if already checked out, update the OpenShift templates repository:
-
-```
-cd openshift-templates
-git pull
+oc new-project my-namespace
 ```
 
-Create the following three secret YAML files locally,
-in a directory outside the checked out Git repository.
-Replace the `xy` placeholders with the appropriate values.
-Then, in each environment (test, integration, production)
-create the secrets by running
-
+Set secret for pulling images from image registry (optional)
 ```
-oc create -f FILENAME
+oc create secret docker-registry dockerhub-pull-secret --docker-username=xy --docker-password=xy -n my-namespace
+oc secrets link default dockerhub-pull-secret --for=pull -n my-namespace
 ```
 
-aws-secret-gb2av.yaml:
+Grant permissions for deploying the app
+from a Jenkins instance running in a different namespace (optional);
+replace JENKINS-NAMESPACE with the name of the namespace
+where Jenkins is deployed
+```
+oc policy add-role-to-user edit system:serviceaccount:JENKINS-NAMESPACE:jenkins -n my-namespace
+```
+
+Grant permissions on project (optional)
+```
+oc policy add-role-to-user admin ... -n my-namespace
+oc policy add-role-to-user view ... -n my-namespace
+```
+
+## Create secret
+
+In a separate folder, create a file `gb2av.yaml`
+containing a secret according to the following template.
+Then run `oc apply -f path/to/gb2av.yaml -n my-namespace`.
+
 
 ```
 apiVersion: v1
 kind: Secret
 metadata:
-  name: aws-secret-gb2av
+  name: gb2av-aws-secret
   labels:
     app: gb2av
 type: Opaque
@@ -39,13 +47,11 @@ stringData:
   awsSecretKey: xy
 ```
 
-infogrips-secret.yaml:
-
 ```
 apiVersion: v1
 kind: Secret
 metadata:
-  name: infogrips-secret
+  name: gb2av-infogrips-secret
   labels:
     app: gb2av
 type: Opaque
@@ -54,13 +60,11 @@ stringData:
   ftpPwdInfogrips: xy
 ```
 
-db-secret-gretl.yaml
-
 ```
 apiVersion: v1
 kind: Secret
 metadata:
-  name: db-secret-gretl
+  name: gb2av-db-secret
   labels:
     app: gb2av
 type: Opaque
@@ -69,47 +73,15 @@ stringData:
   dbPwd: xy
 ```
 
-Deploy test environment:
+
+## Apply template
 
 ```
-oc project agi-apps-test
-oc process -f gb2av/gb2av.yaml \
-  -p ENVIRONMENT_SHORT=test \
-  -p TAG=latest \
-  -p IMPORT_POLICY_SCHEDULED=true \
-  -p CPU_LIMIT="0" \
-  -p MEMORY_LIMIT="0" \
-  -p CPU_REQUEST="0" \
-  -p MEMORY_REQUEST="0" \
-  | oc apply -f -
+oc process -f gb2av/gb2av.yaml --param-file=gb2av/gb2av_test.params | oc apply -f - -n my-namespace
 ```
-
-Deploy integration environment:
-
 ```
-oc project agi-apps-integration
-oc process -f gb2av/gb2av.yaml \
-  -p ENVIRONMENT_SHORT=int \
-  -p TAG=1.1.6 \
-  -p IMPORT_POLICY_SCHEDULED=false \
-  -p CPU_LIMIT="750m" \
-  -p MEMORY_LIMIT="600Mi" \
-  -p CPU_REQUEST="60m" \
-  -p MEMORY_REQUEST="300Mi" \
-  | oc apply -f -
+oc process -f gb2av/gb2av.yaml --param-file=gb2av/gb2av_integration.params | oc apply -f - -n my-namespace
 ```
-
-Deploy production environment:
-
 ```
-oc project agi-apps-production
-oc process -f gb2av/gb2av.yaml \
-  -p ENVIRONMENT_SHORT=prod \
-  -p TAG=1.1.6 \
-  -p IMPORT_POLICY_SCHEDULED=false \
-  -p CPU_LIMIT="750m" \
-  -p MEMORY_LIMIT="600Mi" \
-  -p CPU_REQUEST="60m" \
-  -p MEMORY_REQUEST="600Mi" \
-  | oc apply -f -
+oc process -f gb2av/gb2av.yaml --param-file=gb2av/gb2av_production.params | oc apply -f - -n my-namespace
 ```

@@ -1,234 +1,216 @@
-# Install or update MapCache in OpenShift
+# Deploying MapCache in OpenShift
 
-## Set up MapCache
+## Notes on the MapCache seeder cron job
 
-A persistent volume claim for storing the tiles must exist already.
+In addition to the MapCache service,
+this template creates a MapCache seeder cron job
+which updates a part of the MapCache tiles in regular intervals.
 
-
-## Create a Docker image pull secret
-
-This step is needed only if this is the first installation, or if any value of the secret needs to be changed.
-
-Create a secret for pulling the Docker images, and link this secret to the default service account:
-
-For test environment:
-
-```
-oc project agi-mapcache-test
-oc create secret docker-registry sogis-pull-secret --docker-username=xx --docker-password=yy
-oc secrets link default sogis-pull-secret --for=pull
-```
-
-For production environment:
-
-Run the same commands as above, but connect to `agi-mapcache-production` before.
-
-
-# Deploy MapCache
-
-Checkout the openshift-templates repository:
+The cron job can be started manually as well.
+Run the following command
+for manual seeding of the zoom levels 11 to 14
+of the `ch.so.agi.hintergrundkarte_farbig`
+and `ch.so.agi.hintergrundkarte_sw` tile sets
+of the most recently imported municipalities:
 
 ```
-git clone https://github.com/sogis/openshift-templates.git
-cd openshift-templates
+oc delete job mapcache-seeder-manual ; oc create job mapcache-seeder-manual --from=cronjob/mapcache-seeder -n my-namespace
 ```
 
-Or, if already checked out, update the OpenShift templates repository:
+If you just want to seed certain zoom levels,
+or a certain variant, or the whole area of the tileset,
+proceed as follows:
 
-```
-cd openshift-templates
-git pull
-```
+* Export the definition of the seeder cron job to a YAML file:
+  ```
+  oc create job manual-seed-job --dry-run=client --from cronjob/mapcache-seeder -o yaml > manual-seed-job.yaml
+  ```
+* Now edit the `manual-seed-job.yaml` as required.
+  * For seeding specific zoom levels:
+    Modify the value of the `ZOOM_LEVELS_SEEDER` environment variable,
+    e.g. `11,13` for seeding levels 11 to 13,
+    or `11,11` for seeding just level 11
+  * For seeding just a certain variant:
+    Remove one of the commands in the `args:` section,
+    and make sure to also remove the semicolon between the two commands
+  * For seeding the whole canton area:
+    Remove the `-d PG:service=pub` and `-s "$SQL_EXPRESSION"` options
+    from both commands;
+    additionally remove the `activeDeadlineSeconds: 21600` entry
+    from the job spec (or increase the value),
+    as the seeding will last longer in this case
+* Create and start the manual job from the modified YAML file:
+  ```
+  oc apply -f manual-seed-job.yaml
+  ```
+  If such a manual job already exists, you need to delete it beforehand with
+  `oc delete job manual-seed-job`.
 
-Deploy test environment:
-```
-oc project agi-mapcache-test
-oc process -f mapcache/mapcache_template.yaml \
-  -p TAG=latest \
-  -p IMPORT_POLICY_SCHEDULED=true \
-  -p REPLICA_COUNT=1 \
-  -p SERVICE_URL=https://geo-t.so.ch/api \
-  -p SOURCE_URL=http://qgis-server.agi-mapcache-test.svc/ows/somap \
-  -p TILES_PVC_NAME=gditest-mapcache-lowback \
-  -p HOSTNAME=geo-wmts-t.so.ch \
-  -p CPU_REQUEST=0 \
-  -p CPU_LIMIT=0 \
-  -p MEMORY_REQUEST=0 \
-  -p MEMORY_LIMIT=0 \
-  | oc apply -f -
-```
+The `hintergrundkarte_ortho` tile set and the zoom levels 0 to 10
+of the `ch.so.agi.hintergrundkarte_farbig` and the `ch.so.agi.hintergrundkarte_sw` tile set
+should be seeded on a local machine.
+Please refer to the instructions in the seed folder of the
+https://github.com/sogis/docker-mapcache Git repository.
 
-Check the deployment:
-```
-https://geo-wmts-t.so.ch/mapcache/wmts/1.0.0/WMTSCapabilities.xml
-```
+## Create and configure project
 
-Deploy production environment:
+Create project
 ```
-oc project agi-mapcache-production
-oc process -f mapcache/mapcache_template.yaml \
-  -p TAG=50 \
-  -p IMPORT_POLICY_SCHEDULED=false \
-  -p REPLICA_COUNT=2 \
-  -p SERVICE_URL=https://geo.so.ch/api \
-  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
-  -p TILES_PVC_NAME=gdi-mapcache-lowback \
-  -p HOSTNAME=geo-wmts.so.ch \
-  -p CPU_REQUEST=250m \
-  -p CPU_LIMIT=1 \
-  -p MEMORY_REQUEST=200Mi \
-  -p MEMORY_LIMIT=600Mi \
-  | oc apply -f -
+oc new-project my-namespace
 ```
 
-Check the deployment:
+Set secret for pulling images from image registry (optional)
 ```
-https://geo-wmts.so.ch/mapcache/wmts/1.0.0/WMTSCapabilities.xml
-```
-
-## Set up a separate QGIS Server for seeding
-
-Run the following commands to create a QGIS Server Deployment Configuration; the templates are based on those in https://github.com/sogis/pipelines/tree/master/api_webgisclient/qgis-server, and they are additionally modified so that they use the Image Registry of a different OpenShift project:
-
-Deploy test environment:
-```
-oc project agi-mapcache-test
-oc policy add-role-to-user system:image-puller system:serviceaccount:agi-mapcache-test:default --rolebinding-name puller-agi-mapcache-test -n gdi-test
-oc process -f mapcache/qgis-server_resources.yaml \
-  -p DB_SERVER=xy \
-  -p DB_PUB=xy \
-  -p USER_OGC_SERVER=xy \
-  -p PW_OGC_SERVER=xy \
-  | oc apply -f -
-oc process -f mapcache/qgis-server_deploymentconfig.yaml \
-  -p TAG=2.0.15 \
-  -p QGS_RESOURCES_PVC_NAME=qgs-resources-claim1 \
-  -p GEODATA_PVC_NAME=datensogispicmir-claim-test \
-  -p REPLICAS=1 \
-  -p CPU_REQUEST=0 \
-  -p CPU_LIMIT=0 \
-  -p MEMORY_REQUEST=0 \
-  -p MEMORY_LIMIT=0 \
-  | oc apply -f -
+oc create secret docker-registry dockerhub-pull-secret --docker-username=xy --docker-password=xy -n my-namespace
+oc secrets link default dockerhub-pull-secret --for=pull -n my-namespace
 ```
 
-Deploy production environment:
+Grant permissions for deploying the app
+from a Jenkins instance running in a different namespace (optional);
+replace JENKINS-NAMESPACE with the name of the namespace
+where Jenkins is deployed
 ```
-oc project agi-mapcache-production
-oc policy add-role-to-user system:image-puller system:serviceaccount:agi-mapcache-production:default --rolebinding-name puller-agi-mapcache-production -n gdi-production
-oc process -f mapcache/qgis-server_resources.yaml \
-  -p DB_SERVER=xy \
-  -p DB_PUB=xy \
-  -p USER_OGC_SERVER=xy \
-  -p PW_OGC_SERVER=xy \
-  | oc apply -f -
-oc process -f mapcache/qgis-server_deploymentconfig.yaml \
-  -p TAG=2.0.15 \
-  -p QGS_RESOURCES_PVC_NAME=qgs-resources-claim \
-  -p GEODATA_PVC_NAME=datensogispicmir-claim2 \
-  -p REPLICAS=1 \
-  -p CPU_REQUEST=1 \
-  -p CPU_LIMIT=6 \
-  -p MEMORY_REQUEST=2Gi \
-  -p MEMORY_LIMIT=6Gi \
-  | oc apply -f -
+oc policy add-role-to-user edit system:serviceaccount:JENKINS-NAMESPACE:jenkins -n my-namespace
 ```
 
-## Set up MapCache seeder Cron Job
-
-Run the following commands to create an OpenShift Cron Job which regularly updates a part of the MapCache tiles:
-
-In test environment:
-
-(We don't run this cron job in test environment.)
-
-In production environment:
+Grant permissions on project (optional)
 ```
-oc project agi-mapcache-production
-oc process -f mapcache/seeder-cronjob-template.yaml \
-  -p NAMESPACE=agi-mapcache-production \
-  -p PVC_NAME=gdi-mapcache-lowback \
-  -p ZOOM_LEVELS=11,14 \
-  -p SCHEDULE='00 01 * * *' \
-  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
-  -p PGHOST=xy \
-  -p PGDATABASE=pub \
-  -p PGUSER=ogc_server \
-  -p PGPASSWORD=xy \
-  | oc apply -f -
+oc policy add-role-to-user admin ... -n my-namespace
+oc policy add-role-to-user view ... -n my-namespace
 ```
 
-## Run MapCache seeder Jobs that need to run on demand only
+## Create Persistent Volume Claim
 
-The *hintergrundkarte_ortho* tile set and the zoom levels 0 to 10 of the *ch.so.agi.hintergrundkarte_farbig* and the *ch.so.agi.hintergrundkarte_sw* tile set should be seeded on a local machine. Please refer to the instructions in the *seed* folder of the repository https://github.com/sogis/docker-mapcache.
+In a separate folder, create a file `mapcache-pvc.yaml`
+containing the definition of a Persistent Volume Claim
+according to the following template.
+Then run `oc apply -f path/to/mapcache-pvc.yaml -n my-namespace`.
 
-For manual seeding of the zoom levels 11 to 14 of the *ch.so.agi.hintergrundkarte_farbig* and *ch.so.agi.hintergrundkarte_sw* tile sets, use the following commands:
-
-In test environment:
 ```
-oc project agi-mapcache-test
-oc process -f mapcache/seeder-job-template.yaml \
-  -p NAMESPACE=agi-mapcache-test \
-  -p PVC_NAME=gditest-mapcache-lowback \
-  -p VARIANT=farbig \
-  -p ZOOM_LEVELS=11,14 \
-  -p SOURCE_URL=http://qgis-server.agi-mapcache-test.svc/ows/somap \
-  | oc create -f -
-oc process -f mapcache/seeder-job-template.yaml \
-  -p NAMESPACE=agi-mapcache-test \
-  -p PVC_NAME=gditest-mapcache-lowback \
-  -p VARIANT=sw \
-  -p ZOOM_LEVELS=11,14 \
-  -p SOURCE_URL=http://qgis-server.agi-mapcache-test.svc/ows/somap \
-  | oc create -f -
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mapcache
+labels:
+  app: mapcache
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
 ```
 
-In production environment:
+## Create secret
+
+In a separate folder, create a file `mapcache-seeder-db-secret.yaml`
+containing a secret according to the following template.
+Then run `oc apply -f path/to/mapcache-seeder-db-secret.yaml -n my-namespace`.
+
 ```
-oc project agi-mapcache-production
-oc process -f mapcache/seeder-job-template.yaml \
-  -p NAMESPACE=agi-mapcache-production \
-  -p PVC_NAME=gdi-mapcache-lowback \
-  -p VARIANT=farbig \
-  -p ZOOM_LEVELS=11,14 \
-  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
-  | oc create -f -
-oc process -f mapcache/seeder-job-template.yaml \
-  -p NAMESPACE=agi-mapcache-production \
-  -p PVC_NAME=gdi-mapcache-lowback \
-  -p VARIANT=sw \
-  -p ZOOM_LEVELS=11,14 \
-  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
-  | oc create -f -
+kind: Secret
+apiVersion: v1
+metadata:
+  name: mapcache-seeder-db-secret
+  labels:
+    app: mapcache
+stringData:
+  pg_service.conf: |-
+    [pub]
+    host=xy
+    port=5432
+    dbname=xy
+    user=xy
+    password=xy
+    sslmode=require
 ```
 
-(If any of these jobs already exists, you might need to delete it using the command `oc delete job JOB-NAME`.)
+## Apply template
 
-If you want to just seed the area of the municipalities
-that have been imported the day before,
-use the following commands (production environment):
 ```
-oc project agi-mapcache-production
-oc process -f mapcache/seeder-job-template-latest-municipalities.yaml \
-  -p NAMESPACE=agi-mapcache-production \
-  -p PVC_NAME=gdi-mapcache-lowback \
-  -p VARIANT=farbig \
-  -p ZOOM_LEVELS=11,14 \
-  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
-  -p PGHOST=xy \
-  -p PGDATABASE=pub \
-  -p PGUSER=ogc_server \
-  -p PGPASSWORD=xy \
-  | oc create -f -
-oc process -f mapcache/seeder-job-template-latest-municipalities.yaml \
-  -p NAMESPACE=agi-mapcache-production \
-  -p PVC_NAME=gdi-mapcache-lowback \
-  -p VARIANT=sw \
-  -p ZOOM_LEVELS=11,14 \
-  -p SOURCE_URL=http://qgis-server.agi-mapcache-production.svc/ows/somap \
-  -p PGHOST=xy \
-  -p PGDATABASE=pub \
-  -p PGUSER=ogc_server \
-  -p PGPASSWORD=xy \
-  | oc create -f -
+oc process -f mapcache/mapcache.yaml --param-file=mapcache/mapcache_development.params | oc apply -f - -n my-namespace
+```
+
+
+# Deploying QGIS Server (for seeding WMTS tiles) in OpenShift
+
+## Enable running image with any UID
+
+Enable QGIS Server image to be run wit any UID.
+Note that the second command must be run as an administrator.
+```
+oc create sa qgis-server -n my-namespace
+oc adm policy add-scc-to-user anyuid -z qgis-server -n my-namespace
+```
+
+## Create Persistent Volume Claims
+
+In a separate folder, create a file `qgis-server-pvc.yaml`
+containing the definition of a Persistent Volume Claim
+according to the following template.
+Then run `oc apply -f path/to/qgis-server-pvc.yaml -n my-namespace`.
+
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qgis-server-resources
+labels:
+  app: qgis-server
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qgis-server-geodata
+labels:
+  app: qgis-server
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+```
+
+
+## Create secret
+
+In a separate folder, create a file `qgis-server-db-secret.yaml`
+containing a secret according to the following template.
+Then run `oc apply -f path/to/qgis-server-db-secret.yaml -n my-namespace`.
+
+```
+kind: Secret
+apiVersion: v1
+metadata:
+  name: qgis-server-db-secret
+  labels:
+    app: qgis-server
+stringData:
+  pg_service.conf: |-
+    [sogis_pub]
+    host=xy
+    port=5432
+    dbname=xy
+    user=xy
+    password=xy
+    sslmode=require
+```
+
+## Apply template
+
+```
+oc process -f mapcache/qgis-server.yaml --param-file=mapcache/qgis-server_development.params | oc apply -f - -n my-namespace
+```
+
+## Set secret for pulling images from image registry on _qgis-server_ Service Account as well (optional)
+
+```
+oc secrets link qgis-server dockerhub-pull-secret --for=pull -n my-namespace
 ```

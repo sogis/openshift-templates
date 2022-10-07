@@ -40,48 +40,25 @@ objects:
         - name: ${APPNAME}
           ## List the necessary envirionment variables below
           env:
-          - name: CUBA_WEB_REQUIREPASSWORDFORNEWUSERS
-            value: 'false'
-          - name: CUBA_WEB_STANDARDAUTHENTICATIONUSERS
-            value: admin
-          - name: CUBA_WEB_PRODUCTIONMODE
-            value: 'true'
-          - name: SIMI_CONFIG_STOPONINCOMPLETE
-            value: 'true'
-          - name: SIMI_GITSEARCH_URL
-            value: https://api.github.com/search/code
-          - name: SIMI_GITSEARCH_REPOS
-            value: sogis/gretljobs,sogis/oereb-gretljobs
-          - name: SIMI_PUBLISHJOB_BASEURL
-            value: fuu
-          - name: SIMI_PUBLISHJOB_POLLTIMEOUT
-            value: '5'
-          - name: SIMI_PUBLISHJOB_SECTOKEN
-            value: secret
-          - name: SIMI_SCHEMAREADER_URL
-            value: http://${SIMI_SCHEMAREADER_URL}
-          - name: CUBA_WEB_LDAP_ENABLED
-            value: 'true'
-          envFrom:
-          - secretRef:
-              name: simi-db-secret
-          - secretRef:
-              name: simi-ldap-secret
+          - name: LOG_LEVEL_SPRING
+            value: ${LOG_LEVEL_SPRING}
+          - name: LOG_LEVEL_APP
+            value: ${LOG_LEVEL_APP}
           ## Define HealthChecks. Ideally the timeoutSeconds for the readiness Probe should be shorter than for the liveness Probe or you have different Probes for the checks
           readinessProbe:
             httpGet:
-              path: /app/dispatch/health
+              path: /actuator/health
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 15
+            initialDelaySeconds: 3
             periodSeconds: 10
             timeoutSeconds: 1
           livenessProbe:
             httpGet:
-              path: /app/dispatch/health
+              path: /actuator/health
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 15
+            initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 1
           ## Define the desired Resources for your container in the paramter file. They should be different in test, int and prod environment
@@ -143,5 +120,9 @@ parameters:
 - name: MEMORY_LIMIT
   description: The maximum amount of memory the container is allowed to use when running.
   required: true
-- name: SIMI_SCHEMAREADER_URL
-  description: URL to simi-schemareader
+- name: LOG_LEVEL_SPRING
+  description: Spring framework log level
+  value: INFO
+- name: LOG_LEVEL_APP
+  description: Application log level
+  value: INFO
