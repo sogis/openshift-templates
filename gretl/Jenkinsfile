@@ -29,7 +29,7 @@ pipeline {
         stage('Update ImageStream tags') {
             when { expression { !params.RESTART_ONLY } }
             steps {
-                sh "oc import-image ${appName} --all --confirm -o name -n ${params.NAMESPACE}"
+                sh "oc import-image jenkins-controller --all --confirm -o name -n ${params.NAMESPACE}"
                 sh "oc import-image jenkins-agent --all --confirm -o name -n ${params.NAMESPACE}"
                 sh "oc import-image gretl --all --confirm -o name -n ${params.NAMESPACE}"
             }

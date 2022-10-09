@@ -9,7 +9,7 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: ${APPNAME}
+    name: jenkins-controller
   spec:
     tags:
     - from:
@@ -218,7 +218,7 @@ objects:
         - ${APPNAME}
         from:
           kind: ImageStreamTag
-          name: ${APPNAME}:${TAG}
+          name: jenkins-controller:${TAG}
 - apiVersion: v1
   kind: Service
   metadata:
