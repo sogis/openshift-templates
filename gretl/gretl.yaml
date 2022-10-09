@@ -122,7 +122,7 @@ objects:
     name: ${APPNAME}
   spec:
     replicas: ${{REPLICA_COUNT}}
-    revisionHistoryLimit: 3
+    revisionHistoryLimit: 6
     selector:
       app: ${APPNAME}
     strategy:
