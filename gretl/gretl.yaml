@@ -28,7 +28,7 @@ objects:
     configuration-as-code.yaml: |
       jobs:
         - script: |
-            job('gretl_job_generator') {
+            job('gretl-job-generator') {
               description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
               logRotator(-1, 14)
               scm {
@@ -50,7 +50,7 @@ objects:
               }
             }
         - script: |
-            job('gretl_job_generator-oereb') {
+            job('gretl-job-generator-oereb') {
               description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
               logRotator(-1, 14)
               scm {
@@ -72,7 +72,7 @@ objects:
               }
             }
         - script: |
-            job('gretl_job_generator-oerebv2') {
+            job('gretl-job-generator-oerebv2') {
               description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
               logRotator(-1, 14)
               scm {
@@ -94,7 +94,7 @@ objects:
               }
             }
         - script: |
-            job('gretl_job_generator-schema') {
+            job('gretl-job-generator-schema') {
               description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
               logRotator(-1, 14)
               scm {
