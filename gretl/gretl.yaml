@@ -251,6 +251,9 @@ objects:
     name: ${APPNAME}
   spec:
     host: ${HOSTNAME}
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
     port:
       targetPort: web
     to:
