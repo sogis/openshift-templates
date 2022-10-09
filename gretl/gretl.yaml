@@ -205,7 +205,7 @@ objects:
         volumes:
         - name: ${APPNAME}-data
           persistentVolumeClaim:
-            claimName: ${APPNAME}
+            claimName: ${JENKINS_PVC_NAME}
         - name: configuration-as-code-volume
           configMap:
             name: configuration-as-code
@@ -594,6 +594,9 @@ parameters:
   displayName: Path or URL to Configuration as Code config file
   description: Path or URL to the config file for the Jenkins Configuration as Code plugin.
   value: /opt/configuration-as-code/configuration-as-code.yaml
+- name: JENKINS_PVC_NAME
+  description: Name of the PVC for storing the Jenkins config and the jobs
+  required: true
 - name: GRETL_JOB_REPO_URL
   displayName: Git repo containing GRETL Jobs
   description: URL of the Git repo holding the GRETL Job configurations.
