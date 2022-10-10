@@ -1,10 +1,265 @@
 apiVersion: template.openshift.io/v1
 kind: Template
-labels:
-  app: gretl-platform
 metadata:
-  name: gretl-platform
+  name: gretl-platform-template
+labels:
+  template: gretl-platform-template
+  app: gretl-platform
 objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: jenkins-controller
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: configuration-as-code
+    labels:
+      app: gretl-platform
+  data:
+    configuration-as-code.yaml: |
+      jobs:
+        - script: |
+            job('gretl-job-generator') {
+              description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
+              logRotator(-1, 14)
+              scm {
+                git {
+                  remote {
+                    url('${GRETL_JOB_REPO_URL}')
+                  }
+                  branch('*/main')
+                }
+              }
+              triggers {
+                cron('H H/8 * * *')
+              }
+              steps {
+                dsl {
+                  external('gretl_job_generator.groovy')
+                  removeAction('DELETE')
+                }
+              }
+            }
+        - script: |
+            job('gretl-job-generator-oereb') {
+              description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
+              logRotator(-1, 14)
+              scm {
+                git {
+                  remote {
+                    url('${GRETL_JOB_REPO_URL_OEREB}')
+                  }
+                  branch('*/master')
+                }
+              }
+              triggers {
+                cron('H H/8 * * *')
+              }
+              steps {
+                dsl {
+                  external('gretl_job_generator.groovy')
+                  removeAction('DELETE')
+                }
+              }
+            }
+        - script: |
+            job('gretl-job-generator-oerebv2') {
+              description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
+              logRotator(-1, 14)
+              scm {
+                git {
+                  remote {
+                    url('${GRETL_JOB_REPO_URL_OEREB_V2}')
+                  }
+                  branch('*/main')
+                }
+              }
+              triggers {
+                cron('H H/8 * * *')
+              }
+              steps {
+                dsl {
+                  external('gretl_job_generator.groovy')
+                  removeAction('DELETE')
+                }
+              }
+            }
+        - script: |
+            job('gretl-job-generator-schema') {
+              description('Generates a Jenkins job for every GRETL-Job found in the Git repository')
+              logRotator(-1, 14)
+              scm {
+                git {
+                  remote {
+                    url('${GRETL_JOB_REPO_URL_SCHEMA}')
+                    credentials('${PROJECT_NAME}-github-access-token-schema-jobs')
+                  }
+                  branch('*/main')
+                }
+              }
+              triggers {
+                cron('H H/8 * * *')
+              }
+              steps {
+                dsl {
+                  external('gretl_job_generator.groovy')
+                  removeAction('DELETE')
+                }
+              }
+            }
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}
+  spec:
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 6
+    selector:
+      app: ${APPNAME}
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+      spec:
+        serviceAccountName: ${APPNAME}
+        containers:
+        - name: ${APPNAME}
+          ## List the necessary envirionment variables below
+          env:
+          - name: OPENSHIFT_ENABLE_OAUTH
+            value: ${ENABLE_OAUTH}
+          - name: OPENSHIFT_ENABLE_REDIRECT_PROMPT
+            value: 'true'
+          - name: KUBERNETES_MASTER
+            value: https://kubernetes.default:443
+          - name: KUBERNETES_TRUST_CERTIFICATES
+            value: 'true'
+          - name: INSTALL_PLUGINS
+            value: ${INSTALL_PLUGINS}
+          - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
+            value: ${OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS}
+          - name: CASC_JENKINS_CONFIG
+            value: ${CASC_JENKINS_CONFIG}
+          - name: JENKINS_SERVICE_NAME
+            value: ${APPNAME}
+          - name: JNLP_SERVICE_NAME
+            value: ${APPNAME}-jnlp
+          - name: JENKINS_JAVA_OVERRIDES
+            value: '-Dcom.sun.jndi.ldap.connect.pool.timeout=1200000'
+          - name: CONTAINER_HEAP_PERCENT
+            value: '0.75'
+          - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
+            value: 'true'
+          - name: GRETL_JOB_REPO_URL
+            value: ${GRETL_JOB_REPO_URL}
+          - name: GRETL_JOB_REPO_URL_OEREB
+            value: ${GRETL_JOB_REPO_URL_OEREB}
+          - name: GRETL_JOB_REPO_URL_OEREB_V2
+            value: ${GRETL_JOB_REPO_URL_OEREB_V2}
+          - name: GRETL_JOB_REPO_URL_SCHEMA
+            value: ${GRETL_JOB_REPO_URL_SCHEMA}
+          ## Define HealthChecks. Ideally the timeoutSeconds for the readiness Probe should be shorter than for the liveness Probe or you have different Probes for the checks
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 240
+          livenessProbe:
+            httpGet:
+              path: /login
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 420
+            periodSeconds: 360
+            timeoutSeconds: 240
+          ## Define the desired Resources for your container in the paramter file. They should be different in test, int and prod environment
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+          ## Define the required volume mounts
+          volumeMounts:
+          - name: ${APPNAME}-data
+            mountPath: /var/lib/jenkins
+          - name: configuration-as-code-volume
+            mountPath: /opt/configuration-as-code
+            readOnly: true
+        ## Define the required volumes
+        volumes:
+        - name: ${APPNAME}-data
+          persistentVolumeClaim:
+            claimName: ${JENKINS_PVC_NAME}
+        - name: configuration-as-code-volume
+          configMap:
+            name: configuration-as-code
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: jenkins-controller:${TAG}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}
+  spec:
+    ## Define the ports exposed by the app
+    ports:
+    - name: web
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: ${APPNAME}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}-jnlp
+  spec:
+    ## Define the ports exposed by the app
+    ports:
+    - name: agent
+      port: 50000
+      protocol: TCP
+      targetPort: 50000
+    selector:
+      app: ${APPNAME}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}
+  spec:
+    host: ${HOSTNAME}
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
+    port:
+      targetPort: web
+    to:
+      kind: Service
+      name: ${APPNAME}
+## The following objects are needed as pod templates for the Jenkins agents
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
@@ -287,6 +542,81 @@ objects:
         </yaml>
       </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
 parameters:
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The Docker image tag to use (e.g. latest)
+  value: latest
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  value: 'false'
+- name: REPLICA_COUNT
+  description: Number of replicas to run
+  value: '1'
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
+- name: HOSTNAME
+  description: The hostname for the route
+- name: ENABLE_OAUTH
+  displayName: Enable OAuth in Jenkins
+  description: Whether to enable OAuth OpenShift integration. If false, the static
+    account 'admin' will be initialized with the password 'password'.
+  value: 'true'
+- name: INSTALL_PLUGINS
+  displayName: Jenkins plug-ins to install
+  description: List of Jenkins plug-ins to update to a specific version
+    or to install additionally
+  value:
+    cloudbees-disk-usage-simple:0.10,
+    mailer:414.vcc4c33714601,
+    script-security:1138.v8e727069a_025,
+    email-ext:2.83,
+    envinject:2.4.0,
+    groovy:2.4,
+    ldap:2.7,
+    job-dsl:1.77,
+    matrix-auth:2.6.8
+- name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
+  displayName: Copy plugins of the image to persistent volume
+  description: Overwrite the plugins installed in the jenkins persistent volume with the plugins installed in the Jenkins image.
+  value: 'true'
+- name: CASC_JENKINS_CONFIG
+  displayName: Path or URL to Configuration as Code config file
+  description: Path or URL to the config file for the Jenkins Configuration as Code plugin.
+  value: /opt/configuration-as-code/configuration-as-code.yaml
+- name: JENKINS_PVC_NAME
+  description: Name of the PVC for storing the Jenkins config and the jobs
+  required: true
+- name: GRETL_JOB_REPO_URL
+  displayName: Git repo containing GRETL Jobs
+  description: URL of the Git repo holding the GRETL Job configurations.
+  value: https://github.com/sogis/gretljobs.git
+- name: GRETL_JOB_REPO_URL_OEREB
+  displayName: Git repo containing OEREB GRETL Jobs
+  description: URL of the Git repo holding the OEREB GRETL Job configurations.
+  value: https://github.com/sogis/oereb-gretljobs.git
+- name: GRETL_JOB_REPO_URL_OEREB_V2
+  displayName: Git repo containing OEREB V2 GRETL Jobs
+  description: URL of the Git repo holding the OEREB V2 GRETL Job configurations.
+  value: https://github.com/sogis-oereb/oereb-gretljobs.git
+- name: GRETL_JOB_REPO_URL_SCHEMA
+  displayName: Git repo containing Schema Jobs
+  description: URL of the Git repo holding the Schema Job configurations.
+  value: https://github.com/sogis/schema-jobs.git
 - name: JENKINS_AGENT_IMAGE_TAG
   description: Jenkins agent image tag to be pulled from Quay.io
   required: true
