@@ -578,17 +578,18 @@ parameters:
   value: 'true'
 - name: INSTALL_PLUGINS
   displayName: Jenkins plug-ins to install
-  description: List of additional Jenkins plug-ins to install.
+  description: List of Jenkins plug-ins to update to a specific version
+    or to install additionally
   value:
     cloudbees-disk-usage-simple:0.10,
+    mailer:414.vcc4c33714601,
+    script-security:1138.v8e727069a_025,
     email-ext:2.83,
     envinject:2.4.0,
     groovy:2.4,
     ldap:2.7,
     job-dsl:1.77,
-    mailer:414.vcc4c33714601,
-    matrix-auth:2.6.8,
-    script-security:1138.v8e727069a_025
+    matrix-auth:2.6.8
 - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
   displayName: Copy plugins of the image to persistent volume
   description: Overwrite the plugins installed in the jenkins persistent volume with the plugins installed in the Jenkins image.
