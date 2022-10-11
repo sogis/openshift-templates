@@ -117,8 +117,14 @@ parameters:
 - name: CPU_REQUEST
   description: The minimum amount of CPU the container is guaranteed.
   required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container can use.
+  required: true
 - name: MEMORY_REQUEST
   description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container can use.
   required: true
 - name: HOSTNAME
   description: The hostname for the route
