@@ -1,10 +1,5 @@
 # Deploying the GRETL pod template in OpenShift
 
-Note: This template only creates one or more ConfigMaps
-that serve as pod templates for running GRETL jobs,
-and the required image streams.
-Jenkins must currently still be deployed manually.
-
 ## Create and configure project
 
 Create project
