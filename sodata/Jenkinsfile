@@ -1,0 +1,129 @@
+def appName = env.JOB_BASE_NAME
+def environment = params.NAMESPACE.substring(params.NAMESPACE.lastIndexOf('-' + 1)
+
+pipeline {
+    agent any
+    parameters {
+        string(defaultValue: "master",
+               description: 'Branch, der ausgecheckt werden soll',
+               name: 'BRANCH'
+               ),
+        booleanParam(defaultValue: false,
+                     description: 'Nur Pods neu starten (keine Änderung an der DeploymentConfig vornehmen',
+                     name: 'RESTART_ONLY'
+                     ),
+        choice(description: 'Namespace,in welchem die App deployt werden soll',
+               choices: ['agi-apps-production', 'agi-apps-integration', 'agi-apps-test'],
+               name: 'NAMESPACE'
+               )
+        }
+
+    stages {
+        stage ('Checkout branch') {
+            steps {
+                checkout([
+                     $class: 'GitSCM',
+                     branches: [[name: "*/${params.BRANCH}"]],
+                     extensions: [
+                         [$class: 'CloneOption', noTags: true, shallow: true],
+                         [$class: 'parseCheckoutPaths', sparseCheckoutPaths: [[path: appName]]]
+                     ],
+                     userRemoteConfigs: [[url: env.GIT_URL]]
+                ])
+             }
+        }
+        stage ('Prerequesits') {
+            steps {
+                script {
+                    if ( environment == 'agi-apps-test' ) {
+                        dbserver = env.DB_SERVER_TEST
+                        }
+                    else if ( environment == 'agi-apps-integration' ) {
+                        dbserver = env.DB_SERVER_INT
+                        }
+                    else if ( environment == 'agi-apps-production' ) {
+                        dbserver = env.DB_SERVER_PROD
+                        }
+                    else {
+                        dbserver = env.DB_SERVER_TEST
+                        }
+                    credentials = [ 
+                        usernamePassword(credentialsId: (env.NAMESPACE_JENKINS) + '-jenkins-dbuser-simi-secret'   , usernameVariable: 'DbUserSimi'   , passwordVariable: 'PwdSimi')
+                        ]
+                    }
+                }
+            }
+        stage ('Restart the pods') {
+            when { expression { params.RESTART_ONLY } }
+            steps {
+                sh """
+                    oc rollout latest dc/${APPNAME} -n ${params.NAMESPACE}"
+                """
+             }
+        }
+        stage ('Apply configuration') {
+            when { expression { !params.RESTART_ONLY } }
+            steps {
+                sh """
+                    oc process -f ${appName}/${appName}.yaml --param-file=${appName}/${appName}_${environment}.params | oc apply -f - -n ${params.NAMESPACE}
+                 """
+            }
+        }
+        stage ('Create Datensuche XML File') {
+            when { expression { !params.RESTART_ONLY } }
+            steps {
+                withCredentials ( credentials ) {
+                    script {
+                        sh """
+                            if [ -d "meta_exporter" ]; then
+                              rm -rf meta_exporter/* rm -rf meta_exporter/.git
+                            fi
+        
+                            if [ ! -d  "config/default" ]; then
+                              mkdir -p config/default
+                            fi
+
+                            # if not exists get the meta2file-cli-all.jar and set the necessary permissions
+                            if [ ! -f "meta2file-cli-1.0.63-all.jar" ]; then
+                              wget https://github.com/sogis/meta2file/releases/download/v1.0.63/meta2file-cli-1.0.63-all.jar
+                              chmod u+x meta2file-cli-1.0.63-all.jar
+                            fi
+                            
+                            # meta2file command to create the conf files
+                            java -jar meta2file-cli-1.0.63-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -u ${DbUserSimi} -p ${PwdSimi} -d $env.WORKSPACE/sodata/datasearch.xml
+                        """ 
+                        archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
+                        input(message: 'Please validate, this job will automatically ABORTED after 30 minutes even if no user input provided', ok: 'Proceed')
+                        }
+                    }
+                }
+            }
+          stage ('Build extended Image' ) {
+              when { expression { !params.RESTART_ONLY } }
+              steps {
+                  script {
+                      sh """ 
+                          oc start-build sodata-extended-image -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
+                      """
+                      }
+                  }
+              }
+          stage ( 'Wait for rollout to finish' ) {
+              steps {
+                  sh """
+                      sleep 2 && oc rollout status -n ${params.NAMESPACE}  dc/${appName} --timeout=90s
+                  """
+                  }
+              }
+        }
+    post {
+        // Clean after build
+        cleanup {
+            sh """
+                rm -rf $JENKINS_HOME/jobs/$JOB_NAME/workspace\\@script
+                rm -rf $JENKINS_HOME/jobs/$JOB_NAME/workspace\\@libs
+                rm -rf $WORKSPACE/*
+            """
+            }
+        }
+    }
