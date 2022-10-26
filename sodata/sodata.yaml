@@ -115,7 +115,7 @@ objects:
     strategy:
       dockerStrategy:
         dockerfilePath: Dockerfile
-	  type: Docker 
+      type: Docker 
 parameters:
 - name: APPNAME
   description: Name of the App
