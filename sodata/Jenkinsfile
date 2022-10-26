@@ -26,7 +26,7 @@ pipeline {
                      branches: [[name: "*/${params.BRANCH}"]],
                      extensions: [
                          [$class: 'CloneOption', noTags: true, shallow: true],
-                         [$class: 'parseCheckoutPaths', sparseCheckoutPaths: [[path: appName]]]
+                         [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: appName]]]
                      ],
                      userRemoteConfigs: [[url: env.GIT_URL]]
                 ])
@@ -119,11 +119,7 @@ pipeline {
     post {
         // Clean after build
         cleanup {
-            sh """
-                rm -rf $JENKINS_HOME/jobs/$JOB_NAME/workspace\\@script
-                rm -rf $JENKINS_HOME/jobs/$JOB_NAME/workspace\\@libs
-                rm -rf $WORKSPACE/*
-            """
+            script { currentBuild.description = "${params.NAMESPACE}, branch: ${params.BRANCH}" }   
             }
         }
     }
