@@ -1,5 +1,5 @@
 def appName = env.JOB_BASE_NAME
-def environment = params.NAMESPACE.substring(params.NAMESPACE.lastIndexOf('-' + 1)
+def environment = params.NAMESPACE.substring(params.NAMESPACE.lastIndexOf('-') + 1)
 
 pipeline {
     agent any
