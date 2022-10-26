@@ -103,7 +103,7 @@ pipeline {
               steps {
                   script {
                       sh """ 
-                          oc start-build sodata-extended-image -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
+                          oc start-build ${appName}-extended -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
                       """
                       }
                   }
