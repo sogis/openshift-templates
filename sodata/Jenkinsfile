@@ -7,11 +7,11 @@ pipeline {
         string(defaultValue: "master",
                description: 'Branch, der ausgecheckt werden soll',
                name: 'BRANCH'
-               ),
+               )
         booleanParam(defaultValue: false,
                      description: 'Nur Pods neu starten (keine Änderung an der DeploymentConfig vornehmen',
                      name: 'RESTART_ONLY'
-                     ),
+                     )
         choice(description: 'Namespace,in welchem die App deployt werden soll',
                choices: ['agi-apps-production', 'agi-apps-integration', 'agi-apps-test'],
                name: 'NAMESPACE'
