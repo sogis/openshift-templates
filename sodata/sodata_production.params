@@ -1,8 +1,10 @@
 APPNAME=sodata
-IMAGENAME=image-registry.openshift-image-registry.svc:5000/agi-apps-integration/sodata-extended
+IMAGENAME=image-registry.openshift-image-registry.svc:5000/agi-apps-production/sodata-extended
 TAG=latest
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=100m
+CPU_LIMIT=4000m
 MEMORY_REQUEST=100Mi
+
 HOSTNAME=data.geo.so.ch
