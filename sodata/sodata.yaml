@@ -69,7 +69,7 @@ objects:
         - ${APPNAME}
         from:
           kind: ImageStreamTag
-          name: ${APPNAME}:${TAG}
+          name: ${APPNAME}-extended:${TAG}
 - apiVersion: v1
   kind: Service
   metadata:
