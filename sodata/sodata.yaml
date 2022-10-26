@@ -9,7 +9,7 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: ${APPNAME}
+    name: ${APPNAME}-extended
     labels:
       app: ${APPNAME}
   spec:
@@ -98,6 +98,24 @@ objects:
     tls:
       termination: edge
       insecureEdgeTerminationPolicy: Redirect
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: ${APPNAME}-extended
+  spec: 
+    successfulBuildsHistoryLimit: 1
+    failedBuildsHistoryLimit: 2
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${APPNAME}-extended:${TAG}
+    source:
+      binary: {}
+      type: Binary
+    strategy:
+      dockerStrategy:
+        dockerfilePath: Dockerfile
+	  type: Docker 
 parameters:
 - name: APPNAME
   description: Name of the App
