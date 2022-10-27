@@ -100,6 +100,9 @@ parameters:
   - name: TAG 
     description: The docker image tag to use (e.g. latest)
     required: true
+  - name: REPLICA_COUNT
+    description: Number of replicas to run
+    required: true
   - name: IMPORT_POLICY_SCHEDULED
     description: Regularly check for changed image?
     required: true
