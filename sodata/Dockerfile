@@ -1,3 +1,3 @@
-FROM sogis/sodata:0.0.120
+FROM sogis/sodata:0.0.121
 
 ADD ./datasearch.xml /config/datasearch.xml
