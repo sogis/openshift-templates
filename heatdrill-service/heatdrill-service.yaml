@@ -40,7 +40,7 @@ objects:
         - name: ${APPNAME}
           envFrom:
           - secretRef:
-            name: heatdrill-service-secret
+              name: heatdrill-service-secret
           readinessProbe:
             httpGet:
               path: /actuator/health
