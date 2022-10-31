@@ -1,4 +1,4 @@
-# Deploying OEREB Web Service in OpenShift
+# Deploying Ilivalidator Web Service in OpenShift
 
 ## Create and configure project
 
