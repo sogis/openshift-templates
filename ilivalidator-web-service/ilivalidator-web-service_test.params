@@ -1,0 +1,9 @@
+APPNAME=ilivalidator-web-service
+IMAGENAME=sogis/ilivalidator-web-service
+TAG=latest
+IMPORT_POLICY_SCHEDULED=true
+REPLICA_COUNT=1
+CPU_REQUEST=0
+CPU_LIMIT=0
+MEMORY_REQUEST=0
+MEMORY_LIMIT=0
