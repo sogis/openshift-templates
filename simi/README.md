@@ -67,6 +67,23 @@ stringData:
   CUBA_WEB_LDAP_USERLOGINFIELD: xy
 ```
 
+In a separate folder, create a file `simi-rest-client-secret.yaml`
+containing a secret according to the following template.
+Then run `oc apply -f path/to/simi-rest-client-secret.yaml -n my-namespace`.
+
+```
+kind: Secret
+apiVersion: v1
+metadata:
+  name: simi-rest-client-secret
+  labels:
+    app: simi
+type: Opaque
+stringData:
+  CUBA_REST_CLIENT_ID: xy
+  CUBA_REST_CLIENT_SECRET: xy
+```
+
 ## Apply template
 
 ```
