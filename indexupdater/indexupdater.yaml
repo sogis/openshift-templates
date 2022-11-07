@@ -114,7 +114,7 @@ parameters:
   - name: REPLICA_COUNT
     description: Number of replicas to run
     required: true
-  - name: HOST
+  - name: HOSTNAME
     description: The hostname for the route
     required: true
   - name: SOLR_HOST
