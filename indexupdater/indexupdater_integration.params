@@ -1,0 +1,11 @@
+APPNAME=indexupdater
+IMAGENAME=sogis/indexupdater
+TAG=1.0.2
+IMPORT_POLICY_SCHEDULED=false
+REPLICA_COUNT=1
+HOST=geo-i.so.ch
+SOLR_HOST=solr-headless.solr-cloud-integration
+CPU_REQUEST=20m
+CPU_LIMIT=4
+MEMORY_REQUEST=256Mi
+MEMORY_LIMIT=4Gi

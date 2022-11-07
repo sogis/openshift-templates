@@ -1,104 +1,62 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  creationTimestamp: null
-  name: indexupdater
-  annotations:
-    openshift.io/display-name: "All components for Solr Indexupdater"
-    description: >-
-      "Creates all necessary components for the Solr Indexupdater"
-    openshift.io/long-description: >-
-      "Creates all necessary components for the Solr Index Updater"
-    tags: "agi,gdi,ilivalidator,java"
-    iconClass: icon-java
+  name: ${APPNAME}-template
 labels:
-  createdBy: indexupdater-template
-parameters:
-  - description: Name for Environment
-    name: env
-    required: true
-    value: test
-  - description: Version of Image
-    name: version
-    required: true
-    value:
-  - description: Set cpu Limit
-    name: CPU_LIMIT
-    value: "800m"
-  - description: Set cpu request
-    name: CPU_REQUEST
-    value: "100m"
-  - description: Set Memory Limit
-    name: MEMORY_LIMIT
-    value: "250MB"
-  - description: Set Memory Request
-    name: MEMORY_REQUEST
-    value: "500MB"
+  template: ${APPNAME}-template
+  app: ${APPNAME}
 objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    annotations:
-      description: Image Stream of the application
-    labels:
-      application: indexupdater
-    creationTimestamp: null
-    generation: 1
-    name: indexupdater
+    name: ${APPNAME}
   spec:
-    replicas: 1
-    revisionHistoryLimit: 10
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 3
     selector:
-      deploymentconfig: indexupdater
+      app: ${APPNAME}
     strategy:
-      activeDeadlineSeconds: 21600
-      resources: {}
-      rollingParams:
-        intervalSeconds: 1
-        maxSurge: 10%
-        maxUnavailable: 10%
-        timeoutSeconds: 60
-        updatePeriodSeconds: 1
       type: Rolling
     template:
       metadata:
-        annotations:
-          openshift.io/generated-by: OpenShiftNewApp
-        creationTimestamp: null
         labels:
-          application: indexupdater
-          deploymentconfig: indexupdater
+          app: ${APPNAME}
       spec:
         containers:
-        - env:
-            - name: SPRING_APPLICATION_JSON
-              value: >-
-                {"solrProtocol":"http","solrHost":"solr-headless.solr-cloud-${env}","solrPort":8983,"solrPathQuery":"solr/gdi/select","solrPathUpdate":"solr/gdi/update","logSilenceMaxDurationSeconds":3600,"dihPollIntervalSeconds":2,"dihImportMaxDurationSeconds":900,"dihDefaultPath":"solr/gdi/dih_geodata", "logLevel":"info"}
-          image: sogis/indexupdater
-          imagePullPolicy: IfNotPresent
+        - name: ${APPNAME}
+          env:
+          - name: SPRING_APPLICATION_JSON
+            value: >-
+              {"solrProtocol":"http","solrHost":"${SOLR_HOST}","solrPort":8983,"solrPathQuery":"solr/gdi/select","solrPathUpdate":"solr/gdi/update","logSilenceMaxDurationSeconds":3600,"dihPollIntervalSeconds":2,"dihImportMaxDurationSeconds":900,"dihDefaultPath":"solr/gdi/dih_geodata", "logLevel":"info"}
           livenessProbe:
-            failureThreshold: 3
             httpGet:
               path: /actuator/health
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 10
-            successThreshold: 1
             timeoutSeconds: 1
-          name: indexupdater
-          ports:
-          - containerPort: 8888
-            protocol: TCP
           readinessProbe:
-            failureThreshold: 3
             httpGet:
               path: /actuator/health
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 10
-            successThreshold: 1
             timeoutSeconds: 1
           resources:
             limits:
@@ -107,67 +65,70 @@ objects:
             requests:
               cpu: ${CPU_REQUEST}
               memory: ${MEMORY_REQUEST}
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        schedulerName: default-scheduler
-        securityContext: {}
-        terminationGracePeriodSeconds: 30
-    test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
+    - type: ImageChange
+      imageChangeParams:
         automatic: true
         containerNames:
-        - indexupdater
+        - ${APPNAME}
         from:
           kind: ImageStreamTag
-          name: indexupdater:${version}
-          namespace: solr-cloud-${env}
-      type: ImageChange
+          name: ${APPNAME}:${TAG}
 - apiVersion: v1
   kind: Service
   metadata:
-    name: indexupdater
-    annotations:
-      description: http port of application
-    labels:
-      application: indexupdater
+    name: ${APPNAME}
   spec:
     selector:
-      deploymentconfig: indexupdater
+      app: ${APPNAME}
     ports:
     - protocol: TCP
-      name: "80"
+      name: 80-tcp
       port: 80
       targetPort: 8080
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    name: indexupdater
-    labels:
-      application: indexupdater
-  spec:
-    tags:
-    - from:
-        kind: DockerImage
-        name: sogis/indexupdater:${version}
-      name: ${version}
-      importPolicy:
-        scheduled: true
 - apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
-    labels:
-      application: indexupdater
-    name: indexupdater
+    name: ${APPNAME}
   spec:
-    host: indexupdater-${env}.apps.ocp.so.ch
+    host: ${HOSTNAME}
     port:
-      targetPort: 80
+      targetPort: 80-tcp
     to: 
       kind: Service
-      name: indexupdater
-      weight: 100 
-    wildcardPolicy: None
+      name: ${APPNAME}
+parameters:
+  - name: APPNAME
+    description: Name of the App
+    required: true
+  - name: IMAGENAME
+    description: Name of the docker image (e.g. sogis/my-image)
+    required: true
+  - name: TAG
+    description: The docker image tag to use (e.g. latest)
+    required: true
+  - name: IMPORT_POLICY_SCHEDULED
+    description: Regularly check for changed image?
+    required: true
+  - name: REPLICA_COUNT
+    description: Number of replicas to run
+    required: true
+  - name: HOSTNAME
+    description: The hostname for the route
+    required: true
+  - name: SOLR_HOSTNAME
+    description: The hostname for the solr host
+    required: true
+  - description: The maximum amount of CPU the container is allowed to use when running.
+    name: CPU_LIMIT
+    required: true
+  - description: The minimum amount of CPU the container is guaranteed.
+    name: CPU_REQUEST
+    required: true
+  - description: The maximum amount of memory the container is allowed to use when running.
+    name: MEMORY_LIMIT
+    required: true
+  - description: The minimum amount of memory the container is guaranteed.
+    name: MEMORY_REQUEST
+    required: true
