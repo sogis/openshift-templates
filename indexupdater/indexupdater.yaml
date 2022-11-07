@@ -114,10 +114,10 @@ parameters:
   - name: REPLICA_COUNT
     description: Number of replicas to run
     required: true
-  - name: HOSTNAME
+  - name: HOST
     description: The hostname for the route
     required: true
-  - name: SOLR_HOSTNAME
+  - name: SOLR_HOST
     description: The hostname for the solr host
     required: true
   - description: The maximum amount of CPU the container is allowed to use when running.
