@@ -13,8 +13,8 @@ metadata:
     app: pgadmin4
 type: Opaque
 stringData:
-  password: xy
-  username: xy
+  PGADMIN_DEFAULT_EMAIL: xy
+  PGADMIN_DEFAULT_PASSWORD: xy
 ```
 
 All necassary components of the application are configured in the template pgadmin4.yaml.
