@@ -119,6 +119,6 @@ parameters:
   - name: MEMORY_REQUEST
     description: The minimum amount of memory the container is guaranteed.
     required: true
-  - name: HOSTNAME:
+  - name: HOSTNAME
     description: The hostname for the route
     required: true
