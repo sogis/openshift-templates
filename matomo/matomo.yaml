@@ -1,106 +1,60 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: matomo
+  name: ${APPNAME}
   annotations:
     description: "Liberating Analytics. Matomo is the only web and mobile analytics platform that gives you full control over your data and more."
-    tags: "analytics,piwik,matomo"
+    tags: "analytics,piwik,${APPNAME}"
     iconClass: fa-cloud-upload
     template.openshift.io/provider-display-name: "tobrunet"
     template.openshift.io/documentation-url: "https://github.com/tobru/piwik-openshift/blob/master/README.md"
     template.openshift.io/support-url: "https://github.com/tobru/piwik-openshift/issues"
-parameters:
-- name: APP_URL
-  description: Application URL of Matomo (Route/host)
-  required: true
-- name: MATOMO_IMAGE_SOURCE
-  description: Source of the Matomo Docker Image to deploy
-  value: matomo
-- name: MATOMO_IMAGE_TAG
-  description: Tag of the Matomo Docker Image to deploy
-  value: 4.4.1-fpm
-- name: NGINX_DOCKERFILE_REPO
-  description: Nginx Dockerfile source repository
-  value: https://github.com/sogis/piwik-openshift.git
-- name: PVC_SIZE_CONFIG
-  description: PVC size for config files
-  value: 1Gi
 objects:
 - apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    name: app-config
-  spec:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: ${PVC_SIZE_CONFIG}
-- apiVersion: v1
   kind: ImageStream
   metadata:
     labels:
-      app: matomo
-    name: matomo
+      app: ${APPNAME}
+    name: ${APPNAME}
   spec:
     tags:
-    - annotations:
-        openshift.io/imported-from: ${MATOMO_IMAGE_SOURCE}:${MATOMO_IMAGE_TAG}
-      from:
+      - from:
         kind: DockerImage
-        name: ${MATOMO_IMAGE_SOURCE}:${MATOMO_IMAGE_TAG}
+        name: ${IMAGENAME}:${TAG}
       importPolicy:
-        scheduled: true
-      name: ${MATOMO_IMAGE_TAG}
-      referencePolicy:
-        type: Source
+        scheduled: {{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
 - apiVersion: v1
   kind: ImageStream
   metadata:
     labels:
-      app: matomo
+      app: ${APPNAME}
     name: nginx
   spec:
     tags:
-    - annotations: null
-      from:
+    - from:
         kind: DockerImage
         name: nginxinc/nginx-unprivileged:stable
-      generation: null
       importPolicy: {}
       name: stable
-      referencePolicy:
-        type: ""
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    labels:
-      app: matomo
-    name: matomo
+    name: ${APPNAME}
   spec:
-    replicas: 1
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 3
     selector:
-      app: matomo
-      deploymentconfig: matomo
+      app: ${APPNAME}
     strategy:
-      activeDeadlineSeconds: 21600
-      resources: {}
-      rollingParams:
-        intervalSeconds: 1
-        maxSurge: 25%
-        maxUnavailable: 25%
-        timeoutSeconds: 600
-        updatePeriodSeconds: 1
       type: Rolling
     template:
       metadata:
         labels:
-          app: matomo
-          deploymentconfig: matomo
+          app: ${APPNAME}
       spec:
         containers:
-        - image: matomo
-          imagePullPolicy: Always
+        - name: ${APPNAME}
           livenessProbe:
             failureThreshold: 3
             initialDelaySeconds: 1
@@ -109,10 +63,6 @@ objects:
             tcpSocket:
               port: 9000
             timeoutSeconds: 5
-          name: matomo
-          ports:
-          - containerPort: 9000
-            protocol: TCP
           readinessProbe:
             failureThreshold: 3
             initialDelaySeconds: 1
@@ -121,19 +71,23 @@ objects:
             tcpSocket:
               port: 9000
             timeoutSeconds: 5
-          resources: {}
-          terminationMessagePath: /dev/termination-log
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
           volumeMounts:
           - mountPath: /var/www/html
-            name: matomo-source
+            name: ${APPNAME}-source
           - mountPath: /var/www/html/misc
             name: app-config
             subPath: misc
           - mountPath: /var/www/html/config
             name: app-config
             subPath: config
-        - image: nginxinc/nginx-unprivileged:stable
-          imagePullPolicy: Always
+        - name: nginx
           livenessProbe:
             failureThreshold: 3
             initialDelaySeconds: 1
@@ -142,10 +96,6 @@ objects:
             tcpSocket:
               port: 8080
             timeoutSeconds: 1
-          name: nginx
-          ports:
-          - containerPort: 8080
-            protocol: TCP
           readinessProbe:
             failureThreshold: 3
             initialDelaySeconds: 1
@@ -154,21 +104,22 @@ objects:
             tcpSocket:
               port: 8080
             timeoutSeconds: 1
-          resources: {}
-          terminationMessagePath: /dev/termination-log
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
           volumeMounts:
           - mountPath: /var/www/html
-            name: matomo-source
+            name: ${APPNAME}-source
           - mountPath: /etc/nginx/nginx.conf
             name: nginx-config-claim
             subPath: nginx.conf
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        securityContext: {}
-        terminationGracePeriodSeconds: 30
         volumes:
         - emptyDir: {}
-          name: matomo-source
+          name: ${APPNAME}-source
         - name: app-config
           persistentVolumeClaim:
             claimName: app-config
@@ -178,31 +129,30 @@ objects:
               - key: nginx.conf
                 path: nginx.conf
           name: nginx-config-claim
-    test: false
     triggers:
-    - imageChangeParams:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
         automatic: true
         containerNames:
-        - matomo
+        - ${APPNAME}
         from:
           kind: ImageStreamTag
-          name: matomo:${MATOMO_IMAGE_TAG}
-      type: ImageChange
-    - imageChangeParams:
+          name: ${APPNAME}:${TAG}
+    - type: ImageChange
+      imageChangeParams:
         automatic: true
         containerNames:
         - nginx
         from:
           kind: ImageStreamTag
           name: nginx:stable
-      type: ImageChange
-    - type: ConfigChange
 - apiVersion: v1
   kind: Service
   metadata:
     labels:
-      app: matomo
-    name: matomo
+      app: ${APPNAME}
+    name: ${APPNAME}
   spec:
     ports:
     - name: 8080-tcp
@@ -210,30 +160,25 @@ objects:
       protocol: TCP
       targetPort: 8080
     selector:
-      app: matomo
-      deploymentconfig: matomo
-    sessionAffinity: None
-    type: ClusterIP
-- apiVersion: v1
+      app: ${APPNAME}
+- apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
-    name: matomo
+    name: ${APPNAME}
   spec:
-    host: ${APP_URL}
+    host: ${HOSTNAME}
     port:
       targetPort: 8080-tcp
     to:
       kind: Service
-      name: matomo
-      weight: 100
-    wildcardPolicy: None
+      name: ${APPNAME}
     tls:
       termination: edge
       insecureEdgeTerminationPolicy: Redirect
 - apiVersion: batch/v1beta1
   kind: CronJob
   metadata:
-    name: matomo
+    name: ${APPNAME}
   spec:
     successfulJobsHistoryLimit: 1
     failedJobsHistoryLimit: 1
@@ -247,9 +192,9 @@ objects:
             - command:
               - bash
               - -c
-              - tar cf - --one-file-system -C /usr/src/matomo . | tar xf - --no-overwrite-dir
+              - tar cf - --one-file-system -C /usr/src/${APPNAME} . | tar xf - --no-overwrite-dir
                 && php -f /var/www/html/console core:archive
-              image: ${MATOMO_IMAGE_SOURCE}:${MATOMO_IMAGE_TAG}
+              image: ${IMAGENAME}:${TAG}
               imagePullPolicy: Always
               name: cron
               resources: {}
@@ -269,7 +214,7 @@ objects:
             terminationGracePeriodSeconds: 30
             volumes:
             - emptyDir: {}
-              name: matomo-source
+              name: ${APPNAME}-source
             - name: app-config
               persistentVolumeClaim:
                 claimName: app-config
@@ -409,3 +354,34 @@ objects:
   kind: ConfigMap
   metadata:
     name: nginx-conf
+parameters:
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The docker image tag to use (e.g. latest)
+  required: true
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  required: true
+- name: REPLICA_COUNT
+  description: Number of the replicas to run
+  required: true
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
+- name: HOSTNAME
+  description: The hostname for the route
+  required: true
