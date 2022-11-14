@@ -18,7 +18,7 @@ objects:
     name: ${APPNAME}
   spec:
     tags:
-      - from:
+    - from:
         kind: DockerImage
         name: ${IMAGENAME}:${TAG}
       importPolicy:
