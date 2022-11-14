@@ -22,7 +22,7 @@ objects:
         kind: DockerImage
         name: ${IMAGENAME}:${TAG}
       importPolicy:
-        scheduled: {{IMPORT_POLICY_SCHEDULED}}
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
       name: ${TAG}
 - apiVersion: v1
   kind: ImageStream
