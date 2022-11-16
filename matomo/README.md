@@ -27,25 +27,9 @@ oc policy add-role-to-user admin ... -n my-namespace
 oc policy add-role-to-user view ... -n my-namespace
 ```
 
-## Create secret
+## Apply template for matomo
+Please install the mariadb Database first (https://jenkins-agi-apps-production.apps.ocp.so.ch/job/agi-infrastructure/job/mariadb/) before installing the matomo app.
 
-In a separate folder, create a file `oereb-web-service-secret.yaml`
-containing a secret according to the following template.
-Then run `oc apply -f path/to/oereb-web-service-secret.yaml -n my-namespace`.
-
-```
-kind: Secret
-apiVersion: v1
-metadata:
-  name: oereb-web-service-secret
-  labels:
-    app: oereb-web-service
-stringData:
-  username: xy
-  password: xy
-```
-
-## Apply template
 The matomo.yaml file is from the github repository of Tobias Brunner. Get it by git clone https://github.com/tobru/piwik-openshift.git.
 Before installing matomo you need a pvc named app-config.
 ```
