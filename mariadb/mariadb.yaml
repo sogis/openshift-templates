@@ -1,0 +1,170 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${APPNAME} 
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: registry.redhat.io/rhel8/${APPNAME}-103:${TAG}
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}
+  spec:
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+      spec:
+        containers:
+        - name: ${APPNAME}
+          env:
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                key: database-user
+                name: ${APPNAME}-secret
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: database-password
+                name: ${APPNAME}-secret
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: database-root-password
+                name: ${APPNAME}-secret
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                key: database-name
+                name: ${APPNAME}-secret
+          - name: MYSQL_DEFAULTS_FILE
+            value: /etc/mysql/my.cnf
+          livenessProbe:
+            initialDelaySeconds: 30
+            tcpSocket:
+              port: 3306
+            timeoutSeconds: 1
+          readinessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -i
+              - -c
+              - MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u $MYSQL_USER -D $MYSQL_DATABASE
+                -e 'SELECT 1'
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+          volumeMounts:
+          - mountPath: /var/lib/mysql/data
+            name: ${APPNAME}-data
+          - mountPath: /etc/mysql
+            name: my-cnf-config
+        volumes:
+        - name: ${APPNAME}-data
+          persistentVolumeClaim:
+            claimName: ${APPNAME}
+        - name: my-cnf-config
+          configMap:
+            name: mysql-cnf
+            items:
+            - key: my.cnf
+              path: my.cnf
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}
+  spec:
+    ports:
+    - name: 3306-tcp
+      port: 3306
+    selector:
+      app: ${APPNAME}
+- apiVersion: v1
+  data:
+    my.cnf: |
+      [mysqld]
+  
+      # Disabling symbolic-links is recommended to prevent assorted security risks
+      symbolic-links = 0 
+  
+      # http://www.percona.com/blog/2008/05/31/dns-achilles-heel-mysql-installation/
+      skip_name_resolve
+  
+      # http://www.chriscalender.com/ignoring-the-lostfound-directory-in-your-datadir/
+      ignore-db-dirs=lost+found
+  
+      # GlusterFS equivalent of 'lost+found'
+      ignore-db-dirs=.trashcan
+  
+      # Snapshot
+      ignore-db-dirs=.snapshot
+  
+      !includedir /etc/my.cnf.d
+  kind: ConfigMap
+  metadata:
+    name: mysql-cnf
+parameters:
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The docker image tag to use (e.g. latest)
+  required: true
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  required: true
+- name: REPLICA_COUNT
+  description: Number of replicas to run
+  required: true
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
