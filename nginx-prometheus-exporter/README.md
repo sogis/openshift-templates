@@ -1,18 +1,34 @@
-# Nginx Prometheus exporter
+# Deploying Nginx Prometheus Exporter in OpenShift
 
-NGINX Prometheus exporter makes it possible to monitor NGINX or NGINX Plus using Prometheus.
+## Create and configure project
 
-## First install and update of app in an Openshift Environment
-
-All necassary components of the application are configured in the template nginx-prometheus-exporter.yaml.
-Set env parameter to set environment
-Set version parameter to set Image version
+Create project
 ```
-oc process -f nginx-prometheus-exporter.yaml \
-  -p APPNAME=nginx-prometheus-exporter \
-  -p IMAGENAME=nginx/nginx-prometheus-exporter \
-  -p TAG=0.8.0 \
-  -p IMPORT_POLICY_SCHEDULED=false \
-  -p ENV="gdi-test" \
-  | oc apply -f-
+oc new-project my-namespace
+```
+
+Set secret for pulling images from image registry (optional)
+```
+oc create secret docker-registry dockerhub-pull-secret --docker-username=xy --docker-password=xy -n my-namespace
+oc secrets link default dockerhub-pull-secret --for=pull -n my-namespace
+```
+
+Grant permissions for deploying the app
+from a Jenkins instance running in a different namespace (optional);
+replace JENKINS-NAMESPACE with the name of the namespace
+where Jenkins is deployed
+```
+oc policy add-role-to-user edit system:serviceaccount:JENKINS-NAMESPACE:jenkins -n my-namespace
+```
+
+Grant permissions on project (optional)
+```
+oc policy add-role-to-user admin ... -n my-namespace
+oc policy add-role-to-user view ... -n my-namespace
+```
+
+## Apply template
+
+```
+oc process -f nginx-prometheus-exporter/nginx-prometheus-exporter.yaml --param-file=nginx-prometheus-exporter/nginx-prometheus-exporter_test.params | oc apply -f - -n my-namespace
 ```

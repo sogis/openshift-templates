@@ -1,0 +1,5 @@
+APPNAME=nginx-prometheus-exporter
+IMAGENAME=nginx/nginx-prometheus-exporter
+TAG=latest
+IMPORT_POLICY_SCHEDULED=true
+REPLICA_COUNT=0
