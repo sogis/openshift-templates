@@ -41,25 +41,24 @@ objects:
             valueFrom:
               secretKeyRef:
                 key: database-user
-                name: ${DATABASE_SERVICE_NAME}
+                name: ${APPNAME}-secret
           - name: MYSQL_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: database-password
-                name: ${DATABASE_SERVICE_NAME}
+                name: ${APPNAME}-secret
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: database-root-password
-                name: ${DATABASE_SERVICE_NAME}
+                name: ${APPNAME}-secret
           - name: MYSQL_DATABASE
             valueFrom:
               secretKeyRef:
                 key: database-name
-                name: ${DATABASE_SERVICE_NAME}
+                name: ${APPNAME}-secret
           - name: MYSQL_DEFAULTS_FILE
             value: /etc/mysql/my.cnf
-          image: registry.redhat.io/rhel8/${APPNAME}-103:latest
           livenessProbe:
             initialDelaySeconds: 30
             tcpSocket:
