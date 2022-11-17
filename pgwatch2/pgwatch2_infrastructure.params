@@ -1,14 +1,14 @@
 APPNAME=pgwatch2
 IMAGENAME=cypertec/pgwatch2-nonroot
-TAG=1.9
+TAG=1.8.5
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=0
 CPU_LIMIT=0
 MEMORY_REQUEST=0
 MEMORY_LIMIT=0
-HOSTNAME_GRAFANA=pgwatch-monitor-integration.apps.ocp.so.ch
-HOSTNAME_PGWATCH_GUI=pgwatch-gui-integration.apps.ocp.so.ch
+HOSTNAME_GRAFANA=pgwatch-monitor-production.apps.ocp.so.ch
+HOSTNAME_PGWATCH_GUI=pgwatch-gui-production.apps.ocp.so.ch
 NOTESTDB=1
 PW2_GRAFANASSL=""
 PW2_WEBSSL=""
