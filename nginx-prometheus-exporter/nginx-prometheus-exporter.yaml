@@ -40,7 +40,7 @@ objects:
         - name: ${APPNAME}
           env:
           - name: SCRAPE_URI
-            value: https://api-gateway.${ENV}.svc/nginx_status
+            value: ${SCRAPE_URI}/nginx_status
           - name: SSL_VERIFY
             value: "false"
           resources: {}
@@ -81,4 +81,7 @@ parameters:
   required: true
 - name: REPLICA_COUNT
   description: Number of replicas to run
+  required: true
+- name: SCRAPE_URI
+  description: Name of the server to scrape
   required: true
