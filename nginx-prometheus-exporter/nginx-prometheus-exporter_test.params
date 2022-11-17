@@ -3,3 +3,4 @@ IMAGENAME=nginx/nginx-prometheus-exporter
 TAG=latest
 IMPORT_POLICY_SCHEDULED=true
 REPLICA_COUNT=0
+SCRAPE_URI=https://api-gateway.gdi-test.svc
