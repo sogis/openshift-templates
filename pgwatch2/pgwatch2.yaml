@@ -145,7 +145,7 @@ objects:
     name: ${APPNAME}-grafana
   spec:
     selector:
-      name: ${APPNAME}
+      app: ${APPNAME}
     ports:
     - port: 3000
       protocol: TCP
