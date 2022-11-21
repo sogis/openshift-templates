@@ -1,6 +1,6 @@
 APPNAME=pgwatch2
 ENV=integration
-IMAGENAME=cybertec/pgwatch2-nonroot
+IMAGENAME=pfeimich/pgwatch2-nonroot
 TAG=1.9.0
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
