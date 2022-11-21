@@ -1,6 +1,6 @@
 APPNAME=pgwatch2
 ENV=production
-IMAGENAME=cypertec/pgwatch2-nonroot
+IMAGENAME=cybertec/pgwatch2-nonroot
 TAG=1.8.5
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
