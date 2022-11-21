@@ -34,7 +34,7 @@ objects:
     template:
       metadata:
         labels:
-          name: ${APPNAME}
+          app: ${APPNAME}
       spec:
         securityContext:
           runAsUser: 10001
@@ -133,7 +133,7 @@ objects:
     name: ${APPNAME}-pgwatch-gui
   spec:
     selector:
-      name: ${APPNAME}
+      app: ${APPNAME}
     ports:
     - port: 8080
       protocol: TCP
