@@ -1,7 +1,7 @@
 APPNAME=pgwatch2
 ENV=integration
 IMAGENAME=pfeimich/pgwatch2-nonroot
-TAG=1.9.0
+TAG=latest
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=0
