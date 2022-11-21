@@ -215,52 +215,38 @@ parameters:
   required: true
 - name: PW2_GRAFANASSL
   description: Use self signed SSL for Grafana
-  required: true
 - name: PW2_WEBSSL
   description: Use self signed SSL for the Admin UI
-  required: true
 - name: PW2_WEBNOANONYMOUS
   description: Passoword protect config changes via the Web UI. Disabled by default
   value: "1"
 - name: PW2_GRAFANANOANONYMOUS
   description: Can be set to require login even for viewing dashboards
-  required: true
 - name: PW2_GRAFANA_BASEURL
   description: When using Grafana externally, set this to get correct links from the Admin UI
   required: true
 - name: PW2_PGHOST
   description: Postgres config store (internal DB used by default, adjust following 5 params for an external DB)
-  required: true
 - name: PW2_PGPORT
   description: Use an external Postgres DB as config store instead of the internal one
-  required: true
 - name: PW2_PGDATABASE
   description: Postgres config store - DB name
-  required: true
 - name: PW2_PGUSER
   description: Postgres config store - user
-  required: true
 - name: PW2_PGPASSWORD
   description: Postgres config store - password
-  required: true
 - name: PW2_PGSSL
   description: Postgres config store - require SSL
-  required: true
 - name: PW2_IHOST
   description: Use already External Influx DB for storing metrics
-  required: true
 - name: PW2_IPORT
   description: External Influx DB - port
-  required: true
 - name: PW2_IDATABASE
   description: External Influx DB - DB name
-  required: true
 - name: PW2_IUSER
   description: External Influx DB - user
-  required: true
 - name: PW2_IPASSWORD
   description: External Influx DB - password
-  required: true
 - name: PW2_ISSL
   description: External Influx DB - require SSL
   required: true
@@ -272,16 +258,11 @@ parameters:
   required: true
 - name: PW2_GRAPHITEHOST
   description: External Graphite - host
-  required: true
 - name: PW2_GRAPHITEPORT
   description: External Graphite - port
-  required: true
 - name: PW2_BATCHING_MAX_DELAY_MS
   description: Max milliseconds to wait for a batched metrics flush
-  required: true
 - name: PW2_INTERNAL_STATS_PORT
   description: Port for inquiring monitoring status in JSON format
-  required: true
 - name: PW2_CONN_POOLING
   description: Enable re-use of metrics fetching connections. "false" means reconnect every time
-  required: true
