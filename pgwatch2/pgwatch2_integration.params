@@ -1,4 +1,5 @@
 APPNAME=pgwatch2
+ENV=integration
 IMAGENAME=cypertec/pgwatch2-nonroot
 TAG=1.9
 IMPORT_POLICY_SCHEDULED=false

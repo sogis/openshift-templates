@@ -224,7 +224,6 @@ parameters:
   description: Can be set to require login even for viewing dashboards
 - name: PW2_GRAFANA_BASEURL
   description: When using Grafana externally, set this to get correct links from the Admin UI
-  required: true
 - name: PW2_PGHOST
   description: Postgres config store (internal DB used by default, adjust following 5 params for an external DB)
 - name: PW2_PGPORT
