@@ -1,5 +1,7 @@
 APPNAME=pgwatch2
-ENV=integration
+PVC_INFLUXDB_CLAIM=integration-claim-lowback
+PVC_PGWATCH_CLAIM=integration-claim-lowback
+PVC_POSTGRESQL_CLAIM=integration-claim-lowback
 IMAGENAME=sogis/pgwatch2-nonroot
 TAG=1.9.0
 IMPORT_POLICY_SCHEDULED=false

@@ -96,13 +96,13 @@ objects:
         volumes:
         - name: ${APPNAME}-config
           persistentVolumeClaim:
-            claimName: pw2-pgwatch-${ENV}-claim-lowback
+            claimName: pw2-pgwatch-${PVC_PGWATCH_CLAIM}
         - name: ${APPNAME}-postgresql
           persistentVolumeClaim:
-            claimName: pw2-postgresql-${ENV}-claim-lowback
+            claimName: pw2-postgresql-${PVC_INFLUXDB_CLAIM}
         - name: ${APPNAME}-influx
           persistentVolumeClaim:
-            claimName: pw2-influxdb-${ENV}-claim-lowback
+            claimName: pw2-influxdb-${PVC_POSTGRESQL_CLAIM}
         serviceAccountName: ${APPNAME}
     triggers:
     - type: ConfigChange
@@ -161,8 +161,14 @@ objects:
       kind: Service
       name: ${APPNAME}-grafana
 parameters:
-- name: ENV
-  description: environment to deploy
+- name: PVC_POSTGRESQL_CLAIM
+  description: Postgresql PVC name ending
+  required: true
+- name: PVC_INFLUXDB_CLAIM
+  description: Influx DB PVC name ending
+  required: true
+- name: PVC_PGWATCH_CLAIM
+  description: Pgwatch PVC name ending
   required: true
 - name: APPNAME
   description: Name of the App
