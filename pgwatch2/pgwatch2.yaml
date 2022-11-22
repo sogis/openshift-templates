@@ -45,18 +45,6 @@ objects:
                 value: ${NOTESTDB}
               - name: PW2_WEBNOANONYMOUS
                 value: ${PW2_WEBNOANONYMOUS}
-              - name: PW2_IHOST
-                value: ${PW2_IHOST}
-              - name: PW2_IPORT
-                value: ${PW2_IPORT}
-              - name: PW2_IDATABASE
-                value: ${PW2_IDATABASE}
-              - name: PW2_IUSER
-                value: ${PW2_IUSER}
-              - name: PW2_IPASSWORD
-                value: ${PW2_IPASSWORD}
-              - name: PW2_ISSL
-                value: ${PW2_ISSL}
               - name: PW2_IRETENTIONDAYS
                 value: ${PW2_IRETENTIONDAYS}
               - name: PW2_DATASTORE
