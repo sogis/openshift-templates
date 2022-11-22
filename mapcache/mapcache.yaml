@@ -115,6 +115,9 @@ objects:
     host: ${HOSTNAME}
     port:
       targetPort: 80-tcp
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: None
     to:
       kind: Service
       name: ${APPNAME}
