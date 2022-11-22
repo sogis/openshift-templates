@@ -1,0 +1,254 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${APPNAME}-template 
+labels:
+  template: ${APPNAME}-template
+  app: ${APPNAME}
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}
+  spec:
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+      spec:
+        securityContext:
+          runAsUser: 10001
+        containers:
+          - name: ${APPNAME}
+            env:
+              - name: NOTESTDB
+                value: ${NOTESTDB}
+              - name: PW2_WEBNOANONYMOUS
+                value: ${PW2_WEBNOANONYMOUS}
+              - name: PW2_IRETENTIONDAYS
+                value: ${PW2_IRETENTIONDAYS}
+              - name: PW2_DATASTORE
+                value: ${PW2_DATASTORE}
+            envFrom:
+              - secretRef:
+                  name: ${APPNAME}-webuser-secret
+              - secretRef:
+                  name: ${APPNAME}-grafanauser-secret 
+              - secretRef:
+                  name: ${APPNAME}-postgres-secret
+              - secretRef:
+                  name: ${APPNAME}-influx-secret
+              - configMapRef:
+                  name: ${APPNAME}-configmap
+            livenessProbe:
+              exec:
+                command:
+                - /usr/bin/pg_isready
+                - -qU
+                - pgwatch2
+              initialDelaySeconds: 30
+              periodSeconds: 30
+            resources:
+              limits:
+                cpu: ${CPU_LIMIT}
+                memory: ${MEMORY_LIMIT}
+              requests:
+                cpu: ${CPU_REQUEST}
+                memory: ${MEMORY_REQUEST}
+            ports:
+              - containerPort: 8080
+                protocol: TCP
+              - containerPort: 3000
+                protocol: TCP
+              - containerPort: 5432
+                protocol: TCP
+              - containerPort: 8086
+                protocol: TCP
+              - containerPort: 8088
+                protocol: TCP
+            volumeMounts:
+              - mountPath: /${APPNAME}/persistent-config
+                name: ${APPNAME}-config
+              - mountPath: /var/lib/postgresql
+                name: ${APPNAME}-postgresql
+              - mountPath: /var/lib/influxdb
+                name: ${APPNAME}-influx
+        volumes:
+        - name: ${APPNAME}-config
+          persistentVolumeClaim:
+            claimName: pw2-pgwatch-${ENV}-claim-lowback
+        - name: ${APPNAME}-postgresql
+          persistentVolumeClaim:
+            claimName: pw2-postgresql-${ENV}-claim-lowback
+        - name: ${APPNAME}-influx
+          persistentVolumeClaim:
+            claimName: pw2-influxdb-${ENV}-claim-lowback
+        serviceAccountName: ${APPNAME}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}-pgwatch-gui
+  spec:
+    selector:
+      app: ${APPNAME}
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      name: 8080-tcp
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}-grafana
+  spec:
+    selector:
+      app: ${APPNAME}
+    ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+      name: 3000-tcp
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}-pgwatch-gui
+  spec:
+    host: ${PGWATCH_GUI_HOSTNAME}
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: ${APPNAME}-pgwatch-gui
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}-grafana
+  spec:
+    host: ${GRAFANA_HOSTNAME}
+    port:
+      targetPort: 3000-tcp
+    to:
+      kind: Service
+      name: ${APPNAME}-grafana
+parameters:
+- name: ENV
+  description: environment to deploy
+  required: true
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The docker image tag to use (e.g. latest)
+  required: true
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  required: true
+- name: REPLICA_COUNT
+  description: Number of replicas to run
+  required: true
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
+- name: GRAFANA_HOSTNAME
+  description: The hostname for the route to grafana
+  required: true
+- name: PGWATCH_GUI_HOSTNAME
+  description: The hostname for the route to the pgwatch2 config gui
+  required: true
+- name: NOTESTDB
+  description: Don't add the local config DB to monitoring
+  required: true
+- name: PW2_GRAFANASSL
+  description: Use self signed SSL for Grafana
+- name: PW2_WEBSSL
+  description: Use self signed SSL for the Admin UI
+- name: PW2_WEBNOANONYMOUS
+  description: Passoword protect config changes via the Web UI. Disabled by default
+  value: "1"
+- name: PW2_GRAFANANOANONYMOUS
+  description: Can be set to require login even for viewing dashboards
+- name: PW2_GRAFANA_BASEURL
+  description: When using Grafana externally, set this to get correct links from the Admin UI
+- name: PW2_PGHOST
+  description: Postgres config store (internal DB used by default, adjust following 5 params for an external DB)
+- name: PW2_PGPORT
+  description: Use an external Postgres DB as config store instead of the internal one
+- name: PW2_PGDATABASE
+  description: Postgres config store - DB name
+- name: PW2_PGUSER
+  description: Postgres config store - user
+- name: PW2_PGPASSWORD
+  description: Postgres config store - password
+- name: PW2_PGSSL
+  description: Postgres config store - require SSL
+- name: PW2_IHOST
+  description: Use already External Influx DB for storing metrics
+- name: PW2_IPORT
+  description: External Influx DB - port
+- name: PW2_IDATABASE
+  description: External Influx DB - DB name
+- name: PW2_IUSER
+  description: External Influx DB - user
+- name: PW2_IPASSWORD
+  description: External Influx DB - password
+- name: PW2_ISSL
+  description: External Influx DB - require SSL
+  required: true
+- name: PW2_IRETENTIONDAYS
+  description: Influx DB metrics retention period in days
+  required: true
+- name: PW2_DATASTORE
+  description: Set to "graphite" to use external Graphite server as metrics datastore
+  required: true
+- name: PW2_GRAPHITEHOST
+  description: External Graphite - host
+- name: PW2_GRAPHITEPORT
+  description: External Graphite - port
+- name: PW2_BATCHING_MAX_DELAY_MS
+  description: Max milliseconds to wait for a batched metrics flush
+- name: PW2_INTERNAL_STATS_PORT
+  description: Port for inquiring monitoring status in JSON format
+- name: PW2_CONN_POOLING
+  description: Enable re-use of metrics fetching connections. "false" means reconnect every time
