@@ -46,6 +46,8 @@ objects:
                 value: ldap2pg
               - name: PGSERVICEFILE
                 value: /workspace/pg_service/pg_service.conf
+              - name: LDAPTLS_CACERT
+                value: /usr/local/share/ca-certificates/ca-certificates.crt
               envFrom:
               - secretRef:
                   name: ldap2pg-ldap-secret
@@ -71,6 +73,9 @@ objects:
               - name: ldap2pg-db-secret-volume
                 mountPath: /workspace/pg_service/
                 readOnly: true
+              - name: ldap2pg-ca-certificates-volume
+                mountPath: /usr/local/share/ca-certificates
+                readOnly: true
             volumes:
             - name: ldap2pg-configmap-volume
               configMap:
@@ -78,6 +83,9 @@ objects:
             - name: ldap2pg-db-secret-volume
               secret:
                 secretName: ldap2pg-db-secret
+            - name: ldap2pg-ca-certificates-volume
+              configMap:
+                name: ldap2pg-ca-certificates
 - apiVersion: v1
   kind: ConfigMap
   metadata:
