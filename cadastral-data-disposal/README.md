@@ -19,10 +19,10 @@ Create a file secret.yaml for AWS with the following content; replace ACCESS_KEY
 apiVersion: v1
 kind: Secret
 metadata:
-  name: aws-secret
+  name: cadastral-data-disposal-aws-secret
 stringData:
-  aws_access_key: ACCESS_KEY
-  aws_secret_key: SECRET_KEY
+  aws_access_key_id: ACCESS_KEY
+  aws_secret_access_key: SECRET_KEY
 ```
 
 Switch to the right OpenShift project (e.g. oc project agi-apps-test) and create the secret by running the following commands:
