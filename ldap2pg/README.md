@@ -70,6 +70,28 @@ stringData:
   LDAPPASSWORD: xy
 ```
 
+## Create ConfigMap containing the ldap2pg configuration
+
+In a separate folder, create a file `ldap2pg-configmap.yaml`
+containing a ConfigMap according to the following template.
+Then run `oc apply -f path/to/ldap2pg-configmap.yaml -n my-namespace`.
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ldap2pg-configmap
+  labels:
+    app: ldap2pg
+data:
+  ldap2pg.yml: |
+    version: 5
+    postgres:
+      [...]
+    sync_map:
+      [...]
+```
+
 ## Create ConfigMap containing an individual CA certificate
 
 Place your CA certificate in a separate folder.
