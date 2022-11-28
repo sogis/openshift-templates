@@ -70,6 +70,20 @@ stringData:
   LDAPPASSWORD: xy
 ```
 
+## Create ConfigMap containing an individual CA certificate
+
+Place your CA certificate in a separate folder.
+Then convert it and create a ConfigMap from it:
+```
+openssl x509 -inform der -in originalcertificatefilename.crt -out mycertificatefilename.crt
+oc create --dry-run=client configmap ldap2pg-ca-certificates --from-file=ca-certificates.crt=mycertificatefilename.crt -o yaml > ldap2pg-ca-certificates.yaml
+```
+Then run
+```
+oc apply -f ldap2pg-ca-certificates.yaml -n my-namespace
+oc label configmap ldap2pg-ca-certificates app=ldap2pg -n my-namespace
+```
+
 ## Apply template
 
 ```
