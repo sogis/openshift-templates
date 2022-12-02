@@ -149,12 +149,12 @@ stringData:
 Place your additional CA certificate in a separate folder.
 Then create a ConfigMap from it:
 ```
-oc create --dry-run=client configmap jenkins-ca-bundle --from-file=ca-bundle.crt=mycertificatefilename.crt -o yaml > jenkins-ca-bundle.yaml
+oc create --dry-run=client configmap jenkins-ca-certificates --from-file=ca-certificates.crt=mycertificatefilename.crt -o yaml > jenkins-ca-certificates.yaml
 ```
 Then run
 ```
-oc apply -f jenkins-ca-bundle.yaml -n my-namespace
-oc label configmap jenkins-ca-bundle app=gretl-platform -n my-namespace
+oc apply -f jenkins-ca-certificates.yaml -n my-namespace
+oc label configmap jenkins-ca-certificates app=gretl-platform -n my-namespace
 ```
 
 ## Apply template
