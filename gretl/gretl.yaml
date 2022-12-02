@@ -201,7 +201,7 @@ objects:
           - name: configuration-as-code-volume
             mountPath: /opt/configuration-as-code
             readOnly: true
-          - name: jenkins-ca-certificates-volume
+          - name: gretl-jenkins-ca-certificates-volume
             mountPath: /etc/pki/ca-trust/source/anchors
             readOnly: true
         ## Define the required volumes
@@ -212,9 +212,9 @@ objects:
         - name: configuration-as-code-volume
           configMap:
             name: configuration-as-code
-        - name: jenkins-ca-certificates-volume
+        - name: gretl-jenkins-ca-certificates-volume
           configMap:
-            name: jenkins-ca-certificates
+            name: gretl-jenkins-ca-certificates
     triggers:
     - type: ConfigChange
     - type: ImageChange
