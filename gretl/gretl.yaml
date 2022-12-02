@@ -575,6 +575,7 @@ parameters:
   description: List of Jenkins plug-ins to update to a specific version
     or to install additionally
   value:
+    active-directory:2.27,
     cloudbees-disk-usage-simple:0.10,
     mailer:414.vcc4c33714601,
     script-security:1138.v8e727069a_025,
