@@ -149,7 +149,7 @@ stringData:
 Place your additional CA certificate in a separate folder.
 Then create a ConfigMap from it:
 ```
-oc create --dry-run=client configmap gretl-jenkins-ca-certificates --from-file=ca-certificates.crt=mycertificatefilename.crt -o yaml > gretl-jenkins-ca-certificates.yaml
+oc create --dry-run=client configmap gretl-jenkins-ca-certificates --from-file=ca-bundle.crt=mycertificatefilename.crt -o yaml > gretl-jenkins-ca-certificates.yaml
 ```
 Then run
 ```
