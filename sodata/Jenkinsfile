@@ -120,7 +120,7 @@ pipeline {
         unsuccessful {
             emailtext (
                 to: '${DEFAULT_PROVIDERS}',
-                subject: "sodata Pipeline ist fehlgeschlagen"
+                subject: "sodata Pipeline ist fehlgeschlagen",
                 body: "Die Ausführung der sodata Pipeline war nicht erfolgreich. Details dazu finden Sie in den Log-Meldungen unter ${RUN_DISPLAY_URL}."
             )
         }
