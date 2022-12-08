@@ -119,7 +119,7 @@ pipeline {
     post {
         unsuccessful {
             emailext (
-                to: '${DEFAULT_PROVIDERS}',
+                to: '${DEFAULT_RECIPIENTS}',
                 subject: "sodata Pipeline ist fehlgeschlagen",
                 body: "Die Ausführung der sodata Pipeline war nicht erfolgreich. Details dazu finden Sie in den Log-Meldungen unter ${RUN_DISPLAY_URL}."
             )
