@@ -5,7 +5,7 @@ pipeline {
     agent any
     parameters {
         choice(description: 'Namespace,in welchem die App deployt werden soll',
-               choices: ['agi-apps-production', 'agi-apps-integration', 'agi-apps-test'],
+               choices: ['agi-apps-integration', 'agi-apps-production', 'agi-apps-test'],
                name: 'NAMESPACE'
                )
         booleanParam(defaultValue: false,
