@@ -155,8 +155,6 @@ objects:
             value: ${APPNAME}
           - name: JNLP_SERVICE_NAME
             value: ${APPNAME}-jnlp
-          - name: JENKINS_JAVA_OVERRIDES
-            value: '-Dcom.sun.jndi.ldap.connect.pool.timeout=1200000'
           - name: CONTAINER_HEAP_PERCENT
             value: '0.75'
           - name: LOG4J_FORMAT_MSG_NO_LOOKUPS
