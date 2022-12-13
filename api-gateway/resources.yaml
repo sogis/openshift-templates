@@ -421,10 +421,6 @@ objects:
             proxy_pass http://heatdrill-service.agi-apps-${ENVIRONMENT}.svc/service/;
         }
 
-        location /lidar-browser {
-            proxy_pass http://lidar-browser.agi-apps-${ENVIRONMENT}.svc/;
-        }
-
         location /standortkarte/ {
             proxy_pass http://standortkarte.agi-apps-${ENVIRONMENT}.svc/;
         }
