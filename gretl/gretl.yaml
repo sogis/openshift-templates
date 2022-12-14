@@ -580,7 +580,6 @@ parameters:
     email-ext:2.83,
     envinject:2.4.0,
     groovy:2.4,
-    ldap:2.7,
     job-dsl:1.77,
     matrix-auth:2.6.8
 - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
