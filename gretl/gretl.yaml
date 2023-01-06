@@ -213,6 +213,7 @@ objects:
         - name: gretl-jenkins-ca-certificates-volume
           configMap:
             name: gretl-jenkins-ca-certificates
+            optional: true
     triggers:
     - type: ConfigChange
     - type: ImageChange
