@@ -157,6 +157,19 @@ oc apply -f gretl-jenkins-ca-certificates.yaml -n my-namespace
 oc label configmap gretl-jenkins-ca-certificates app=gretl-platform -n my-namespace
 ```
 
+## Create secret containing an additional SSH private key
+
+Place your additional SSH private key in a separate folder.
+Then create a secret from it:
+```
+oc create --dry-run=client secret general gretl-privatekeys --from-file=id_rsa=myprivatekeyfilename -o yaml > gretl-privatekeys.yaml
+```
+Then run
+```
+oc apply -f gretl-privatekeys.yaml -n my-namespace
+oc label secret gretl-privatekeys app=gretl-platform -n my-namespace
+```
+
 ## Apply template
 
 (For local usage a particular `gretl_development.params` file is available.)
