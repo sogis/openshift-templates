@@ -112,8 +112,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: jenkins
-labels:
-  app: gretl-platform
+  labels:
+    app: gretl-platform
 spec:
   accessModes:
   - ReadWriteOnce
