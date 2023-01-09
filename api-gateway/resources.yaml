@@ -45,7 +45,7 @@ objects:
                             '"status": "$status", "request_method": "$request_method", "server_protocol": "$server_protocol", "address": "$uri", "args": "$args", "request": "$request", '
                             '"body_bytes_sent": "$body_bytes_sent", "http_user_agent": "$http_user_agent", "remote_user": "$remote_user", '
                             '"request_time": "$request_time", "upstream_connect_time": "$upstream_connect_time", "upstream_header_time": "$upstream_header_time", '
-                            '"upstream_response_time": "$upstream_response_time","upstream_addr": "$upstream_addr" }';
+                            '"upstream_response_time": "$upstream_response_time","upstream_addr": "$upstream_addr","cache": "$upstream_cache_status" }';
 
           access_log  /var/log/nginx/access.log  json;
           access_log  /var/log/nginx-soft/access.log json;
