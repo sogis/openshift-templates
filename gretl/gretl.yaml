@@ -318,7 +318,7 @@ objects:
         <nodeSelector></nodeSelector>
         <volumes>
           <org.csanchez.jenkins.plugins.kubernetes.volumes.SecretVolume>
-            <mountPath>/home/gradle/.ssh</mountPath>
+            <mountPath>/home/gradle/.sshkeys</mountPath>
             <secretName>gretl-privatekeys</secretName>
             <optional>true</optional>
           </org.csanchez.jenkins.plugins.kubernetes.volumes.SecretVolume>
@@ -401,7 +401,7 @@ objects:
         <nodeSelector></nodeSelector>
         <volumes>
           <org.csanchez.jenkins.plugins.kubernetes.volumes.SecretVolume>
-            <mountPath>/home/gradle/.ssh</mountPath>
+            <mountPath>/home/gradle/.sshkeys</mountPath>
             <secretName>gretl-privatekeys</secretName>
             <optional>true</optional>
           </org.csanchez.jenkins.plugins.kubernetes.volumes.SecretVolume>
@@ -489,7 +489,7 @@ objects:
         <nodeSelector></nodeSelector>
         <volumes>
           <org.csanchez.jenkins.plugins.kubernetes.volumes.SecretVolume>
-            <mountPath>/home/gradle/.ssh</mountPath>
+            <mountPath>/home/gradle/.sshkeys</mountPath>
             <secretName>gretl-privatekeys</secretName>
             <optional>true</optional>
           </org.csanchez.jenkins.plugins.kubernetes.volumes.SecretVolume>
