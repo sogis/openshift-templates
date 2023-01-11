@@ -330,7 +330,7 @@ objects:
             limit_req zone=ip burst=12 delay=9;
             limit_req_status 444;
             
-            #error_page 444   /error.xml;
+            error_page 444   /error.xml;
 
             proxy_set_header 'X-FORWARDED-HOST' '${BASEURL}';
             proxy_set_header 'X-FORWARDED-PREFIX' '/api/oereb';
@@ -490,9 +490,9 @@ objects:
             root   /usr/share/nginx/html;
         }
 
-        #location = /error.xml {
-        #    root   /usr/share/nginx/html;
-        #}
+        location = /error.xml {
+            root   /usr/share/nginx/html;
+        }
         # redirect server error pages to the static page /50x.html
         #
         #error_page   500 502 503 504  /maintenance.html;
