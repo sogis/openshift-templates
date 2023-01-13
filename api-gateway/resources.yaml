@@ -113,6 +113,10 @@ objects:
             proxy_pass http://qwc-service.${NAMESPACE}.svc;
         }
 
+        location ~ /map/energie {
+            rewrite ^/map/energie$ /map?k=8cbad0256 break;
+            proxy_pass http://qwc-service.${NAMESPACE}.svc;
+        }
         location ~ /map/grundstuecksinformation {
             rewrite ^/map/grundstuecksinformation$ /map?realty= break;
             proxy_pass http://qwc-service.${NAMESPACE}.svc;
