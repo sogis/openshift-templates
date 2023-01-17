@@ -127,7 +127,7 @@ objects:
         }
         location ~ /map/energie {
             rewrite ^/map/energie$ /map?k=dc1a40ef6 break;
-            proxy_pass http://qwc-service.$[NAMESPACE}.svc;
+            proxy_pass http://qwc-service.${NAMESPACE}.svc;
         }
 
         location ~ /map/([a-z_]+) {
