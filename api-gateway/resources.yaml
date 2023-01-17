@@ -114,7 +114,7 @@ objects:
         }
 
         location ~ /map/energie {
-            rewrite ^/map/energie$ /map?k=0f54cbbc4 break;
+            rewrite ^/map/energie$ /map?k=e369634ec break;
             proxy_pass http://qwc-service.${NAMESPACE}.svc;
         }
         location ~ /map/grundstuecksinformation {
