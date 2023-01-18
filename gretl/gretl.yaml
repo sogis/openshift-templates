@@ -127,6 +127,8 @@ objects:
       app: ${APPNAME}
     strategy:
       type: Rolling
+      rollingParams:
+        timeoutSeconds: 90
     template:
       metadata:
         labels:
