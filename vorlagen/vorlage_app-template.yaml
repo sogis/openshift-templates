@@ -30,7 +30,10 @@ objects:
     selector:
       app: ${APPNAME}
     strategy:
+      ## Increase timeoutSeconds if app takes longer to get ready
       type: Rolling
+      rollingParams:
+        timeoutSeconds: 60
     template:
       metadata:
         labels:
