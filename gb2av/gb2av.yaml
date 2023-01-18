@@ -91,6 +91,8 @@ objects:
       deploymentconfig: ${APPNAME}
     strategy:
       type: Rolling
+      rollingParams:
+        timeoutSeconds: 60
     revisionHistoryLimit: 10
 - apiVersion: v1
   kind: Service

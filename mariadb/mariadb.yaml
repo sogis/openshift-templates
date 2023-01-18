@@ -29,6 +29,8 @@ objects:
       app: ${APPNAME}
     strategy:
       type: Recreate
+      recreateParams:
+        timeoutSeconds: 60
     template:
       metadata:
         labels:
