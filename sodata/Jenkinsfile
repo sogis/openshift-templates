@@ -37,15 +37,19 @@ pipeline {
                 script {
                     if ( environment == 'test' ) {
                         dbserver = env.DB_SERVER_TEST
+                        ENV = 'test'
                         }
                     else if ( environment == 'integration' ) {
                         dbserver = env.DB_SERVER_INT
+                        ENV = 'int'
                         }
                     else if ( environment == 'production' ) {
                         dbserver = env.DB_SERVER_PROD
+                        ENV = 'prod'
                         }
                     else {
                         dbserver = env.DB_SERVER_TEST
+                        ENV = 'test'
                         }
                     credentials = [ 
                         usernamePassword(credentialsId: (env.NAMESPACE_JENKINS) + '-jenkins-dbuser-simi-secret'   , usernameVariable: 'DbUserSimi'   , passwordVariable: 'PwdSimi')
@@ -90,7 +94,7 @@ pipeline {
                             fi
                             
                             # meta2file command to create the conf files
-                            java -jar meta2file-cli-1.0.77-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -u ${DbUserSimi} -p ${PwdSimi} -d $env.WORKSPACE/sodata/datasearch.xml
+                            java -jar meta2file-cli-1.0.77-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -e ${ENV} -u ${DbUserSimi} -p ${PwdSimi} -d $env.WORKSPACE/sodata/datasearch.xml
                         """ 
                         archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
                         // input(message: 'Please validate, this job will automatically ABORTED after 30 minutes even if no user input provided', ok: 'Proceed')
