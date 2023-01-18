@@ -88,13 +88,13 @@ pipeline {
                             fi
 
                             # if not exists get the meta2file-cli-all.jar and set the necessary permissions
-                            if [ ! -f "meta2file-cli-1.0.83-all.jar" ]; then
-                              wget https://github.com/sogis/meta2file/releases/download/v1.0.83/${env.META2FILE_APP}
-                              chmod u+x ${env.META2FILE_APP}
+                            if [ ! -f "meta2file-cli-${env.META2FILE_VERSION}-all.jar" ]; then
+                              wget https://github.com/sogis/meta2file/releases/download/v${env.META2FILE_VERSION}/meta2file-cli-${env.META2FILE_VERSION}-all.jar
+                              chmod u+x meta2file-cli-${env.META2FILE_VERSION}-all.jar
                             fi
                             
                             # meta2file command to create the conf files
-                            java -jar ${env.META2FILE_APP} -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -e ${ENV} -u ${DbUserSimi} -p ${PwdSimi} -d $env.WORKSPACE/sodata/datasearch.xml
+                            java -jar meta2file-cli-${env.META2FILE_VERSION}-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -e ${ENV} -u ${DbUserSimi} -p ${PwdSimi} -d $env.WORKSPACE/sodata/datasearch.xml
                         """ 
                         archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
                         // input(message: 'Please validate, this job will automatically ABORTED after 30 minutes even if no user input provided', ok: 'Proceed')
