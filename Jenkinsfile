@@ -38,7 +38,7 @@ pipeline {
         }
         stage('Wait for rollout to finish') {
             steps {
-                sh "sleep 2 && oc rollout status dc/${appName} --timeout=90s -n ${params.NAMESPACE}"
+                sh "sleep 2 && oc rollout status dc/${appName} -n ${params.NAMESPACE}"
             }
         }
     }

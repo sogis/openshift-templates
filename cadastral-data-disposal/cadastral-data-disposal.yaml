@@ -29,6 +29,10 @@ objects:
     revisionHistoryLimit: 3
     selector:
       app: ${APPNAME}
+    strategy:
+      type: Rolling
+      rollingParams:
+        timeoutSeconds: 60
     template:
       metadata:
         labels:
