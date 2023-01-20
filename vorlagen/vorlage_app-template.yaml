@@ -135,13 +135,13 @@ parameters:
   required: true
 - name: TAG
   description: The Docker image tag to use (e.g. latest)
-  value: latest
+  required: true
 - name: IMPORT_POLICY_SCHEDULED
   description: Regularly check for changed image?
-  value: 'false'
+  required: true
 - name: REPLICA_COUNT
   description: Number of replicas to run
-  value: '1'
+  required: true
 - name: CPU_REQUEST
   description: The minimum amount of CPU the container is guaranteed.
   required: true
