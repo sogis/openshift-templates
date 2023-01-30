@@ -17,7 +17,7 @@ pipeline {
                name: 'BRANCH'
                )
         string(defaultValue: "1.0.83",
-               decription: 'Version metafile Exporter',
+               description: 'Version metafile Exporter',
                name: 'META2FILE_VERSION'
                )
         }
