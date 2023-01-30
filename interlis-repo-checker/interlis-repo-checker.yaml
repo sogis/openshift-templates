@@ -149,7 +149,7 @@ parameters:
   value:
     http://models.interlis.ch/,
     https://models.geo.admin.ch,
-    http://models.geo.kgk-cgc.ch/,
+    https://models.kgk-cgc.ch/,
     http://models.geo.ai.ch/,
     https://models.geo.ar.ch/,
     https://models.geo.be.ch/,
@@ -161,7 +161,7 @@ parameters:
     https://models.geo.sg.ch/,
     http://models.geo.sh.ch/,
     https://geo.so.ch/models/,
-    http://models.geo.sz.ch,
+    https://models.geo.sz.ch,
     http://models.geo.ti.ch,
     https://models.geo.zg.ch,
     http://models.geo.zh.ch,
