@@ -92,7 +92,7 @@ pipeline {
                             fi
 
                             # if not exists get the meta2file-cli-all.jar and set the necessary permissions
-                            if [ ! -f "meta2file-cli-${env.META2FILE_VERSION}-all.jar" ]; then
+                            if [ ! -f "meta2file-cli-${META2FILE_VERSION}-all.jar" ]; then
                               wget https://github.com/sogis/meta2file/releases/download/v${META2FILE_VERSION}/meta2file-cli-${META2FILE_VERSION}-all.jar
                               chmod u+x meta2file-cli-${META2FILE_VERSION}-all.jar
                             fi
