@@ -32,7 +32,7 @@ objects:
     strategy:
       type: Rolling
       rollingParams:
-        timeoutSeconds: 300
+        timeoutSeconds: 660
     template:
       metadata:
         labels:
@@ -62,9 +62,10 @@ objects:
               path: /actuator/health/readiness
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 300
+            initialDelaySeconds: 120
             periodSeconds: 10
             timeoutSeconds: 1
+            failureThreshold: 5
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
