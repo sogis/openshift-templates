@@ -598,7 +598,7 @@ parameters:
 - name: GRETL_JOB_REPO_URL_OEREB_V2
   displayName: Git repo containing OEREB V2 GRETL Jobs
   description: URL of the Git repo holding the OEREB V2 GRETL Job configurations.
-  value: https://github.com/sogis-oereb/oereb-gretljobs.git
+  value: https://github.com/sogis/oereb-gretljobs.git
 - name: GRETL_JOB_REPO_URL_SCHEMA
   displayName: Git repo containing Schema Jobs
   description: URL of the Git repo holding the Schema Job configurations.
