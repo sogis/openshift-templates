@@ -32,7 +32,7 @@ objects:
     strategy:
       type: Rolling
       rollingParams:
-        timeoutSeconds: 180
+        timeoutSeconds: 60
     template:
       metadata:
         labels:
