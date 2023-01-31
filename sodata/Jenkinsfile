@@ -125,7 +125,7 @@ pipeline {
                       quit
                       EOL
                   """
-                  archiveArtifacts artifacts: 'config/**', onlySuccessful: true, allowEmptyArchive: true
+                  archiveArtifacts artifacts: 'config/**', onlyIfSuccessful: true, allowEmptyArchive: true
                   sh """
                       rm -rf $env.WORKSPACE/config
                   """
