@@ -111,22 +111,25 @@ pipeline {
                 }
             }
           stage ('Upload XML to geocat') {
-              sh """
-                  if [ ! -d "config/default" ]; then
-                      mkdir -p config/default
-                  fi
-                  # meta2file command to create the conf files
-                  java -jar meta2file-cli-${META2FILE_VERSION}-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -u ${DbUserSimi} -p ${PwdSimi} -g $env.WORKSPACE/config
-                  sftp -i /etc/ssh-keys/id_rsa $GEOCAT_SFTP_USER@$GEOCAT_SFTP_SERVER <<EOL
-                  cd ${FTP_DIR}
-                  put config/*
-                  quit
-                  EOL
-              """
-              archiveArtifacts artifacts: 'config/**', onlySuccessful: true, allowEmptyArchive: true
-              sh """
-                  rm -rf $env.WORKSPACE/config
-              """
+              when { expression { !params.RESTART_ONLY } }
+              steps {
+                  sh """
+                      if [ ! -d "config/default" ]; then
+                          mkdir -p config/default
+                      fi
+                      # meta2file command to create the conf files
+                      java -jar meta2file-cli-${META2FILE_VERSION}-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -u ${DbUserSimi} -p ${PwdSimi} -g $env.WORKSPACE/config
+                      sftp -i /etc/ssh-keys/id_rsa $GEOCAT_SFTP_USER@$GEOCAT_SFTP_SERVER <<EOL
+                      cd ${FTP_DIR}
+                      put config/*
+                      quit
+                      EOL
+                  """
+                  archiveArtifacts artifacts: 'config/**', onlySuccessful: true, allowEmptyArchive: true
+                  sh """
+                      rm -rf $env.WORKSPACE/config
+                  """
+                  }
               }
           stage ('Build extended Image' ) {
               when { expression { !params.RESTART_ONLY } }
