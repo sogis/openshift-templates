@@ -62,7 +62,7 @@ objects:
               path: /actuator/health/readiness
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 5
+            initialDelaySeconds: 180
             periodSeconds: 10
             timeoutSeconds: 1
           livenessProbe:
@@ -70,7 +70,7 @@ objects:
               path: /actuator/health/liveness
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 180
+            initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 1
           ## Define the desired Resources for your container in the paramter file. They should be different in test, int and prod environment
