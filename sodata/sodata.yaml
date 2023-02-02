@@ -117,9 +117,7 @@ objects:
     strategy:
       type: Docker
       dockerStrategy:
-        from:
-          kind: DockerImage
-          name: sogis/sodata:0.0.134
+        dockerfilePath: Dockerfile
         pullSecret:
           name: sogis-pull-secret
 parameters:
