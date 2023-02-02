@@ -118,8 +118,6 @@ objects:
       type: Docker
       dockerStrategy:
         dockerfilePath: Dockerfile
-        pullSecret:
-          name: sogis-pull-secret
 parameters:
 - name: APPNAME
   description: Name of the App
