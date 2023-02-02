@@ -115,13 +115,13 @@ objects:
       binary: {}
       type: Binary
     strategy:
+      type: Docker
       dockerStrategy:
         from:
           kind: DockerImage
           name: sogis/sodata:0.0.134
-      pullSecret:
-        name: sogis-pull-secret
-      type: Docker 
+        pullSecret:
+          name: sogis-pull-secret
 parameters:
 - name: APPNAME
   description: Name of the App
