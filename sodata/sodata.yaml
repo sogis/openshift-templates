@@ -127,11 +127,15 @@ parameters:
   description: Name of the App
   required: true
 - name: IMAGENAME
-  description: Name of the docker image (e.g. sogis/my-image)
+  description: Name of the extended docker output image (e.g. sogis/my-image)
   required: true
 - name: TAG
   description: The Docker image tag to use (e.g. latest)
   value: latest
+- name: BASEIMAGE
+  description: Name of the docker base image (e.g. sogis/my-image)
+- name: BASEIMAGE_TAG
+  description: The docker image tag to use (e.g. latest)
 - name: IMPORT_POLICY_SCHEDULED
   description: Regularly check for changed image?
   value: 'false'
