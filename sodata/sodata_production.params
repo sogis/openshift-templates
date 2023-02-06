@@ -1,6 +1,8 @@
 APPNAME=sodata
 IMAGENAME=image-registry.openshift-image-registry.svc:5000/agi-apps-production/sodata-extended
 TAG=latest
+BASEIMAGE=sogis/sodata
+BASEIMAGE_TAG=0.0.134
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=100m
