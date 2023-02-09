@@ -122,6 +122,7 @@ objects:
           name: ${BASEIMAGE}:${BASEIMAGE_TAG}
         pullSecret:
           name: sogis-pull-secret
+        noCache: false
 parameters:
 - name: APPNAME
   description: Name of the App
