@@ -16,7 +16,7 @@ pipeline {
                description: 'Branch, der ausgecheckt werden soll',
                name: 'BRANCH'
                )
-        string(defaultValue: "1.0.88",
+        string(defaultValue: "1.0.89",
                description: 'Version metafile Exporter',
                name: 'META2FILE_VERSION'
                )
@@ -123,6 +123,7 @@ pipeline {
                               java -jar meta2file-cli-${META2FILE_VERSION}-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -e ${ENV} -u ${DbUserSimi} -p ${PwdSimi} -g $env.WORKSPACE/config
                               sftp -i /etc/ssh-keys/id_rsa $GEOCAT_SFTP_USER@$GEOCAT_SFTP_SERVER <<EOL
                               cd ${FTP_DIR}
+                              rm ch.*
                               put config/*
                               quit
                               EOL
