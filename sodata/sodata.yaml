@@ -115,11 +115,11 @@ objects:
       binary: {}
       type: Binary
     strategy:
-      env:
-        - name: "BUILD_LOGLEVEL"
-          value: "5"
       type: Docker
       dockerStrategy:
+        env:
+        - name: BUILD_LOGLEVEL
+          value: "5"
         from:
           kind: DockerImage
           name: ${BASEIMAGE}:${BASEIMAGE_TAG}
