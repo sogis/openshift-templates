@@ -16,7 +16,7 @@ pipeline {
                description: 'Branch, der ausgecheckt werden soll',
                name: 'BRANCH'
                )
-        string(defaultValue: "1.0.94",
+        string(defaultValue: "1.0.95",
                description: 'Version metafile Exporter',
                name: 'META2FILE_VERSION'
                )
