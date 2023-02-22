@@ -1,6 +1,6 @@
 APPNAME=interlis-repository
 IMAGENAME=sogis/interlis-repository
-TAG=latest
+TAG=1.2.451
 IMPORT_POLICY_SCHEDULED=true
 REPLICA_COUNT=1
 CPU_REQUEST=50m
