@@ -447,8 +447,13 @@ objects:
             proxy_set_header 'X-FORWARDED-PREFIX' '/modelfinder';
             proxy_pass http://modelfinder.agi-apps-${ENVIRONMENT}.svc/;
         }
+        
+        # redirect for links without trailing slash
+        location ~ ^/models/([aa-zZ]+)$ {
+            return 301 /models/$1/;
+        }
 
-        location /models {
+        location /models/ {
             proxy_pass http://interlis-repository.agi-apps-${ENVIRONMENT}.svc/;
         }
 
