@@ -418,10 +418,7 @@ objects:
         }
 
         location /av_datenabgabe {
-            proxy_set_header 'X-FORWARDED-HOST' '${BASEURL}';
-            proxy_set_header 'X-FORWARDED-PREFIX' '/av_datenabgabe';
-            proxy_set_header 'X-FORWARDED-PROTO' 'https';
-            proxy_pass http://cadastral-data-disposal.agi-apps-${ENVIRONMENT}.svc/;
+            proxy_pass https://so.ch/verwaltung/bau-und-justizdepartement/amt-fuer-geoinformation/geoportal/av-daten/;
         }
 
         location /avgbs2mtab {
