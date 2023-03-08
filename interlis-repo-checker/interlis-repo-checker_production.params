@@ -1,6 +1,6 @@
 APPNAME=interlis-repo-checker
 IMAGENAME=sogis/interlis-repo-checker
-TAG=0.1.51
+TAG=0.1.52
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=200m
