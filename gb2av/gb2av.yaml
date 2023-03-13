@@ -61,7 +61,7 @@ objects:
               path: /actuator/health
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
@@ -71,7 +71,7 @@ objects:
               path: /actuator/health
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1 
@@ -92,7 +92,7 @@ objects:
     strategy:
       type: Rolling
       rollingParams:
-        timeoutSeconds: 60
+        timeoutSeconds: 150
     revisionHistoryLimit: 10
 - apiVersion: v1
   kind: Service
