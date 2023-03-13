@@ -90,8 +90,8 @@ objects:
       app: ${APPNAME}
       deploymentconfig: ${APPNAME}
     strategy:
-      type: Rolling
-      rollingParams:
+      type: Recreate
+      recreateParams:
         timeoutSeconds: 150
     revisionHistoryLimit: 10
 - apiVersion: v1
