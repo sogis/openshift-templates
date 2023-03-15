@@ -115,7 +115,7 @@ pipeline {
                 }
             }
           stage ('Upload XML to geocat') {
-              when { expression { !params.RESTART_ONLY } }
+              when { expression { !params.RESTART_ONLY && !params.IMAGE_ONLY } }
               steps {
                   withCredentials ( credentials ) {
                       script {
