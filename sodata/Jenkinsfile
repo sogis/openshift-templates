@@ -73,7 +73,7 @@ pipeline {
             when { expression { params.RESTART_ONLY } }
             steps {
                 sh """
-                    oc rollout latest dc/${APPNAME} -n ${params.NAMESPACE}"
+                    oc rollout latest dc/${appName} -n ${params.NAMESPACE}"
                 """
              }
         }
