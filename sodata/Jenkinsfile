@@ -64,7 +64,8 @@ pipeline {
                         FTP_DIR = 'int'
                         }
                     credentials = [ 
-                        usernamePassword(credentialsId: (env.NAMESPACE_JENKINS) + '-jenkins-dbuser-simi-secret'   , usernameVariable: 'DbUserSimi'   , passwordVariable: 'PwdSimi')
+                        usernamePassword(credentialsId: (env.NAMESPACE_JENKINS) + '-jenkins-dbuser-simi-secret'   , usernameVariable: 'DbUserSimi'     , passwordVariable: 'PwdSimi')
+                        usernamePassword(credentialsId: (env.NAMESPACE_JENKINS) + '-jenkins-sogis-sftp-secret'    , usernameVariable: 'SOGIS_SFTP_USER', passwordVariable: 'SOGIS_SFTP_PASSWORD')
                         ]
                     }
                 }
@@ -107,6 +108,13 @@ pipeline {
                             
                             # meta2file command to create the conf files
                             java -jar meta2file-cli-${META2FILE_VERSION}-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -e ${ENV} -u ${DbUserSimi} -p ${PwdSimi} -d $env.WORKSPACE/sodata/datasearch.xml
+                            
+                            # Upload XML to sogis sftp Server
+                            env.SSHPASS = ${SOGIS_SFTP_PASSWORD}
+                            sshpass -e $SOGIS_SFTP_USER@$SOGIS_SFTP_SERVER <<EOL
+                            put sodata/datasearch.xml
+                            quit
+                            EOL
                         """ 
                         archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
                         // input(message: 'Please validate, this job will automatically ABORTED after 30 minutes even if no user input provided', ok: 'Proceed')
