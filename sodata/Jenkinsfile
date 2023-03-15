@@ -9,8 +9,12 @@ pipeline {
                name: 'NAMESPACE'
                )
         booleanParam(defaultValue: false,
-                     description: 'Nur Pods neu starten (keine Änderung an der DeploymentConfig vornehmen',
+                     description: 'Nur Pods neu starten (keine Änderung an der DeploymentConfig vornehmen)',
                      name: 'RESTART_ONLY'
+                     )
+        booleanParam(defaultValue: false,
+                     description: 'Nur Image deployen (keine datasearch.xml erstellen)',
+                     name: 'IMAGE_ONLY'
                      )
         string(defaultValue: "master",
                description: 'Branch, der ausgecheckt werden soll',
@@ -82,7 +86,7 @@ pipeline {
             }
         }
         stage ('Create Datensuche XML File') {
-            when { expression { !params.RESTART_ONLY } }
+            when { expression { !params.RESTART_ONLY && !params.IMAGE_ONLY } }
             steps {
                 withCredentials ( credentials ) {
                     script {
