@@ -110,7 +110,7 @@ pipeline {
                             java -jar meta2file-cli-${META2FILE_VERSION}-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -e ${ENV} -u ${DbUserSimi} -p ${PwdSimi} -d $env.WORKSPACE/sodata/datasearch.xml
                             
                             # Upload XML to sogis sftp Server
-                            env.SSHPASS = ${SOGIS_SFTP_PASSWORD}
+                            env.SSHPASS = '${SOGIS_SFTP_PASSWORD}'
                             sshpass -e $SOGIS_SFTP_USER@$SOGIS_SFTP_SERVER <<EOL
                             put sodata/datasearch.xml
                             quit
