@@ -64,7 +64,7 @@ pipeline {
                         FTP_DIR = 'int'
                         }
                     credentials = [ 
-                        usernamePassword(credentialsId: (env.NAMESPACE_JENKINS) + '-jenkins-dbuser-simi-secret'   , usernameVariable: 'DbUserSimi'     , passwordVariable: 'PwdSimi')
+                        usernamePassword(credentialsId: (env.NAMESPACE_JENKINS) + '-jenkins-dbuser-simi-secret'   , usernameVariable: 'DbUserSimi'     , passwordVariable: 'PwdSimi'),
                         usernamePassword(credentialsId: (env.NAMESPACE_JENKINS) + '-jenkins-sogis-sftp-secret'    , usernameVariable: 'SOGIS_SFTP_USER', passwordVariable: 'SOGIS_SFTP_PASSWORD')
                         ]
                     }
