@@ -116,7 +116,7 @@ pipeline {
                             quit
                             EOL
                         """ 
-                        archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
+                        archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: false, allowEmptyArchive: true
                         // input(message: 'Please validate, this job will automatically ABORTED after 30 minutes even if no user input provided', ok: 'Proceed')
                         }
                     }
