@@ -110,11 +110,11 @@ pipeline {
                             java -jar meta2file-cli-${META2FILE_VERSION}-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -e ${ENV} -u ${DbUserSimi} -p ${PwdSimi} -d $env.WORKSPACE/sodata/datasearch.xml
                             
                             # Upload XML to sogis sftp Server
-                            export SSHPASS='${SOGIS_SFTP_PASSWORD}'
-                            sshpass -e $SOGIS_SFTP_USER@$SOGIS_SFTP_SERVER <<EOL
-                            put sodata/datasearch.xml
-                            quit
-                            EOL
+                            # export SSHPASS='${SOGIS_SFTP_PASSWORD}'
+                            # sshpass -e $SOGIS_SFTP_USER@$SOGIS_SFTP_SERVER <<EOL
+                            # put sodata/datasearch.xml
+                            # quit
+                            # EOL
                         """ 
                         archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: false, allowEmptyArchive: true
                         // input(message: 'Please validate, this job will automatically ABORTED after 30 minutes even if no user input provided', ok: 'Proceed')
