@@ -153,8 +153,8 @@ pipeline {
               steps {
                   script {
                       sh """ 
-                          echo $env.JOB_URL
                           wget $env.JOB_URL/lastSuccessfulBuild/artifact/sodata/datasearch.xml -o $env.WORKSPACE/sodata/datasearch.xml
+                          ls -la  $env.WORKSPACE/sodata
                           oc start-build ${appName}-extended -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
                       """
                       }
