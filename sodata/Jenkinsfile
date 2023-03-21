@@ -9,8 +9,12 @@ pipeline {
                name: 'NAMESPACE'
                )
         booleanParam(defaultValue: false,
-                     description: 'Nur Pods neu starten (keine Änderung an der DeploymentConfig vornehmen',
+                     description: 'Nur Pods neu starten (keine Änderung an der DeploymentConfig vornehmen)',
                      name: 'RESTART_ONLY'
+                     )
+        booleanParam(defaultValue: false,
+                     description: 'Nur Image deployen (keine datasearch.xml erstellen)',
+                     name: 'IMAGE_ONLY'
                      )
         string(defaultValue: "master",
                description: 'Branch, der ausgecheckt werden soll',
@@ -60,7 +64,7 @@ pipeline {
                         FTP_DIR = 'int'
                         }
                     credentials = [ 
-                        usernamePassword(credentialsId: (env.NAMESPACE_JENKINS) + '-jenkins-dbuser-simi-secret'   , usernameVariable: 'DbUserSimi'   , passwordVariable: 'PwdSimi')
+                        usernamePassword(credentialsId: (env.NAMESPACE_JENKINS) + '-jenkins-dbuser-simi-secret'   , usernameVariable: 'DbUserSimi'     , passwordVariable: 'PwdSimi')
                         ]
                     }
                 }
@@ -69,7 +73,7 @@ pipeline {
             when { expression { params.RESTART_ONLY } }
             steps {
                 sh """
-                    oc rollout latest dc/${APPNAME} -n ${params.NAMESPACE}"
+                    oc rollout latest dc/${appName} -n ${params.NAMESPACE}"
                 """
              }
         }
@@ -82,7 +86,7 @@ pipeline {
             }
         }
         stage ('Create Datensuche XML File') {
-            when { expression { !params.RESTART_ONLY } }
+            when { expression { !params.RESTART_ONLY && !params.IMAGE_ONLY } }
             steps {
                 withCredentials ( credentials ) {
                     script {
@@ -104,14 +108,12 @@ pipeline {
                             # meta2file command to create the conf files
                             java -jar meta2file-cli-${META2FILE_VERSION}-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -e ${ENV} -u ${DbUserSimi} -p ${PwdSimi} -d $env.WORKSPACE/sodata/datasearch.xml
                         """ 
-                        archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
-                        // input(message: 'Please validate, this job will automatically ABORTED after 30 minutes even if no user input provided', ok: 'Proceed')
                         }
                     }
                 }
             }
           stage ('Upload XML to geocat') {
-              when { expression { !params.RESTART_ONLY } }
+              when { expression { !params.RESTART_ONLY && !params.IMAGE_ONLY } }
               steps {
                   withCredentials ( credentials ) {
                       script {
@@ -140,9 +142,15 @@ pipeline {
               when { expression { !params.RESTART_ONLY } }
               steps {
                   script {
-                      sh """ 
+                      sh """
+                          pwd
+                          ls -la sodata
+                          if [ ! -e "sodata/datasearch.xml" ]; then
+                              wget $env.JOB_URL/lastSuccessfulBuild/artifact/sodata/datasearch.xml -P $env.WORKSPACE/sodata/
+                          fi 
                           oc start-build ${appName}-extended -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
                       """
+                      archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
                       }
                   }
               }
@@ -165,6 +173,9 @@ pipeline {
         // Clean after build
         cleanup {
             script { currentBuild.description = "${params.NAMESPACE}, branch: ${params.BRANCH}" }   
+            sh """
+                rm -rf $WORKSPACE/sodata
+            """
             }
         }
     }
