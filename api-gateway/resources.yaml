@@ -428,10 +428,6 @@ objects:
             proxy_pass http://avgbs2mtab-web-service.agi-apps-${ENVIRONMENT}.svc/;
         }
 
-        location /ews {
-            proxy_pass http://heatdrill-service.agi-apps-${ENVIRONMENT}.svc/service/;
-        }
-
         location /standortkarte/ {
             proxy_pass http://standortkarte.agi-apps-${ENVIRONMENT}.svc/;
         }
