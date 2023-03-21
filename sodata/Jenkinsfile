@@ -108,16 +108,7 @@ pipeline {
                             
                             # meta2file command to create the conf files
                             java -jar meta2file-cli-${META2FILE_VERSION}-all.jar -c jdbc:postgresql://${dbserver}/${env.SIMI_DB} -e ${ENV} -u ${DbUserSimi} -p ${PwdSimi} -d $env.WORKSPACE/sodata/datasearch.xml
-                            
-                            # Upload XML to sogis sftp Server
-                            # export SSHPASS='${SOGIS_SFTP_PASSWORD}'
-                            # sshpass -e $SOGIS_SFTP_USER@$SOGIS_SFTP_SERVER <<EOL
-                            # put sodata/datasearch.xml
-                            # quit
-                            # EOL
                         """ 
-                        archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: false, allowEmptyArchive: true
-                        // input(message: 'Please validate, this job will automatically ABORTED after 30 minutes even if no user input provided', ok: 'Proceed')
                         }
                     }
                 }
@@ -152,11 +143,13 @@ pipeline {
               when { expression { !params.RESTART_ONLY } }
               steps {
                   script {
-                      sh """ 
-                          wget $env.JOB_URL/lastSuccessfulBuild/artifact/sodata/datasearch.xml -P $env.WORKSPACE/sodata/
-                          ls -la  $env.WORKSPACE/sodata
+                      sh """
+                          if [ ! -d "sodata/datasearch.xml" ]; then
+                              wget $env.JOB_URL/lastSuccessfulBuild/artifact/sodata/datasearch.xml -P $env.WORKSPACE/sodata/
+                          fi 
                           oc start-build ${appName}-extended -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
                       """
+                      archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
                       }
                   }
               }
@@ -179,6 +172,9 @@ pipeline {
         // Clean after build
         cleanup {
             script { currentBuild.description = "${params.NAMESPACE}, branch: ${params.BRANCH}" }   
+            sh """
+                rm -rf $WORKSPACE/sodata
+            """
             }
         }
     }
