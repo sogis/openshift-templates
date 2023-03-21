@@ -144,6 +144,8 @@ pipeline {
               steps {
                   script {
                       sh """
+                          pwd
+                          ls -la sodata
                           if [ ! -d "sodata/datasearch.xml" ]; then
                               wget $env.JOB_URL/lastSuccessfulBuild/artifact/sodata/datasearch.xml -P $env.WORKSPACE/sodata/
                           fi 
