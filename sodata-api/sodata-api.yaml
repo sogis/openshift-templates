@@ -1,0 +1,180 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${APPNAME}-template
+labels:
+  template: ${APPNAME}-template
+  app: ${APPNAME}
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}
+  spec:
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
+    strategy:
+      ## Increase timeoutSeconds if app takes longer to get ready
+      type: Rolling
+      rollingParams:
+        timeoutSeconds: 60
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+      spec:
+        containers:
+        - name: ${APPNAME}
+          ## Define HealthChecks. Ideally the timeoutSeconds for the readiness Probe should be shorter than for the liveness Probe or you have different Probes for the checks
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}
+  spec:
+    ## Define the ports exposed by the app
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: ${APPNAME}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}-files
+  spec:
+    host: ${HOSTNAME}
+    path: /files
+    port:
+      targetPort: 80-tcp
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: None
+    to:
+      kind: Service
+      name: ${APPNAME}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}-ilisite
+  spec:
+    host: ${HOSTNAME}
+    path: /ilisite.xml
+    port:
+      targetPort: 80-tcp
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: None
+    to:
+      kind: Service
+      name: ${APPNAME}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}-ilimodels
+  spec:
+    host: ${HOSTNAME}
+    path: /ilimodels.xml
+    port:
+      targetPort: 80-tcp
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: None
+    to:
+      kind: Service
+      name: ${APPNAME}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}-ilidata
+  spec:
+    host: ${HOSTNAME}
+    path: /ilidata.xml
+    port:
+      targetPort: 80-tcp
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: None
+    to:
+      kind: Service
+      name: ${APPNAME}
+parameters:
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The Docker image tag to use (e.g. latest)
+  required: true
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  required: true
+- name: REPLICA_COUNT
+  description: Number of replicas to run
+  required: true
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
+- name: HOSTNAME
+  description: The hostname for the route
