@@ -139,7 +139,9 @@ pipeline {
                   }
               }
           stage ('Upload XML to S3') {
-              withAWS(Credentials:env.NAMESPACE_JENKINS + 'sodata-aws-secret')
+              steps {
+                  withAWS(Credentials:env.NAMESPACE_JENKINS + 'sodata-aws-secret')
+                  }
               }
           stage ('Build extended Image' ) {
               when { expression { !params.RESTART_ONLY } }
