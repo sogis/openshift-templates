@@ -26,6 +26,8 @@ objects:
       app: gretl-platform
   data:
     configuration-as-code.yaml: |
+      jenkins:
+        scmCheckoutRetryCount: 1
       jobs:
         - script: |
             job('gretl-job-generator') {
