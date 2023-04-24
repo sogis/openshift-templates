@@ -141,7 +141,7 @@ pipeline {
           stage ('Upload XML to S3') {
               steps {
                   withAWS(credentials:env.NAMESPACE_JENKINS + '-jenkins-sodata-aws-secret') {
-                      s3Upload(file:env.WORKSPACE + '/sodata/datasearch.xml', bucket:'ch.so.agi.' + ENV, region:'eu-central-1', path:'datasearch.xml')
+                      s3Upload(file:env.WORKSPACE + '/sodata/datasearch.xml', bucket:'ch.so.agi.' + ENV, path:'datasearch.xml')
                       }
                   }
               }
