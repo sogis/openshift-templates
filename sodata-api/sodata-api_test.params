@@ -1,0 +1,11 @@
+APPNAME=sodata-api
+IMAGENAME=sogis/sodata-api
+TAG=latest
+IMPORT_POLICY_SCHEDULED=true
+REPLICA_COUNT=1
+CPU_REQUEST=0
+CPU_LIMIT=0
+MEMORY_REQUEST=0
+MEMORY_LIMIT=0
+HOSTNAME=data-t.geo.so.ch
+CONFIGFILE_URL=https://s3.eu-central-1.amazonaws.com/ch.so.agi.sodata-test/datasearch.xml
