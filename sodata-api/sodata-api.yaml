@@ -45,7 +45,7 @@ objects:
           command: ['sh', '-c', 'wget -O /config/datasearch.xml $CONFIGFILE_URL']
           env:
           - name: CONFIGFILE_URL
-            value: https://raw.githubusercontent.com/sogis/sodata-api/main/datasearch.xml
+            value: ${CONFIGFILE_URL}
           volumeMounts:
           - name: config-dir
             mountPath: /config
@@ -196,3 +196,6 @@ parameters:
   required: true
 - name: HOSTNAME
   description: The hostname for the route
+- name: CONFIGFILE_URL
+  description: URL to the datasearch.xml configuration file
+  required: true
