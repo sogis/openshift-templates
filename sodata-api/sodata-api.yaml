@@ -41,7 +41,8 @@ objects:
       spec:
         initContainers:
         - name: init-datasearch
-          image: alpine:latest
+          image: bellsoft/alpaquita-linux-base:stream-glibc
+          imagePullPolicy: IfNotPresent
           command: ['sh', '-c', 'wget -O /config/datasearch.xml $CONFIGFILE_URL']
           env:
           - name: CONFIGFILE_URL
