@@ -73,7 +73,7 @@ pipeline {
             when { expression { params.RESTART_ONLY } }
             steps {
                 sh """
-                    oc rollout latest dc/${appName} -n ${params.NAMESPACE}"
+                    oc rollout latest dc/${appName} -n ${params.NAMESPACE}
                 """
              }
         }
@@ -138,19 +138,27 @@ pipeline {
                       }
                   }
               }
+          stage ('Upload XML to S3') {
+              when { expression { !params.RESTART_ONLY && !params.IMAGE_ONLY } }
+              steps {
+                  withAWS(credentials:env.NAMESPACE_JENKINS + '-jenkins-sodata-aws-secret', region:'eu-central-1') {
+                      s3Upload(file:env.WORKSPACE + '/sodata/datasearch.xml', bucket:'ch.so.agi.sodata-' + ENV, path:'datasearch.xml')
+                      }
+                  }
+              }
           stage ('Build extended Image' ) {
               when { expression { !params.RESTART_ONLY } }
               steps {
                   script {
-                      sh """
-                          pwd
-                          ls -la sodata
-                          if [ ! -e "sodata/datasearch.xml" ]; then
-                              wget $env.JOB_URL/lastSuccessfulBuild/artifact/sodata/datasearch.xml -P $env.WORKSPACE/sodata/
-                          fi 
-                          oc start-build ${appName}-extended -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
-                      """
-                      archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
+                      if (!params.RESTART_ONLY) { 
+                          withAWS(credentials:env.NAMESPACE_JENKINS + '-jenkins-sodata-aws-secret', region:'eu-central-1') {
+                              s3Download(file:'sodata/datasearch.xml', bucket:'ch.so.agi.sodata-' + ENV, path:'datasearch.xml', force:true)
+                              }
+                          sh """ 
+                              oc start-build ${appName}-extended -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
+                          """
+                          archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
+                          }
                       }
                   }
               }
