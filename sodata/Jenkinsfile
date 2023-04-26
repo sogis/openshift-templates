@@ -152,7 +152,7 @@ pipeline {
                   script {
                       if (!params.RESTART_ONLY) { 
                           withAWS(credentials:env.NAMESPACE_JENKINS + '-jenkins-sodata-aws-secret', region:'eu-central-1') {
-                              s3Download(file:'datasearch.xml', bucket:'ch.so.agi.sodata-' + ENV, path:'sodata/datasearch.xml', force:true)
+                              s3Download(file:'datasearch.xml', bucket:'ch.so.agi.sodata-' + ENV, path:'datasearch.xml', force:true)
                               }
                           sh """ 
                               oc start-build ${appName}-extended -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
