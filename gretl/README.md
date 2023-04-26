@@ -126,9 +126,9 @@ spec:
 
 For enabling the GRETL jobs to check out the sogis/schema-jobs Git repository,
 which is a private repository,
-in a separate folder create a file `github-access-token-schema-jobs-pvc.yaml`
+in a separate folder create a file `github-access-token-schema-jobs.yaml`
 containing a secret according to the following template.
-Then run `oc apply -f path/to/github-access-token-schema-jobs-pvc.yaml -n my-namespace`.
+Then run `oc apply -f path/to/github-access-token-schema-jobs.yaml -n my-namespace`.
 
 ```
 apiVersion: v1
