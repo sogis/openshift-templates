@@ -94,6 +94,7 @@ pipeline {
                         """ 
                         }
                     }
+                  build job: 'agi-apps/sodata-api', parameters: [ string(name: 'NAMESPACE', value: ${params.NAMESPACE}) ] 
                 }
             }
           stage ('Upload XML to geocat') {
