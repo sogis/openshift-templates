@@ -142,7 +142,7 @@ pipeline {
               when { expression { !params.RESTART_ONLY && !params.IMAGE_ONLY } }
               steps {
                   withAWS(credentials:env.NAMESPACE_JENKINS + '-jenkins-sodata-aws-secret', region:'eu-central-1') {
-                      s3Upload(file:env.WORKSPACE + '/sodata/datasearch.xml', bucket:'ch.so.agi.sodata-' + ENV, path:'datasearch.xml')
+                      s3Upload(file:env.WORKSPACE + '/sodata/datasearch.xml', bucket:'ch.so.agi.sodata-' + ENV, path:'datasearch.xml', acl:'PublicRead')
                       }
                   }
               }
