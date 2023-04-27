@@ -140,6 +140,7 @@ pipeline {
               }
           }
           stage ('Restart the pods') {
+              when { expression { params.RESTART_ONLY || !params.IMAGE_ONLY } }
               steps {
                   sh """
                       oc rollout latest dc/${appName} -n ${params.NAMESPACE}
