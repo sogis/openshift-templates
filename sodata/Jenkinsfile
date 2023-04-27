@@ -77,14 +77,6 @@ pipeline {
                 """
              }
         }
-        stage ('Apply configuration') {
-            when { expression { !params.RESTART_ONLY } }
-            steps {
-                sh """
-                    oc process -f ${appName}/${appName}.yaml --param-file=${appName}/${appName}_${environment}.params | oc apply -f - -n ${params.NAMESPACE}
-                 """
-            }
-        }
         stage ('Create Datensuche XML File') {
             when { expression { !params.RESTART_ONLY && !params.IMAGE_ONLY } }
             steps {
@@ -147,6 +139,14 @@ pipeline {
                   archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
                   }
               }
+          stage ('Apply configuration') {
+              when { expression { !params.RESTART_ONLY } }
+              steps {
+                  sh """
+                      oc process -f ${appName}/${appName}.yaml --param-file=${appName}/${appName}_${environment}.params | oc apply -f - -n ${params.NAMESPACE}
+                   """
+              }
+          }
           stage ( 'Wait for rollout to finish' ) {
               steps {
                   sh """
