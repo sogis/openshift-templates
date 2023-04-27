@@ -426,10 +426,6 @@ objects:
             proxy_set_header   Connection "upgrade";
         }
 
-        location /av_datenabgabe {
-            return 301  https://so.ch/verwaltung/bau-und-justizdepartement/amt-fuer-geoinformation/geoportal/av-daten/;
-        }
-
         location /avgbs2mtab {
             proxy_set_header 'X-FORWARDED-HOST' '${BASEURL}';
             proxy_set_header 'X-FORWARDED-PREFIX' '/avgbs2mtab';
