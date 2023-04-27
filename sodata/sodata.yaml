@@ -9,7 +9,7 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: ${APPNAME}-extended
+    name: ${APPNAME}
     labels:
       app: ${APPNAME}
   spec:
@@ -38,6 +38,17 @@ objects:
         labels:
           app: ${APPNAME}
       spec:
+        initContainers:
+        - name: init-datasearch
+          image: bellsoft/alpaquita-linux-base-stream-glibc
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c', 'wget -O /config/datasearch.xml $CONFIGFILE_URL']
+          env:
+          - name: CONFIGFILE_URL
+            value: https://s3.eu-central-1.amazonaws.com/ch.so.agi.sodata-prod/datasearch.xml
+          volumeMounts:
+          - name: config-dir
+            mountPath: /config
         containers:
         - name: ${APPNAME}
           ## Define HealthChecks. Ideally the timeoutSeconds for the readiness Probe should be shorter than for the liveness Probe or you have different Probes for the checks
@@ -62,6 +73,12 @@ objects:
             requests:
               cpu: ${CPU_REQUEST}
               memory: ${MEMORY_REQUEST}
+          volumeMounts:
+          - name: config-dir
+            mountPath: /config
+        volumes:
+        - emptyDir: {}
+          name: config-dir
     triggers:
     - type: ConfigChange
     - type: ImageChange
@@ -71,7 +88,7 @@ objects:
         - ${APPNAME}
         from:
           kind: ImageStreamTag
-          name: ${APPNAME}-extended:${TAG}
+          name: ${APPNAME}:${TAG}
 - apiVersion: v1
   kind: Service
   metadata:
@@ -100,46 +117,16 @@ objects:
     tls:
       termination: edge
       insecureEdgeTerminationPolicy: Redirect
-- apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    name: ${APPNAME}-extended
-  spec: 
-    successfulBuildsHistoryLimit: 1
-    failedBuildsHistoryLimit: 2
-    output:
-      to:
-        kind: ImageStreamTag
-        name: ${APPNAME}-extended:${TAG}
-    source:
-      binary: {}
-      type: Binary
-    strategy:
-      type: Docker
-      dockerStrategy:
-        env:
-        - name: BUILD_LOGLEVEL
-          value: "5"
-        from:
-          kind: DockerImage
-          name: ${BASEIMAGE}:${BASEIMAGE_TAG}
-        pullSecret:
-          name: sogis-pull-secret
-        noCache: false
 parameters:
 - name: APPNAME
   description: Name of the App
   required: true
 - name: IMAGENAME
-  description: Name of the extended docker output image (e.g. sogis/my-image)
+  description: Name of the docker image (e.g. sogis/my-image)
   required: true
 - name: TAG
   description: The Docker image tag to use (e.g. latest)
   value: latest
-- name: BASEIMAGE
-  description: Name of the docker base image (e.g. sogis/my-image)
-- name: BASEIMAGE_TAG
-  description: The docker image tag to use (e.g. latest)
 - name: IMPORT_POLICY_SCHEDULED
   description: Regularly check for changed image?
   value: 'false'

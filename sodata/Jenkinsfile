@@ -144,22 +144,7 @@ pipeline {
                   withAWS(credentials:env.NAMESPACE_JENKINS + '-jenkins-sodata-aws-secret', region:'eu-central-1') {
                       s3Upload(file:env.WORKSPACE + '/sodata/datasearch.xml', bucket:'ch.so.agi.sodata-' + ENV, path:'datasearch.xml', acl:'PublicRead')
                       }
-                  }
-              }
-          stage ('Build extended Image' ) {
-              when { expression { !params.RESTART_ONLY } }
-              steps {
-                  script {
-                      if (!params.RESTART_ONLY) { 
-                          withAWS(credentials:env.NAMESPACE_JENKINS + '-jenkins-sodata-aws-secret', region:'eu-central-1') {
-                              s3Download(file:'sodata/datasearch.xml', bucket:'ch.so.agi.sodata-' + ENV, path:'datasearch.xml', force:true)
-                              }
-                          sh """ 
-                              oc start-build ${appName}-extended -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
-                          """
-                          archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
-                          }
-                      }
+                  archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
                   }
               }
           stage ( 'Wait for rollout to finish' ) {
