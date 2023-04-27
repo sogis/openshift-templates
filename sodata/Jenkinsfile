@@ -154,6 +154,11 @@ pipeline {
                   """
                   }
               }
+          stage ( 'Trigger sodata-api Pipeline' ) {
+              steps {
+                  build job: 'agi-apps/sodata-api', parameters: [ string(name: 'NAMESPACE', value: params.NAMESPACE) ] 
+                  }
+              }
         }
     post {
         unsuccessful {
