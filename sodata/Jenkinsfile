@@ -69,14 +69,6 @@ pipeline {
                     }
                 }
             }
-        stage ('Restart the pods') {
-            when { expression { params.RESTART_ONLY } }
-            steps {
-                sh """
-                    oc rollout latest dc/${appName} -n ${params.NAMESPACE}
-                """
-             }
-        }
         stage ('Create Datensuche XML File') {
             when { expression { !params.RESTART_ONLY && !params.IMAGE_ONLY } }
             steps {
@@ -146,6 +138,13 @@ pipeline {
                       oc process -f ${appName}/${appName}.yaml --param-file=${appName}/${appName}_${environment}.params | oc apply -f - -n ${params.NAMESPACE}
                    """
               }
+          }
+          stage ('Restart the pods') {
+              steps {
+                  sh """
+                      oc rollout latest dc/${appName} -n ${params.NAMESPACE}
+                  """
+               }
           }
           stage ( 'Wait for rollout to finish' ) {
               steps {
