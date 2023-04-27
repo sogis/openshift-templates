@@ -1,8 +1,6 @@
 APPNAME=sodata
-IMAGENAME=image-registry.openshift-image-registry.svc:5000/agi-apps-test/sodata-extended
+IMAGENAME=sogis/sodata
 TAG=latest
-BASEIMAGE=sogis/sodata
-BASEIMAGE_TAG=latest
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=0
@@ -10,3 +8,4 @@ CPU_LIMIT=0
 MEMORY_REQUEST=0
 MEMORY_LIMIT=0
 HOSTNAME=data-t.geo.so.ch
+CONFIGFILE_URL=https://s3.eu-central-1.amazonaws.com/ch.so.agi.sodata-test/datasearch.xml

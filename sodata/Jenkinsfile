@@ -69,22 +69,6 @@ pipeline {
                     }
                 }
             }
-        stage ('Restart the pods') {
-            when { expression { params.RESTART_ONLY } }
-            steps {
-                sh """
-                    oc rollout latest dc/${appName} -n ${params.NAMESPACE}
-                """
-             }
-        }
-        stage ('Apply configuration') {
-            when { expression { !params.RESTART_ONLY } }
-            steps {
-                sh """
-                    oc process -f ${appName}/${appName}.yaml --param-file=${appName}/${appName}_${environment}.params | oc apply -f - -n ${params.NAMESPACE}
-                 """
-            }
-        }
         stage ('Create Datensuche XML File') {
             when { expression { !params.RESTART_ONLY && !params.IMAGE_ONLY } }
             steps {
@@ -144,24 +128,25 @@ pipeline {
                   withAWS(credentials:env.NAMESPACE_JENKINS + '-jenkins-sodata-aws-secret', region:'eu-central-1') {
                       s3Upload(file:env.WORKSPACE + '/sodata/datasearch.xml', bucket:'ch.so.agi.sodata-' + ENV, path:'datasearch.xml', acl:'PublicRead')
                       }
+                  archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
                   }
               }
-          stage ('Build extended Image' ) {
+          stage ('Apply configuration') {
               when { expression { !params.RESTART_ONLY } }
               steps {
-                  script {
-                      if (!params.RESTART_ONLY) { 
-                          withAWS(credentials:env.NAMESPACE_JENKINS + '-jenkins-sodata-aws-secret', region:'eu-central-1') {
-                              s3Download(file:'sodata/datasearch.xml', bucket:'ch.so.agi.sodata-' + ENV, path:'datasearch.xml', force:true)
-                              }
-                          sh """ 
-                              oc start-build ${appName}-extended -n ${NAMESPACE} --from-dir $env.WORKSPACE/sodata --wait
-                          """
-                          archiveArtifacts artifacts: 'sodata/datasearch.xml', onlyIfSuccessful: true, allowEmptyArchive: true
-                          }
-                      }
-                  }
+                  sh """
+                      oc process -f ${appName}/${appName}.yaml --param-file=${appName}/${appName}_${environment}.params | oc apply -f - -n ${params.NAMESPACE}
+                   """
               }
+          }
+          stage ('Restart the pods') {
+              when { expression { params.RESTART_ONLY || !params.IMAGE_ONLY } }
+              steps {
+                  sh """
+                      oc rollout latest dc/${appName} -n ${params.NAMESPACE}
+                  """
+               }
+          }
           stage ( 'Wait for rollout to finish' ) {
               steps {
                   sh """
