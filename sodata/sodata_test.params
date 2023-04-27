@@ -8,3 +8,4 @@ CPU_LIMIT=0
 MEMORY_REQUEST=0
 MEMORY_LIMIT=0
 HOSTNAME=data-t.geo.so.ch
+CONFIGFILE_URL=https://s3.eu-central-1.amazonaws.com/ch.so.agi.sodata-test/datasearch.xml

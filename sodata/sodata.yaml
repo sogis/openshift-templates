@@ -40,12 +40,12 @@ objects:
       spec:
         initContainers:
         - name: init-datasearch
-          image: bellsoft/alpaquita-linux-base-stream-glibc
+          image: bellsoft/alpaquita-linux-base:stream-glibc
           imagePullPolicy: IfNotPresent
           command: ['sh', '-c', 'wget -O /config/datasearch.xml $CONFIGFILE_URL']
           env:
           - name: CONFIGFILE_URL
-            value: https://s3.eu-central-1.amazonaws.com/ch.so.agi.sodata-prod/datasearch.xml
+            value: ${CONFIGFILE_URL}
           volumeMounts:
           - name: config-dir
             mountPath: /config
@@ -147,3 +147,6 @@ parameters:
   required: true
 - name: HOSTNAME
   description: The hostname for the route
+- name: CONFIGFILE_URL
+  description: URL to the datasearch.xml configuration file
+  required: true
