@@ -47,7 +47,7 @@ objects:
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 60
-            periodSeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 1
           livenessProbe:
             httpGet:
@@ -55,7 +55,7 @@ objects:
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 10
-            periodSeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 1
           ## Define the desired Resources for your container in the paramter file. They should be different in test, int and prod environment
           resources:
