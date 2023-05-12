@@ -1,7 +1,9 @@
 // Jenkinsfile adapted for GRETL platform
 def appName = 'jenkins'
-def templateFilename = env.JOB_BASE_NAME
-def environment = params.NAMESPACE.substring(params.NAMESPACE.lastIndexOf('-') + 1)
+def templateFilename = env.JOB_NAME.split('/').last()
+// Set namespace to params.NAMESPACE if set (for backwards compatibility) or get it from the Jenkins
+def namespace = params.NAMESPACE ?: env.JOB_NAME.split('/').first()
+def environment = namespace.substring(namespace.lastIndexOf('-') + 1)
 
 pipeline {
     agent any
@@ -22,34 +24,34 @@ pipeline {
         stage('Restart the pods') {
             when { expression { params.RESTART_ONLY } }
             steps {
-                sh "oc rollout latest dc/${appName} -n ${params.NAMESPACE}"
+                sh "oc rollout latest dc/${appName} -n ${namespace}"
             }
         }
         // Update the ImageStream tags (needed for tracking tags like "latest" or "v2.1")
         stage('Update ImageStream tags') {
             when { expression { !params.RESTART_ONLY } }
             steps {
-                sh "oc import-image jenkins-controller --all --confirm -o name -n ${params.NAMESPACE}"
-                sh "oc import-image jenkins-agent --all --confirm -o name -n ${params.NAMESPACE}"
-                sh "oc import-image gretl --all --confirm -o name -n ${params.NAMESPACE}"
+                sh "oc import-image jenkins-controller --all --confirm -o name -n ${namespace}"
+                sh "oc import-image jenkins-agent --all --confirm -o name -n ${namespace}"
+                sh "oc import-image gretl --all --confirm -o name -n ${namespace}"
             }
         }
         stage('Apply configuration') {
             when { expression { !params.RESTART_ONLY } }
             steps {
-                sh "oc process -f ${templateFilename}/${templateFilename}.yaml --param-file=${templateFilename}/${templateFilename}_${environment}.params | oc apply -f - -n ${params.NAMESPACE}"
+                sh "oc process -f ${templateFilename}/${templateFilename}.yaml --param-file=${templateFilename}/${templateFilename}_${environment}.params | oc apply -f - -n ${namespace}"
             }
         }
         stage('Wait for rollout to finish') {
             steps {
-                sh "sleep 2 && oc rollout status dc/${appName} -n ${params.NAMESPACE}"
+                sh "sleep 2 && oc rollout status dc/${appName} -n ${namespace}"
             }
         }
     }
     post {
         always {
-            sh "oc status --suggest -n ${params.NAMESPACE}"
-            script { currentBuild.description = "${params.NAMESPACE}, branch: ${params.BRANCH}" }
+            sh "oc status --suggest -n ${namespace}"
+            script { currentBuild.description = "${namespace}, branch: ${params.BRANCH}" }
         }
     }
 }
