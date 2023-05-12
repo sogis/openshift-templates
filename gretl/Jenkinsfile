@@ -7,6 +7,9 @@ def environment = namespace.substring(namespace.lastIndexOf('-') + 1)
 
 pipeline {
     agent any
+    options {
+        buildDiscarder logRotator(numToKeepStr: '30')
+    }
     parameters {
         booleanParam(
             name: 'RESTART_ONLY',
