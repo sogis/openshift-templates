@@ -7,6 +7,19 @@ def environment = namespace.substring(namespace.lastIndexOf('-') + 1)
 
 pipeline {
     agent any
+    parameters {
+        booleanParam(
+            name: 'RESTART_ONLY',
+            description: 'Nur Pods neu starten (keine Änderung an der DeploymentConfig vornehmen)',
+            defaultValue: false
+        )
+        string(
+            name: 'BRANCH',
+            description: 'Branch, der ausgecheckt werden soll',
+            defaultValue: 'master',
+            trim: true
+        )
+    }
     stages {
         stage('Checkout branch') {
             steps {
