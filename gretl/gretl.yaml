@@ -108,7 +108,7 @@ objects:
     strategy:
       type: Rolling
       rollingParams:
-        timeoutSeconds: 90
+        timeoutSeconds: 120
     template:
       metadata:
         labels:
