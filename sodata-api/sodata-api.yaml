@@ -58,7 +58,7 @@ objects:
               path: /actuator/health
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 3
+            initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 1
           livenessProbe:
@@ -66,7 +66,7 @@ objects:
               path: /actuator/health
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 5
+            initialDelaySeconds: 8
             periodSeconds: 10
             timeoutSeconds: 1
           resources:
