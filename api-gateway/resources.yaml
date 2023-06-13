@@ -451,6 +451,10 @@ objects:
             proxy_pass http://interlis-repository.agi-apps-${ENVIRONMENT}.svc/;
         }
 
+        location /usabilityhub/ {
+            proxy_pass http://usabilityhub.agi-apps-${ENVIRONMENT}.svc/;
+        }
+
         location /repochecker {
             proxy_set_header 'X-FORWARDED-PREFIX' '/repochecker';
             proxy_pass http://interlis-repo-checker.agi-apps-${ENVIRONMENT}.svc/;
