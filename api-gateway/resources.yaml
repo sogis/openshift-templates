@@ -234,6 +234,7 @@ objects:
             if ( $arg_BBOX ~ (-) ) {
                 return 422;
             }
+            mirror /mirror/qgis-server-3;
             proxy_pass http://ogc-service.${NAMESPACE}.svc/ows/somap;
             proxy_cache my_cache;
             proxy_cache_valid 200 30m;
@@ -435,6 +436,11 @@ objects:
 
         location /standortkarte/ {
             proxy_pass http://standortkarte.agi-apps-${ENVIRONMENT}.svc/;
+        }
+
+        location = /mirror/qgis-server-3 {
+            internal;
+            proxy_pass http://qgis-server-3.${NAMESPACE}.svc/ows/qgis3-somap;
         }
 
         location /modelfinder/ {
