@@ -207,6 +207,12 @@ objects:
             if ( $arg_CRS ~ (EPSG:21781|EPSG%3A21781) ) {
                 return 410;
             }
+            if ( $arg_SRS ~ (CRS:84|CRS%3A84) ) {
+                return 410;
+            }
+            if ( $arg_CRS ~ (CRS:84|CRS%3A84) ) {
+                return 410;
+            }
             if ( $arg_WIDTH = 1 ) {
                 return 422;
             }
@@ -223,6 +229,12 @@ objects:
                 return 410;
             }
             if ( $arg_CRS ~ (EPSG:21781|EPSG%3A21781) ) {
+                return 410;
+            }
+            if ( $arg_SRS ~ (CRS:84|CRS%3A84) ) {
+                return 410;
+            }
+            if ( $arg_CRS ~ (CRS:84|CRS%3A84) ) {
                 return 410;
             }
             if ( $arg_WIDTH = 1 ) {
@@ -244,6 +256,12 @@ objects:
                 return 410;
             }
             if ( $arg_CRS ~ (EPSG:21781|EPSG%3A21781) ) {
+                return 410;
+            }
+            if ( $arg_SRS ~ (CRS:84|CRS%3A84) ) {
+                return 410;
+            }
+            if ( $arg_CRS ~ (CRS:84|CRS%3A84) ) {
                 return 410;
             }
             if ( $arg_WIDTH = 1 ) {
