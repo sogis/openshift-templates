@@ -208,10 +208,10 @@ objects:
                 return 410;
             }
             if ( $arg_SRS ~ (CRS:84|CRS%3A84) ) {
-                return 410;
+                return 405;
             }
             if ( $arg_CRS ~ (CRS:84|CRS%3A84) ) {
-                return 410;
+                return 405;
             }
             if ( $arg_WIDTH = 1 ) {
                 return 422;
@@ -232,10 +232,10 @@ objects:
                 return 410;
             }
             if ( $arg_SRS ~ (CRS:84|CRS%3A84) ) {
-                return 410;
+                return 405;
             }
             if ( $arg_CRS ~ (CRS:84|CRS%3A84) ) {
-                return 410;
+                return 405;
             }
             if ( $arg_WIDTH = 1 ) {
                 return 422;
@@ -259,10 +259,10 @@ objects:
                 return 410;
             }
             if ( $arg_SRS ~ (CRS:84|CRS%3A84) ) {
-                return 410;
+                return 405;
             }
             if ( $arg_CRS ~ (CRS:84|CRS%3A84) ) {
-                return 410;
+                return 405;
             }
             if ( $arg_WIDTH = 1 ) {
                 return 422;
