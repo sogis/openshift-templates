@@ -40,22 +40,31 @@ objects:
       spec:
         containers:
         - name: ${APPNAME}
+          env:
+          - name: TZ
+            value: Europe/Zurich
+          - name: STORAGE_SERVICE
+            value: s3
+          - name: WORK_DIRECTORY
+            value: /ch.so.agi.ilivalidator
+          - name: JOBRUNR_WORKER_COUNT
+            value: '1'
           envFrom:
           - secretRef:
               name: ${APPNAME}-aws-secret
           livenessProbe:
             failureThreshold: 3
             httpGet:
-              path: /ilivalidator/actuator/health
-              port: 8888
+              path: /actuator/health
+              port: 8080
               scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 10
             timeoutSeconds: 1
           readinessProbe:
             httpGet:
-              path: /ilivalidator/actuator/health
-              port: 8888
+              path: /actuator/health
+              port: 8080
               scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 10
@@ -92,9 +101,9 @@ objects:
       app: ${APPNAME}
     ports:
     - protocol: TCP
-      name: 80-tcp
-      port: 80
-      targetPort: 8888
+      name: 8080-tcp
+      port: 8080
+      targetPort: 8080
 parameters:
   - name: APPNAME
     description: Name of the App
