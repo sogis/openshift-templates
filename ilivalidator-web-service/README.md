@@ -40,7 +40,7 @@ metadata:
   name: ilivalidator-web-service-aws-secret
   labels:
     app: ilivalidator-web-service
-data:
+stringData:
   AWS_ACCESS_KEY_ID: xy
   AWS_SECRET_ACCESS_KEY: xy
 ```
