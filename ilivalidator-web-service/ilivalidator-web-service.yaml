@@ -104,6 +104,18 @@ objects:
       name: 8080-tcp
       port: 8080
       targetPort: 8080
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}-dashboard
+  spec:
+    selector:
+      app: ${APPNAME}
+    ports:
+    - protocol: TCP
+      name: 8000-tcp
+      port: 8000
+      targetPort: 8000
 parameters:
   - name: APPNAME
     description: Name of the App
