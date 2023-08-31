@@ -69,10 +69,10 @@ objects:
               memory: ${MEMORY_REQUEST}
           volumeMounts:
           - mountPath: /tmp
-            name: ${APPNAME}-web-service-volume-1
+            name: ${APPNAME}-tmp-volume
         volumes:
         - emptyDir: {}
-          name: ${APPNAME}-web-service-volume-1
+          name: ${APPNAME}-tmp-volume
     triggers:
     - type: ConfigChange
     - type: ImageChange
