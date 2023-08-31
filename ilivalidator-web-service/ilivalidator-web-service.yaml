@@ -95,6 +95,86 @@ objects:
           kind: ImageStreamTag
           name: ${APPNAME}:${TAG}
 - apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}-worker
+  spec:
+    replicas: ${{REPLICA_COUNT_WORKER}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
+      name: ${APPNAME}-worker
+    strategy:
+      type: Rolling
+      rollingParams:
+        timeoutSeconds: 60
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+          name: ${APPNAME}-worker
+      spec:
+        containers:
+        - name: ${APPNAME}
+          env:
+          - name: TZ
+            value: Europe/Zurich
+          - name: STORAGE_SERVICE
+            value: s3
+          - name: WORK_DIRECTORY
+            value: /ch.so.agi.ilivalidator
+          - name: JOBRUNR_DASHBOARD_ENABLED
+            value: 'false'
+          - name: REST_API_ENABLED
+            value: 'false'
+          - name: UNPACK_CONFIG_FILES
+            value: 'false'
+          - name: CLEANER_ENABLED
+            value: 'false'
+          envFrom:
+          - secretRef:
+              name: ${APPNAME}-aws-secret
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT_WORKER}
+              memory: ${MEMORY_LIMIT_WORKER}
+            requests:
+              cpu: ${CPU_REQUEST_WORKER}
+              memory: ${MEMORY_REQUEST_WORKER}
+          volumeMounts:
+          - mountPath: /tmp
+            name: ${APPNAME}-worker-tmp-volume
+        volumes:
+        - emptyDir: {}
+          name: ${APPNAME}-worker-tmp-volume
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
   kind: Service
   metadata:
     name: ${APPNAME}
@@ -147,4 +227,19 @@ parameters:
     required: true
   - name: MEMORY_REQUEST
     description: The minimum amount of memory the container is guaranteed.
+    required: true
+  - name: REPLICA_COUNT_WORKER
+    description: Number of replicas to run (worker)
+    required: true
+  - name: CPU_LIMIT_WORKER
+    description: The maximum amount of CPU the container is allowed to use when running (worker).
+    required: true
+  - name: MEMORY_LIMIT_WORKER
+    description: The maximum amount of memory the container is allowed to use when running (worker).
+    required: true
+  - name: CPU_REQUEST_WORKER
+    description: The minimum amount of CPU the container is guaranteed (worker).
+    required: true
+  - name: MEMORY_REQUEST_WORKER
+    description: The minimum amount of memory the container is guaranteed (worker).
     required: true
