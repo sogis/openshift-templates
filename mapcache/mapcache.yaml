@@ -228,7 +228,7 @@ parameters:
 - name: SERVICE_URL
   description: The base URL of the MapCache service (e.g. https://geo-t.so.ch/api)
 - name: SOURCE_URL
-  description: The base URL of the source WMS (e.g. http://ogc-service.gdi-test.svc/ows/somap)
+  description: The base URL of the source WMS (e.g. http://qgis-server.gdi-test.svc/ows/somap)
   required: true
 - name: APACHE_ACCESS_LOG_ENABLED
   description: Print Apache access log to standard output
