@@ -29,6 +29,7 @@ objects:
     revisionHistoryLimit: 3
     selector:
       app: ${APPNAME}
+      name: ${APPNAME}
     strategy:
       type: Rolling
       rollingParams:
@@ -37,6 +38,7 @@ objects:
       metadata:
         labels:
           app: ${APPNAME}
+          name: ${APPNAME}
       spec:
         containers:
         - name: ${APPNAME}
@@ -99,6 +101,7 @@ objects:
   spec:
     selector:
       app: ${APPNAME}
+      name: ${APPNAME}
     ports:
     - protocol: TCP
       name: web
@@ -111,6 +114,7 @@ objects:
   spec:
     selector:
       app: ${APPNAME}
+      name: ${APPNAME}
     ports:
     - protocol: TCP
       name: dashboard
