@@ -49,8 +49,8 @@ objects:
             value: s3
           - name: WORK_DIRECTORY
             value: /ch.so.agi.ilivalidator
-          - name: JOBRUNR_WORKER_COUNT
-            value: '1'
+          - name: JOBRUNR_SERVER_ENABLED
+            value: 'true'
           envFrom:
           - secretRef:
               name: ${APPNAME}-aws-secret
