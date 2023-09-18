@@ -14,7 +14,7 @@ and `ch.so.agi.hintergrundkarte_sw` tile sets
 of the most recently imported municipalities:
 
 ```
-oc delete job mapcache-seeder-manual ; oc create job mapcache-seeder-manual --from=cronjob/mapcache-seeder -n my-namespace
+oc delete job mapcache-seeder-manual -n my-namespace ; oc create job mapcache-seeder-manual --from=cronjob/mapcache-seeder -n my-namespace
 ```
 
 If you just want to seed certain zoom levels,
@@ -23,6 +23,7 @@ proceed as follows:
 
 * Export the definition of the seeder cron job to a YAML file:
   ```
+  oc project my-namespace
   oc create job manual-seed-job --dry-run=client --from cronjob/mapcache-seeder -o yaml > manual-seed-job.yaml
   ```
 * Now edit the `manual-seed-job.yaml` as required.
