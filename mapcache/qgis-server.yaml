@@ -90,6 +90,9 @@ objects:
           volumeMounts:
           - name: qgs-resources
             mountPath: /data
+          - name: qgs-resources
+            mountPath: /usr/local/share/fonts
+            subPath: truetype
           - name: geodata
             mountPath: /geodata
           - name: qgis-server-db-secret-volume
