@@ -165,7 +165,7 @@ objects:
                   /bin/bash,
                   -c,
                   mapcache_seed -b -c /mapcache/mapcache.xml -t ch.so.agi.hintergrundkarte_sw
-                    -f -z $ZOOM_LEVELS_SEEDER -n 4 -d PG:service=pub -s "$SQL_EXPRESSION" ;
+                    -f -z $ZOOM_LEVELS_SEEDER -n 4 -d PG:service=pub -s "$SQL_EXPRESSION" &&
                     mapcache_seed -b -c /mapcache/mapcache.xml -t ch.so.agi.hintergrundkarte_farbig
                     -f -z $ZOOM_LEVELS_SEEDER -n 4 -d PG:service=pub -s "$SQL_EXPRESSION"
                 ]
