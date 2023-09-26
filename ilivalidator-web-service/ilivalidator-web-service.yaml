@@ -101,8 +101,8 @@ objects:
       app: ${APPNAME}
     ports:
     - protocol: TCP
-      name: 8080-tcp
-      port: 8080
+      name: web
+      port: 80
       targetPort: 8080
 - apiVersion: v1
   kind: Service
@@ -113,8 +113,8 @@ objects:
       app: ${APPNAME}
     ports:
     - protocol: TCP
-      name: 8000-tcp
-      port: 8000
+      name: dashboard
+      port: 80
       targetPort: 8000
 parameters:
   - name: APPNAME
