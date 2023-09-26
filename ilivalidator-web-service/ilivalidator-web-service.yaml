@@ -46,7 +46,7 @@ objects:
           - name: TZ
             value: Europe/Zurich
           - name: JOBRUNR_SERVER_ENABLED
-            value: 'true'
+            value: 'false'
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -72,11 +72,13 @@ objects:
               cpu: ${CPU_REQUEST}
               memory: ${MEMORY_REQUEST}
           volumeMounts:
-          - mountPath: /tmp
-            name: ${APPNAME}-tmp-volume
+          - mountPath: /work
+            subPath: ${APPNAME}
+            name: ${APPNAME}-workdir-volume
         volumes:
-        - emptyDir: {}
-          name: ${APPNAME}-tmp-volume
+        - name: ${APPNAME}-workdir-volume
+          persistentVolumeClaim:
+            claimName: ${WORK_DIRECTORY_PVC_NAME}
     triggers:
     - type: ConfigChange
     - type: ImageChange
@@ -145,11 +147,13 @@ objects:
               cpu: ${CPU_REQUEST_WORKER}
               memory: ${MEMORY_REQUEST_WORKER}
           volumeMounts:
-          - mountPath: /tmp
-            name: ${APPNAME}-worker-tmp-volume
+          - mountPath: /work
+            subPath: ${APPNAME}
+            name: ${APPNAME}-workdir-volume
         volumes:
-        - emptyDir: {}
-          name: ${APPNAME}-worker-tmp-volume
+        - name: ${APPNAME}-workdir-volume
+          persistentVolumeClaim:
+            claimName: ${WORK_DIRECTORY_PVC_NAME}
     triggers:
     - type: ConfigChange
     - type: ImageChange
@@ -213,6 +217,9 @@ parameters:
     required: true
   - name: MEMORY_REQUEST
     description: The minimum amount of memory the container is guaranteed.
+    required: true
+  - name: WORK_DIRECTORY_PVC_NAME
+    description: Name of the Persistent Volume Claim for the work directory
     required: true
   - name: REPLICA_COUNT_WORKER
     description: Number of replicas to run (worker)
