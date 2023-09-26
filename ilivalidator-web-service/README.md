@@ -27,24 +27,6 @@ oc policy add-role-to-user admin ... -n my-namespace
 oc policy add-role-to-user view ... -n my-namespace
 ```
 
-## Create secret
-
-In a separate folder, create a file `ilivalidator-web-service-aws-secret.yaml`
-containing a secret according to the following template.
-Then run `oc apply -f path/to/ilivalidator-web-service-aws-secret.yaml -n my-namespace`.
-
-```
-kind: Secret
-apiVersion: v1
-metadata:
-  name: ilivalidator-web-service-aws-secret
-  labels:
-    app: ilivalidator-web-service
-stringData:
-  AWS_ACCESS_KEY_ID: xy
-  AWS_SECRET_ACCESS_KEY: xy
-```
-
 ## Apply template
 
 ```

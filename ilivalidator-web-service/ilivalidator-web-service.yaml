@@ -45,15 +45,8 @@ objects:
           env:
           - name: TZ
             value: Europe/Zurich
-          - name: STORAGE_SERVICE
-            value: s3
-          - name: WORK_DIRECTORY
-            value: /ch.so.agi.ilivalidator
           - name: JOBRUNR_SERVER_ENABLED
             value: 'true'
-          envFrom:
-          - secretRef:
-              name: ${APPNAME}-aws-secret
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -119,10 +112,6 @@ objects:
           env:
           - name: TZ
             value: Europe/Zurich
-          - name: STORAGE_SERVICE
-            value: s3
-          - name: WORK_DIRECTORY
-            value: /ch.so.agi.ilivalidator
           - name: JOBRUNR_DASHBOARD_ENABLED
             value: 'false'
           - name: REST_API_ENABLED
@@ -131,9 +120,6 @@ objects:
             value: 'false'
           - name: CLEANER_ENABLED
             value: 'false'
-          envFrom:
-          - secretRef:
-              name: ${APPNAME}-aws-secret
           livenessProbe:
             failureThreshold: 3
             httpGet:
