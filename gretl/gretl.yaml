@@ -309,7 +309,7 @@ objects:
             <image>jenkins-agent:${JENKINS_AGENT_IMAGE_TAG}</image>
             <privileged>false</privileged>
             <alwaysPullImage>false</alwaysPullImage>
-            <workingDir>/tmp</workingDir>
+            <workingDir>/home/jenkins/agent</workingDir>
             <command></command>
             <args>${computer.jnlpmac} ${computer.name}</args>
             <ttyEnabled>false</ttyEnabled>
@@ -320,7 +320,7 @@ objects:
             <image>gretl:${GRETL_IMAGE_TAG}</image>
             <privileged>false</privileged>
             <alwaysPullImage>false</alwaysPullImage>
-            <workingDir>/tmp</workingDir>
+            <workingDir>/home/gradle/job</workingDir>
             <command>sleep</command>
             <args>24h</args>
             <ttyEnabled>false</ttyEnabled>
@@ -397,7 +397,7 @@ objects:
             <image>jenkins-agent:${JENKINS_AGENT_IMAGE_TAG}</image>
             <privileged>false</privileged>
             <alwaysPullImage>false</alwaysPullImage>
-            <workingDir>/workspace</workingDir>
+            <workingDir>/home/jenkins/agent</workingDir>
             <command></command>
             <args>${computer.jnlpmac} ${computer.name}</args>
             <ttyEnabled>false</ttyEnabled>
@@ -408,7 +408,7 @@ objects:
             <image>gretl:${GRETL_IMAGE_TAG}</image>
             <privileged>false</privileged>
             <alwaysPullImage>false</alwaysPullImage>
-            <workingDir>/workspace</workingDir>
+            <workingDir>/home/gradle/job</workingDir>
             <command>sleep</command>
             <args>24h</args>
             <ttyEnabled>false</ttyEnabled>
@@ -480,7 +480,7 @@ objects:
             <image>jenkins-agent:${JENKINS_AGENT_IMAGE_TAG}</image>
             <privileged>false</privileged>
             <alwaysPullImage>false</alwaysPullImage>
-            <workingDir>/tmp</workingDir>
+            <workingDir>/home/jenkins/agent</workingDir>
             <command></command>
             <args>${computer.jnlpmac} ${computer.name}</args>
             <ttyEnabled>false</ttyEnabled>
@@ -491,7 +491,7 @@ objects:
             <image>gretl:${GRETL_ADDITIONAL_IMAGE_TAG}</image>
             <privileged>false</privileged>
             <alwaysPullImage>false</alwaysPullImage>
-            <workingDir>/tmp</workingDir>
+            <workingDir>/home/gradle/job</workingDir>
             <command>sleep</command>
             <args>24h</args>
             <ttyEnabled>false</ttyEnabled>
