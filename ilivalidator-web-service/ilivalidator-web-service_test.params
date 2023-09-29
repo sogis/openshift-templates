@@ -1,6 +1,6 @@
 APPNAME=ilivalidator-web-service
 IMAGENAME=sogis/ilivalidator-web-service
-TAG=2.0
+TAG=2
 IMPORT_POLICY_SCHEDULED=true
 REPLICA_COUNT=1
 CPU_REQUEST=0
