@@ -47,6 +47,9 @@ objects:
             value: Europe/Zurich
           - name: JOBRUNR_SERVER_ENABLED
             value: 'false'
+          envFrom:
+          - secretRef:
+              name: ${APPNAME}-dashboard-secret
           livenessProbe:
             failureThreshold: 3
             httpGet:

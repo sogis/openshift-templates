@@ -27,6 +27,24 @@ oc policy add-role-to-user admin ... -n my-namespace
 oc policy add-role-to-user view ... -n my-namespace
 ```
 
+## Create secret
+
+In a separate folder, create a file `ilivalidator-web-service-dashboard-secret.yaml`
+containing a secret according to the following template.
+Then run `oc apply -f path/to/ilivalidator-web-service-dashboard-secret.yaml -n my-namespace`.
+
+```
+kind: Secret
+apiVersion: v1
+metadata:
+  name: ilivalidator-web-service-dashboard-secret
+  labels:
+    app: ilivalidator-web-service
+stringData:
+  JOBRUNR_DASHBOARD_USER: xy
+  JOBRUNR_DASHBOARD_PWD: xy
+```
+
 ## Apply template
 
 ```
