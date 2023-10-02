@@ -17,9 +17,9 @@ objects:
     - from:
         kind: DockerImage
         name: ${IMAGENAME}:${TAG}
-      name: ${TAG}
       importPolicy:
         scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -50,8 +50,7 @@ objects:
           envFrom:
           - secretRef:
               name: ${APPNAME}-dashboard-secret
-          livenessProbe:
-            failureThreshold: 3
+          readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
@@ -59,7 +58,7 @@ objects:
             initialDelaySeconds: 15
             periodSeconds: 10
             timeoutSeconds: 1
-          readinessProbe:
+          livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
@@ -75,9 +74,9 @@ objects:
               cpu: ${CPU_REQUEST}
               memory: ${MEMORY_REQUEST}
           volumeMounts:
-          - mountPath: /work
+          - name: ${APPNAME}-workdir-volume
+            mountPath: /work
             subPath: ${APPNAME}
-            name: ${APPNAME}-workdir-volume
         volumes:
         - name: ${APPNAME}-workdir-volume
           persistentVolumeClaim:
@@ -125,8 +124,7 @@ objects:
             value: 'false'
           - name: CLEANER_ENABLED
             value: 'false'
-          livenessProbe:
-            failureThreshold: 3
+          readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
@@ -134,7 +132,7 @@ objects:
             initialDelaySeconds: 15
             periodSeconds: 10
             timeoutSeconds: 1
-          readinessProbe:
+          livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
@@ -150,9 +148,9 @@ objects:
               cpu: ${CPU_REQUEST_WORKER}
               memory: ${MEMORY_REQUEST_WORKER}
           volumeMounts:
-          - mountPath: /work
+          - name: ${APPNAME}-workdir-volume
+            mountPath: /work
             subPath: ${APPNAME}
-            name: ${APPNAME}-workdir-volume
         volumes:
         - name: ${APPNAME}-workdir-volume
           persistentVolumeClaim:
@@ -172,27 +170,27 @@ objects:
   metadata:
     name: ${APPNAME}
   spec:
+    ports:
+    - name: web
+      port: 80
+      protocol: TCP
+      targetPort: 8080
     selector:
       app: ${APPNAME}
       name: ${APPNAME}
-    ports:
-    - protocol: TCP
-      name: web
-      port: 80
-      targetPort: 8080
 - apiVersion: v1
   kind: Service
   metadata:
     name: ${APPNAME}-dashboard
   spec:
+    ports:
+    - name: dashboard
+      port: 80
+      protocol: TCP
+      targetPort: 8000
     selector:
       app: ${APPNAME}
       name: ${APPNAME}
-    ports:
-    - protocol: TCP
-      name: dashboard
-      port: 80
-      targetPort: 8000
 - apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
@@ -215,7 +213,7 @@ parameters:
     description: Name of the docker image (e.g. sogis/my-image)
     required: true
   - name: TAG
-    description: The docker image to use (e.g. latest)
+    description: The Docker image tag to use (e.g. latest)
     required: true
   - name: IMPORT_POLICY_SCHEDULED
     description: Regularly check for changed image?
@@ -223,17 +221,17 @@ parameters:
   - name: REPLICA_COUNT
     description: Number of replicas to run
     required: true
-  - name: CPU_LIMIT
-    description: The maximum amount of CPU the container is allowed to use when running.
-    required: true
-  - name: MEMORY_LIMIT
-    description: The maximum amount of memory the container is allowed to use when running.
-    required: true
   - name: CPU_REQUEST
     description: The minimum amount of CPU the container is guaranteed.
     required: true
+  - name: CPU_LIMIT
+    description: The maximum amount of CPU the container is allowed to use when running.
+    required: true
   - name: MEMORY_REQUEST
     description: The minimum amount of memory the container is guaranteed.
+    required: true
+  - name: MEMORY_LIMIT
+    description: The maximum amount of memory the container is allowed to use when running.
     required: true
   - name: WORK_DIRECTORY_PVC_NAME
     description: Name of the Persistent Volume Claim for the work directory
@@ -241,17 +239,17 @@ parameters:
   - name: REPLICA_COUNT_WORKER
     description: Number of replicas to run (worker)
     required: true
-  - name: CPU_LIMIT_WORKER
-    description: The maximum amount of CPU the container is allowed to use when running (worker).
-    required: true
-  - name: MEMORY_LIMIT_WORKER
-    description: The maximum amount of memory the container is allowed to use when running (worker).
-    required: true
   - name: CPU_REQUEST_WORKER
     description: The minimum amount of CPU the container is guaranteed (worker).
     required: true
+  - name: CPU_LIMIT_WORKER
+    description: The maximum amount of CPU the container is allowed to use when running (worker).
+    required: true
   - name: MEMORY_REQUEST_WORKER
     description: The minimum amount of memory the container is guaranteed (worker).
+    required: true
+  - name: MEMORY_LIMIT_WORKER
+    description: The maximum amount of memory the container is allowed to use when running (worker).
     required: true
   - name: HOSTNAME
     description: The hostname for the route to the JobRunr dashboard
