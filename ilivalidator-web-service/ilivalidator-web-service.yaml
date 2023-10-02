@@ -193,6 +193,20 @@ objects:
       name: dashboard
       port: 80
       targetPort: 8000
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}-dashboard
+  spec:
+    host: ${HOSTNAME}
+    port:
+      targetPort: dashboard
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
+    to:
+      kind: Service
+      name: ${APPNAME}-dashboard
 parameters:
   - name: APPNAME
     description: Name of the App
@@ -238,4 +252,7 @@ parameters:
     required: true
   - name: MEMORY_REQUEST_WORKER
     description: The minimum amount of memory the container is guaranteed (worker).
+    required: true
+  - name: HOSTNAME
+    description: The hostname for the route to the JobRunr dashboard
     required: true
