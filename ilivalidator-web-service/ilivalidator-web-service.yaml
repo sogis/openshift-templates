@@ -121,7 +121,7 @@ objects:
           - name: REST_API_ENABLED
             value: 'false'
           - name: UNPACK_CONFIG_FILES
-            value: 'false'
+            value: 'true'
           - name: CLEANER_ENABLED
             value: 'false'
           readinessProbe:
