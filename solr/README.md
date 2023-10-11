@@ -308,7 +308,8 @@ werden sollen.)
 ![Einstellungen Documents](documents.png)
 * Anschliessend *Submit Document* drücken
 
-Informationen über die Attribute der *docs* der einzelnen Entities erhält man über eine Abfrage unter *Query*. Im nachfolgenden Beispiel für die Entity *ch_so_afu_naturereigniskataster_prozessraum_wasser*
+Informationen über die Attribute der *docs* der einzelnen Entities erhält man über eine Abfrage unter *Query*. Im nachfolgenden Beispiel für die Entity *ch_so_afu_naturereigniskataster_prozessraum_wasser*,
+die über *facet:\*naturereigniskataster.prozessraum.wasser\** gesucht werden kann.
 ![Abfrage Entity](query.png)
 
 
