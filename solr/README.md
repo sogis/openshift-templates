@@ -298,6 +298,20 @@ Aus Solr Pod ausloggen und folgenden Curl Befehl ausführen, um die Collection n
 curl "http://solr-headless-solr-cloud-test.apps.ocp.so.ch/solr/admin/collections?action=RELOAD&name=gdi"
 ```
 
+### Löschen einer einzelnen entity (z.B. bei doppelten Einträgen)
+
+* Im Solr GUI die collection gdi aufrufen => http://solr-headless-solr-cloud-test.apps.ocp.so.ch/solr/#/gdi/collection-overview
+* Reiter Documents aufrufen => http://solr-headless-solr-cloud-test.apps.ocp.so.ch/solr/#/gdi/documents
+* Folgende Einstellungen unter Documents vornehmen *Document Type* auf *XML* stellen. Alle anderen Felder so lassen.
+* Unter *Document(s)* die Query für die zu löschende Entity eintragen. Für die Eingrenzung entsprechende Parameter aus dem Document auswählen (bspw *facet* wenn alle Einträge einer entity gelöscht
+werden sollen.)
+![Einstellungen Documents](documents.png)
+* Anschliessend *Submit Document* drücken
+
+Informationen über die Attribute der *docs* der einzelnen Entities erhält man über eine Abfrage unter *Query*. Im nachfolgenden Beispiel für die Entity *ch_so_afu_naturereigniskataster_prozessraum_wasser*
+![Abfrage Entity](query.png)
+
+
 ## Disaster Recovery
 Wenn aus irgendeinem Grund beide solr Pods gleichzeitig vorübergehend gelöscht wurden (mussten) oder in keinen State ready mehr kommen, dann können diese wegen der Readiness Probe nicht mehr starten.
 Diese schlägt dann beim solr-0 Pod fehl. solr-1 startet dann gar nicht erst. 
