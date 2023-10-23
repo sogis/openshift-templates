@@ -364,7 +364,7 @@ objects:
 
         location /api/v1/plotinfo/plot_owner {
             #Rate Limit fuer Massenabfrage
-            limit_req zone=ip burst=6 delay=3;
+            limit_req zone=ip burst=12 delay=9;
             limit_req_status 429;
 
             error_page 429   /error.xml;
