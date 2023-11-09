@@ -199,6 +199,7 @@ objects:
         - name: cache-volume
           emptyDir: {}
         - name: log-volume
-          emptyDir: {}
+          emptyDir:
+            defaultMode: 0777
     test: false
     triggers: []
