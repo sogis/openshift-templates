@@ -9,7 +9,7 @@ oc new-project my-namespace
 
 Set secret for pulling images from image registry (optional)
 ```
-oc create secret docker-registry dockerhub-pull-secret --docker-username=xy --docker-password=xy -n my-namespace
+oc create secret docker-registry sogis-pull-secret   --docker-username=dockeruser   --docker-password=password
 oc secrets link default dockerhub-pull-secret --for=pull -n my-namespace
 ```
 
