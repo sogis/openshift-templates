@@ -13,6 +13,9 @@ oc create secret docker-registry dockerhub-pull-secret --docker-username=xy --do
 oc secrets link default dockerhub-pull-secret --for=pull -n my-namespace
 oc secrets link jenkins dockerhub-pull-secret --for=pull -n my-namespace
 ```
+(Please note that the last command can be run successfully
+only after the _jenkins_ service account has been created.
+See a little further down in this document.)
 
 Grant permissions for deploying the app
 from a Jenkins instance running in a different namespace (optional);
@@ -98,6 +101,11 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: jenkins
+```
+
+Now link the _dockerhub-pull-secret_ to the _jenkins_ service account as well:
+```
+oc secrets link jenkins dockerhub-pull-secret --for=pull -n my-namespace
 ```
 
 ## Create Persistent Volume Claim
