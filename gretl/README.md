@@ -171,7 +171,7 @@ oc label configmap gretl-jenkins-ca-certificates app=gretl-platform -n my-namesp
 Place your additional SSH private key in a separate folder.
 Then create a secret from it:
 ```
-oc create --dry-run=client secret general gretl-privatekeys --from-file=id_rsa=myprivatekeyfilename -o yaml > gretl-privatekeys.yaml
+oc create --dry-run=client secret generic gretl-privatekeys --from-file=id_rsa=myprivatekeyfilename -o yaml > gretl-privatekeys.yaml
 ```
 Then run
 ```
