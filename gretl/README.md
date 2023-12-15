@@ -46,10 +46,11 @@ metadata:
   labels:
     app: gretl-platform
 stringData:
-  ORG_GRADLE_PROJECT_dbUserEdit: myusername1
-  ORG_GRADLE_PROJECT_dbPwdEdit: mypassword1
-  ORG_GRADLE_PROJECT_dbUserPub: myusername2
-  ORG_GRADLE_PROJECT_dbPwdPub: mypassword2
+  gradle.properties: |-
+    dbUserEdit=myusername1
+    dbPwdEdit=mypassword1
+    dbUserPub=myusername2
+    dbPwdPub=mypassword2
 ```
 
 ## Create ConfigMap

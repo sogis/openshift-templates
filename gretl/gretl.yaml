@@ -358,8 +358,14 @@ objects:
           envFrom:
             - configMapRef:
                 name: gretl-resources
-            - secretRef:
-                name: gretl-secrets
+          volumeMounts:
+            - name: gretl-secrets-volume
+              mountPath: /home/gradle/.gradle/gradle.properties
+              subPath: gradle.properties
+        volumes:
+          - name: gretl-secrets-volume
+            secret:
+              secretName: gretl-secrets
         </yaml>
       </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
 - apiVersion: v1
@@ -441,8 +447,14 @@ objects:
           envFrom:
             - configMapRef:
                 name: gretl-resources
-            - secretRef:
-                name: gretl-secrets
+          volumeMounts:
+            - name: gretl-secrets-volume
+              mountPath: /home/gradle/.gradle/gradle.properties
+              subPath: gradle.properties
+        volumes:
+          - name: gretl-secrets-volume
+            secret:
+              secretName: gretl-secrets
         </yaml>
       </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
 parameters:
