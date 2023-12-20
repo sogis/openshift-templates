@@ -197,13 +197,22 @@ objects:
         }
 
         location /ows {
-            if ( $arg_WIDTH ~ (1|NaN) ) {
+            if ( $arg_WIDTH = 1 ) {
                 return 422;
             }
-            if ( $arg_HEIGHT ~ (1|NaN) ) {
+            if ( $arg_WIDTH = 'NaN' ) {
                 return 422;
             }
-            if ( $arg_BBOX ~ (-|NaN) ) {
+            if ( $arg_HEIGHT = 1 ) {
+                return 422;
+            }
+            if ( $arg_HEIGHT = 'NaN' ) {
+                return 422;
+            }
+            if ( $arg_BBOX ~ (-) ) {
+                return 422;
+            }
+            if ( $arg_BBOX = 'NaN' ) {
                 return 422;
             }
             proxy_pass http://ogc-service.${NAMESPACE}.svc;
