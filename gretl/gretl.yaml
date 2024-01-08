@@ -338,6 +338,10 @@ objects:
         <nodeProperties/>
         <yaml>
       spec:
+        dnsConfig:
+          nameservers:
+            - 193.135.92.51
+            - 10.36.0.140
         containers:
         - name: jnlp
           resources:
@@ -427,6 +431,10 @@ objects:
         <nodeProperties/>
         <yaml>
       spec:
+        dnsConfig:
+          nameservers:
+            - 193.135.92.51
+            - 10.36.0.140
         containers:
         - name: jnlp
           resources:
