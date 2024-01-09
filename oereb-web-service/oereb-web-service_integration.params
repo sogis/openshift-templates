@@ -1,6 +1,6 @@
 APPNAME=oereb-web-service
 IMAGENAME=sogis/oereb-web-service
-TAG=2.0.1705
+TAG=2.0.1808
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=100m
