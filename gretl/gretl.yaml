@@ -338,6 +338,9 @@ objects:
         <nodeProperties/>
         <yaml>
       spec:
+        dnsConfig:
+          options:
+            - name: use-vc
         containers:
         - name: jnlp
           resources:
@@ -427,6 +430,9 @@ objects:
         <nodeProperties/>
         <yaml>
       spec:
+        dnsConfig:
+          options:
+            - name: use-vc
         containers:
         - name: jnlp
           resources:
