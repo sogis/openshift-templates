@@ -504,8 +504,8 @@ parameters:
     or to install additionally
   value:
     cloudbees-disk-usage-simple:0.10,
-    active-directory:2.27,
-    envinject:2.4.0
+    active-directory:2.34,
+    envinject:2.908.v66a_774b_31d93
 - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
   displayName: Copy plugins of the image to persistent volume
   description: Overwrite the plugins installed in the jenkins persistent volume with the plugins installed in the Jenkins image.
