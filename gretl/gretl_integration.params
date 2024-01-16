@@ -10,7 +10,7 @@ MEMORY_LIMIT=2Gi
 HOSTNAME=gretl-i.so.ch
 ENABLE_OAUTH=false
 # Set to true when installing/updating plugins, set to false for faster Jenkins startup:
-OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS=false
+OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS=true
 JENKINS_PVC_NAME=jenkins2
 JENKINS_AGENT_IMAGE_TAG=4.10
 JENKINS_AGENT_IMAGE_IMPORT_POLICY_SCHEDULED=true
