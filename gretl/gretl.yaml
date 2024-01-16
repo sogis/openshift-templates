@@ -503,7 +503,7 @@ parameters:
   description: List of Jenkins plug-ins to update to a specific version
     or to install additionally
   value:
-    cloudbees-disk-usage-simple:0.10,
+    cloudbees-disk-usage-simple:203.v3f46a_7462b_1a_,
     active-directory:2.34,
     envinject:2.908.v66a_774b_31d93
 - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
