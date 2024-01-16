@@ -510,7 +510,8 @@ parameters:
     github:1.37.3.1,
     jira:3.12,
     active-directory:2.34,
-    envinject:2.908.v66a_774b_31d93
+    envinject:2.908.v66a_774b_31d93,
+    file-parameters:316.va_83a_1221db_a_7
 - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
   displayName: Copy plugins of the image to persistent volume
   description: Overwrite the plugins installed in the jenkins persistent volume with the plugins installed in the Jenkins image.
