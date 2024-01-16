@@ -504,14 +504,8 @@ parameters:
     or to install additionally
   value:
     cloudbees-disk-usage-simple:0.10,
-    mailer:414.vcc4c33714601,
-    script-security:1138.v8e727069a_025,
     active-directory:2.27,
-    email-ext:2.83,
-    envinject:2.4.0,
-    groovy:2.4,
-    job-dsl:1.77,
-    matrix-auth:2.6.8
+    envinject:2.4.0
 - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
   displayName: Copy plugins of the image to persistent volume
   description: Overwrite the plugins installed in the jenkins persistent volume with the plugins installed in the Jenkins image.
