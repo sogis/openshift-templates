@@ -28,6 +28,9 @@ objects:
     configuration-as-code.yaml: |
       jenkins:
         scmCheckoutRetryCount: 1
+      unclassified:
+        location:
+          adminAddress: ${JENKINS_ADMIN_EMAIL_ADDRESS}
       jobs:
         - script: |
             job('gretl-job-generator') {
@@ -520,6 +523,10 @@ parameters:
   displayName: Path or URL to Configuration as Code config file
   description: Path or URL to the config file for the Jenkins Configuration as Code plugin.
   value: /opt/configuration-as-code/configuration-as-code.yaml
+- name: JENKINS_ADMIN_EMAIL_ADDRESS
+  displayName: Jenkins administrator e-mail address
+  description: E-mail address that appears in the FROM header in e-mails sent by Jenkins
+  value: noreply@localhost
 - name: JENKINS_PVC_NAME
   description: Name of the PVC for storing the Jenkins config and the jobs
   required: true
