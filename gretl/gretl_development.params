@@ -11,6 +11,7 @@ HOSTNAME=
 ENABLE_OAUTH=true
 # Set to true when installing/updating plugins, set to false for faster Jenkins startup:
 OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS=true
+JENKINS_ADMIN_EMAIL_ADDRESS=noreply@localhost
 JENKINS_PVC_NAME=jenkins
 JENKINS_AGENT_IMAGE_TAG=4.10
 JENKINS_AGENT_IMAGE_IMPORT_POLICY_SCHEDULED=true
