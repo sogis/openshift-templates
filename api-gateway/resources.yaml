@@ -468,6 +468,7 @@ objects:
         }
 
         location /ilivalidator/ {
+            client_max_body_size 200M;
             proxy_set_header 'X-FORWARDED-PREFIX' '/ilivalidator';
             proxy_pass http://ilivalidator-web-service.agi-apps-${ENVIRONMENT}.svc/;
         }
