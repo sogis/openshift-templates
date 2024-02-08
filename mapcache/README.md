@@ -6,6 +6,8 @@ In addition to the MapCache service,
 this template creates a MapCache seeder cron job
 which updates a part of the MapCache tiles in regular intervals.
 
+### Start a job run manually
+
 The cron job can be started manually as well.
 Run the following command
 for manual seeding of the zoom levels 11 to 14
@@ -16,6 +18,8 @@ of the most recently imported municipalities:
 ```
 oc delete job mapcache-seeder-manual -n my-namespace ; oc create job mapcache-seeder-manual --from=cronjob/mapcache-seeder -n my-namespace
 ```
+
+### Start a customized job run manually
 
 If you just want to seed certain zoom levels,
 or a certain variant, or the whole area of the tileset,
@@ -34,12 +38,23 @@ proceed as follows:
   * For seeding just a certain variant:
     Remove one of the commands in the `args:` section,
     and make sure to also remove the semicolon between the two commands
+  * For seeding just a specific municipality:
+    Update the value of the `SQL_EXPRESSION` environment variable, e.g.:
+    ```
+    SELECT geometrie FROM agi_mopublic_pub.mopublic_gemeindegrenze WHERE gemeindename = 'Trimbach'
+    ```
+    (Also works with `... WHERE bfs_nr = 2500`)
   * For seeding the whole canton area:
     Remove the `-d PG:service=pub` and `-s "$SQL_EXPRESSION"` options
     from both commands;
     additionally remove the `activeDeadlineSeconds: 21600` entry
     from the job spec (or increase the value),
     as the seeding will last longer in this case
+  * For seeding the municipalities that were imported
+    the day before the newest imports:
+    Update the WHERE clause
+    in the value of the `SQL_EXPRESSION` environment variable to:
+    `... WHERE date_trunc('day', importdatum) = ( SELECT ... ) - interval '1 day' ...`
 * Create and start the custom seed job from the modified YAML file:
   ```
   oc apply -f custom-seed-job.yaml
