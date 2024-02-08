@@ -24,9 +24,9 @@ proceed as follows:
 * Export the definition of the seeder cron job to a YAML file:
   ```
   oc project my-namespace
-  oc create job manual-seed-job --dry-run=client --from cronjob/mapcache-seeder -o yaml > manual-seed-job.yaml
+  oc create job custom-seed-job --dry-run=client --from cronjob/mapcache-seeder -o yaml > custom-seed-job.yaml
   ```
-* Now edit the `manual-seed-job.yaml` as required.
+* Now edit the `custom-seed-job.yaml` as required.
   * For seeding specific zoom levels:
     Modify the value of the `ZOOM_LEVELS_SEEDER` environment variable,
     e.g. `11,13` for seeding levels 11 to 13,
@@ -40,12 +40,12 @@ proceed as follows:
     additionally remove the `activeDeadlineSeconds: 21600` entry
     from the job spec (or increase the value),
     as the seeding will last longer in this case
-* Create and start the manual job from the modified YAML file:
+* Create and start the custom seed job from the modified YAML file:
   ```
-  oc apply -f manual-seed-job.yaml
+  oc apply -f custom-seed-job.yaml
   ```
-  If such a manual job already exists, you need to delete it beforehand with
-  `oc delete job manual-seed-job`.
+  If such a custom seed job already exists, you need to delete it beforehand with
+  `oc delete job custom-seed-job`.
 
 The `hintergrundkarte_ortho` tile set and the zoom levels 0 to 10
 of the `ch.so.agi.hintergrundkarte_farbig` and the `ch.so.agi.hintergrundkarte_sw` tile set
