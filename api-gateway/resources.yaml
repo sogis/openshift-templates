@@ -511,6 +511,10 @@ objects:
             proxy_pass http://interlis-repository.agi-apps-${ENVIRONMENT}.svc/;
         }
 
+        location /gretl-job-starter
+            proxy_pass http://gretl-job-starter.agi-apps-${ENVIRONMENT}.svc/;
+        }
+
         location /usabilityhub/ {
             proxy_pass http://usabilityhub.agi-apps-${ENVIRONMENT}.svc/;
         }
