@@ -1,6 +1,6 @@
 APPNAME=gretl-job-starter
 IMAGENAME=sogis/gretl-job-starter
-TAG=0.0.5
+TAG=0.0.12
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=100m
