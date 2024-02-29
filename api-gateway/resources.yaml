@@ -392,7 +392,7 @@ objects:
         }
 
         location /api/oereb/extract/json {
-            return 405;
+            return 415;
         }
 
         location /api/oereb {
