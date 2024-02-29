@@ -391,6 +391,10 @@ objects:
             proxy_pass http://oereb-web-service.agi-oerebv2-${ENVIRONMENT}.svc/getegrid/;
         }
 
+        location /api/oereb/extract/json {
+            return 405;
+        }
+
         location /api/oereb {
             if ($http_hsp_client_addr ~ ^18\.156\.190\.100$|^3\.72\.210\.3|^45\.132\.*|^89\.37\.*|^80\.238\.*$) {
                 return 404;
