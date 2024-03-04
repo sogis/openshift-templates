@@ -28,6 +28,7 @@ objects:
     name: ${APPNAME}
   spec:
     schedule: ${SCHEDULE}
+    concurrencyPolicy: Forbid
     suspend: false
     jobTemplate:
       spec:
