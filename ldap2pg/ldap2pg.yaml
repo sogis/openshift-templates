@@ -28,6 +28,7 @@ objects:
     name: ${APPNAME}
   spec:
     schedule: ${SCHEDULE}
+    suspend: false
     jobTemplate:
       spec:
         activeDeadlineSeconds: 30
