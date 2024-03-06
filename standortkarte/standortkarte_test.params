@@ -1,5 +1,5 @@
 APPNAME=standortkarte
-IMAGENAME=sogis/standortkarte
+IMAGENAME=pfeimich/standortkarte
 TAG=latest
 IMPORT_POLICY_SCHEDULED=true
 REPLICA_COUNT=1
