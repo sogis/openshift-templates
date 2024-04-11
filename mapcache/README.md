@@ -37,7 +37,7 @@ proceed as follows:
     or `11,11` for seeding just level 11
   * For seeding just a certain variant:
     Remove one of the commands in the `args:` section,
-    and make sure to also remove the semicolon between the two commands
+    and make sure to also remove the `&&` operator between the two commands
   * For seeding just a specific municipality:
     Update the value of the `SQL_EXPRESSION` environment variable, e.g.:
     ```
