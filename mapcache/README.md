@@ -57,10 +57,8 @@ proceed as follows:
     `... WHERE date_trunc('day', importdatum) = ( SELECT ... ) - interval '1 day' ...`
 * Create and start the custom seed job from the modified YAML file:
   ```
-  oc apply -f custom-seed-job.yaml
+  oc delete job custom-seed-job ; oc apply -f custom-seed-job.yaml
   ```
-  If such a custom seed job already exists, you need to delete it beforehand with
-  `oc delete job custom-seed-job`.
 
 The `hintergrundkarte_ortho` tile set and the zoom levels 0 to 10
 of the `ch.so.agi.hintergrundkarte_farbig` and the `ch.so.agi.hintergrundkarte_sw` tile set
