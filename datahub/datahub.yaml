@@ -1,0 +1,282 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${APPNAME}-template
+labels:
+  template: ${APPNAME}-template
+  app: ${APPNAME}
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${APPNAME}
+    labels:
+      app: ${APPNAME}
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: ${IMAGENAME}:${TAG}
+      importPolicy:
+        scheduled: ${{IMPORT_POLICY_SCHEDULED}}
+      name: ${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}
+  spec:
+    replicas: ${{REPLICA_COUNT}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
+      name: ${APPNAME}
+    strategy:
+      type: Rolling
+      rollingParams:
+        timeoutSeconds: 60
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+          name: ${APPNAME}
+      spec:
+        containers:
+        - name: ${APPNAME}
+          env:
+          - name: TZ
+            value: Europe/Zurich
+          - name: JOBRUNR_SERVER_ENABLED
+            value: 'false'
+          - name: JOBRUNR_DASHBOARD_ENABLED
+            value: 'true'
+          - name: JOBRUNR_SKIP_CREATE
+            value: 'true'
+          - name: WORK_DIRECTORY
+            value: /work/upload
+          - name: TARGET_DIRECTORY
+            value: /work/datahub
+          - name: MAIL_USERNAME
+            value: ${MAIL_USERNAME}
+          envFrom:
+          - secretRef:
+              name: ${APPNAME}-db-secret
+          - secretRef:
+              name: ${APPNAME}-mail-secret
+          - secretRef:
+              name: ${APPNAME}-dashboard-secret
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+          volumeMounts:
+          - name: ${APPNAME}-workdir-volume
+            mountPath: /work
+            subPath: ${APPNAME}
+        volumes:
+        - name: ${APPNAME}-workdir-volume
+          persistentVolumeClaim:
+            claimName: ${WORK_DIRECTORY_PVC_NAME}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: ${APPNAME}-worker
+  spec:
+    replicas: ${{REPLICA_COUNT_WORKER}}
+    revisionHistoryLimit: 3
+    selector:
+      app: ${APPNAME}
+      name: ${APPNAME}-worker
+    strategy:
+      type: Rolling
+      rollingParams:
+        timeoutSeconds: 60
+    template:
+      metadata:
+        labels:
+          app: ${APPNAME}
+          name: ${APPNAME}-worker
+      spec:
+        containers:
+        - name: ${APPNAME}
+          env:
+          - name: TZ
+            value: Europe/Zurich
+          - name: JOBRUNR_SKIP_CREATE
+            value: 'true'
+          - name: CLEANER_ENABLED
+            value: 'false'
+          - name: ADMIN_ACCOUNT_INIT
+            value: 'false'
+          - name: WORK_DIRECTORY
+            value: /work/upload
+          - name: TARGET_DIRECTORY
+            value: /work/datahub
+          - name: MAIL_USERNAME
+            value: ${MAIL_USERNAME}
+          envFrom:
+          - secretRef:
+              name: ${APPNAME}-db-secret
+          - secretRef:
+              name: ${APPNAME}-mail-secret
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: ${CPU_LIMIT_WORKER}
+              memory: ${MEMORY_LIMIT_WORKER}
+            requests:
+              cpu: ${CPU_REQUEST_WORKER}
+              memory: ${MEMORY_REQUEST_WORKER}
+          volumeMounts:
+          - name: ${APPNAME}-workdir-volume
+            mountPath: /work
+            subPath: ${APPNAME}
+        volumes:
+        - name: ${APPNAME}-workdir-volume
+          persistentVolumeClaim:
+            claimName: ${WORK_DIRECTORY_PVC_NAME}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPNAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPNAME}:${TAG}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}
+  spec:
+    ports:
+    - name: web
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: ${APPNAME}
+      name: ${APPNAME}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APPNAME}-dashboard
+  spec:
+    ports:
+    - name: dashboard
+      port: 80
+      protocol: TCP
+      targetPort: 8000
+    selector:
+      app: ${APPNAME}
+      name: ${APPNAME}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: ${APPNAME}-dashboard
+  spec:
+    host: ${HOSTNAME}
+    port:
+      targetPort: dashboard
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
+    to:
+      kind: Service
+      name: ${APPNAME}-dashboard
+parameters:
+- name: APPNAME
+  description: Name of the App
+  required: true
+- name: IMAGENAME
+  description: Name of the docker image (e.g. sogis/my-image)
+  required: true
+- name: TAG
+  description: The Docker image tag to use (e.g. latest)
+  required: true
+- name: IMPORT_POLICY_SCHEDULED
+  description: Regularly check for changed image?
+  required: true
+- name: REPLICA_COUNT
+  description: Number of replicas to run
+  required: true
+- name: CPU_REQUEST
+  description: The minimum amount of CPU the container is guaranteed.
+  required: true
+- name: CPU_LIMIT
+  description: The maximum amount of CPU the container is allowed to use when running.
+  required: true
+- name: MEMORY_REQUEST
+  description: The minimum amount of memory the container is guaranteed.
+  required: true
+- name: MEMORY_LIMIT
+  description: The maximum amount of memory the container is allowed to use when running.
+  required: true
+- name: REPLICA_COUNT_WORKER
+  description: Number of replicas to run (worker)
+  required: true
+- name: CPU_REQUEST_WORKER
+  description: The minimum amount of CPU the container is guaranteed (worker).
+  required: true
+- name: CPU_LIMIT_WORKER
+  description: The maximum amount of CPU the container is allowed to use when running (worker).
+  required: true
+- name: MEMORY_REQUEST_WORKER
+  description: The minimum amount of memory the container is guaranteed (worker).
+  required: true
+- name: MEMORY_LIMIT_WORKER
+  description: The maximum amount of memory the container is allowed to use when running (worker).
+  required: true
+- name: WORK_DIRECTORY_PVC_NAME
+  description: Name of the Persistent Volume Claim for the work directory
+  required: true
+- name: MAIL_USERNAME
+  description: E-mail address to use for sending out e-mails
+  required: true
+- name: HOSTNAME
+  description: The hostname for the route to the JobRunr dashboard
+  required: true
