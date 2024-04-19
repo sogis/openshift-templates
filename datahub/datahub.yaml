@@ -279,4 +279,4 @@ parameters:
   required: true
 - name: HOSTNAME
   description: The hostname for the route to the JobRunr dashboard
-  required: true
+  required: false

@@ -84,6 +84,8 @@ stringData:
 
 ## Apply template
 
+(For local usage a particular `datahub_development.params` file is available.)
+
 ```
-oc process -f datahub/datahub.yaml --param-file=datahub/datahub_test.params | oc apply -f - -n my-namespace
+oc process -f datahub/datahub.yaml --param-file=datahub/datahub_development.params | oc apply -f - -n my-namespace
 ```
