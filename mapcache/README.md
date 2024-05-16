@@ -16,7 +16,10 @@ and `ch.so.agi.hintergrundkarte_sw` tile sets
 of the most recently imported municipalities:
 
 ```
-oc delete job mapcache-seeder-manual -n my-namespace ; oc create job mapcache-seeder-manual --from=cronjob/mapcache-seeder -n my-namespace
+oc project my-namespace
+```
+```
+oc delete job mapcache-seeder-manual ; oc create job mapcache-seeder-manual --from=cronjob/mapcache-seeder
 ```
 
 ### Start a customized job run manually
@@ -28,6 +31,8 @@ proceed as follows:
 * Export the definition of the seeder cron job to a YAML file:
   ```
   oc project my-namespace
+  ```
+  ```
   oc create job custom-seed-job --dry-run=client --from cronjob/mapcache-seeder -o yaml > custom-seed-job.yaml
   ```
 * Now edit the `custom-seed-job.yaml` as required.
