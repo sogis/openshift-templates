@@ -467,6 +467,12 @@ objects:
             proxy_pass http://oereb-wms.agi-oerebv2-${ENVIRONMENT}.svc;
         }
 
+        location /datahub/ {
+            client_max_body_size 200M;
+            proxy_set_header 'X-FORWARDED-PREFIX' '/datahub';
+            proxy_pass http://datahub.agi-apps-${ENVIRONMENT}.svc/;
+        }
+
         location /gb2av/ {
             proxy_pass http://gb2av.agi-apps-${ENVIRONMENT}.svc/;
         }
