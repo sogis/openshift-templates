@@ -151,6 +151,9 @@ objects:
           - name: ${APPNAME}-workdir-volume
             mountPath: /work
             subPath: ${APPNAME}
+          - name: ${APPNAME}-workdir-volume
+            mountPath: /tmp
+            subPath: ${APPNAME}_tmp
         volumes:
         - name: ${APPNAME}-workdir-volume
           persistentVolumeClaim:
