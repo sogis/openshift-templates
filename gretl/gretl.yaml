@@ -182,6 +182,9 @@ objects:
           - name: configuration-as-code-volume
             mountPath: /opt/configuration-as-code
             readOnly: true
+          - name: configuration-as-code-authentication-volume
+            mountPath: /opt/configuration-as-code/authentication
+            readOnly: true
           - name: gretl-jenkins-ca-certificates-volume
             mountPath: /etc/pki/ca-trust/source/anchors
             readOnly: true
@@ -193,6 +196,10 @@ objects:
         - name: configuration-as-code-volume
           configMap:
             name: configuration-as-code
+        - name: configuration-as-code-authentication-volume
+          secret:
+            secretName: gretl-jenkins-configuration-as-code-authentication
+            optional: true
         - name: gretl-jenkins-ca-certificates-volume
           configMap:
             name: gretl-jenkins-ca-certificates
