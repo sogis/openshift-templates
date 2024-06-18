@@ -515,9 +515,9 @@ parameters:
   description: Overwrite the plugins installed in the jenkins persistent volume with the plugins installed in the Jenkins image.
   value: 'true'
 - name: CASC_JENKINS_CONFIG
-  displayName: Path or URL to Configuration as Code config file
-  description: Path or URL to the config file for the Jenkins Configuration as Code plugin.
-  value: /opt/configuration-as-code/configuration-as-code.yaml
+  displayName: Path or URL to Configuration as Code config file(s)
+  description: Path or URL to the config file(s) for the Jenkins Configuration as Code plugin.
+  value: /opt/configuration-as-code
 - name: JENKINS_ADMIN_EMAIL_ADDRESS
   displayName: Jenkins administrator e-mail address
   description: E-mail address that appears in the FROM header in e-mails sent by Jenkins
