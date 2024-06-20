@@ -500,7 +500,12 @@ parameters:
   description: List of Jenkins plug-ins to update to a specific version
     or to install additionally
   value:
+    cloudbees-bitbucket-branch-source:886.v44cf5e4ecec5,
     cloudbees-disk-usage-simple:203.v3f46a_7462b_1a_,
+    git-server:126.v0d945d8d2b_39,
+    htmlpublisher:1.34,
+    matrix-project:822.824.v14451b_c0fd42,
+    script-security:1341.va_2819b_414686,
     active-directory:2.35,
     envinject:2.908.v66a_774b_31d93,
     envinject-api:1.199.v3ce31253ed13,
