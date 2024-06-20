@@ -500,15 +500,11 @@ parameters:
   description: List of Jenkins plug-ins to update to a specific version
     or to install additionally
   value:
-    blueocean:1.27.5.1,
     cloudbees-disk-usage-simple:203.v3f46a_7462b_1a_,
-    cloudbees-folder:6.858.v898218f3609d,
-    config-file-provider:959.vcff671a_4518b_,
-    github:1.37.3.1,
-    jira:3.12,
-    active-directory:2.34,
+    active-directory:2.35,
     envinject:2.908.v66a_774b_31d93,
-    file-parameters:316.va_83a_1221db_a_7
+    envinject-api:1.199.v3ce31253ed13,
+    file-parameters:339.v4b_cc83e11455
 - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
   displayName: Copy plugins of the image to persistent volume
   description: Overwrite the plugins installed in the jenkins persistent volume with the plugins installed in the Jenkins image.
