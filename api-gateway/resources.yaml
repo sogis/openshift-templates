@@ -522,6 +522,8 @@ objects:
         }
 
         location /gretl-job-starter/ {
+            allow 10.36.0.0/16;
+            deny all;
             proxy_pass http://gretl-job-starter.agi-apps-${ENVIRONMENT}.svc/;
         }
 
