@@ -131,6 +131,45 @@ spec:
       storage: 2Gi
 ```
 
+## Create secret containing the configuration for authentication with Active Directory (optional)
+
+**Note**: This secret is only needed
+if you want to use Active Directory for authentication.
+
+In a separate folder, create a file `gretl-jenkins-configuration-as-code-authentication.yaml`
+containing a ConfigMap according to the following template.
+Then run `oc apply -f path/to/gretl-jenkins-configuration-as-code-authentication.yaml -n my-namespace`.
+
+```
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: gretl-jenkins-configuration-as-code-authentication
+  labels:
+    app: gretl-platform
+stringData:
+  configuration-as-code-authentication.yaml: |
+    jenkins:
+      securityRealm:
+        activeDirectory:
+          customDomain: true
+          domains:
+          - bindName: "dummy@mydomain.org"
+            bindPassword: "secret"
+            name: "mydomain.org"
+            servers: "mydomain.org:3269"
+            tlsConfiguration: JDK_TRUSTSTORE
+          groupLookupStrategy: AUTO
+          removeIrrelevantGroups: false
+          requireTLS: true
+          startTls: true
+      authorizationStrategy:
+        projectMatrix:
+          permissions:
+          - "USER:Overall/Administer:myusername"
+```
+
 ## Create secret for checking out a private Git repository sogis/schema-jobs
 
 For enabling the GRETL jobs to check out the sogis/schema-jobs Git repository,

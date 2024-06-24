@@ -182,6 +182,9 @@ objects:
           - name: configuration-as-code-volume
             mountPath: /opt/configuration-as-code
             readOnly: true
+          - name: configuration-as-code-authentication-volume
+            mountPath: /opt/configuration-as-code/authentication
+            readOnly: true
           - name: gretl-jenkins-ca-certificates-volume
             mountPath: /etc/pki/ca-trust/source/anchors
             readOnly: true
@@ -193,6 +196,10 @@ objects:
         - name: configuration-as-code-volume
           configMap:
             name: configuration-as-code
+        - name: configuration-as-code-authentication-volume
+          secret:
+            secretName: gretl-jenkins-configuration-as-code-authentication
+            optional: true
         - name: gretl-jenkins-ca-certificates-volume
           configMap:
             name: gretl-jenkins-ca-certificates
@@ -500,23 +507,24 @@ parameters:
   description: List of Jenkins plug-ins to update to a specific version
     or to install additionally
   value:
-    blueocean:1.27.5.1,
+    cloudbees-bitbucket-branch-source:886.v44cf5e4ecec5,
     cloudbees-disk-usage-simple:203.v3f46a_7462b_1a_,
-    cloudbees-folder:6.858.v898218f3609d,
-    config-file-provider:959.vcff671a_4518b_,
-    github:1.37.3.1,
-    jira:3.12,
-    active-directory:2.34,
+    git-server:126.v0d945d8d2b_39,
+    htmlpublisher:1.34,
+    matrix-project:822.824.v14451b_c0fd42,
+    script-security:1341.va_2819b_414686,
+    active-directory:2.35,
     envinject:2.908.v66a_774b_31d93,
-    file-parameters:316.va_83a_1221db_a_7
+    envinject-api:1.199.v3ce31253ed13,
+    file-parameters:339.v4b_cc83e11455
 - name: OVERRIDE_PV_PLUGINS_WITH_IMAGE_PLUGINS
   displayName: Copy plugins of the image to persistent volume
   description: Overwrite the plugins installed in the jenkins persistent volume with the plugins installed in the Jenkins image.
   value: 'true'
 - name: CASC_JENKINS_CONFIG
-  displayName: Path or URL to Configuration as Code config file
-  description: Path or URL to the config file for the Jenkins Configuration as Code plugin.
-  value: /opt/configuration-as-code/configuration-as-code.yaml
+  displayName: Path or URL to Configuration as Code config file(s)
+  description: Path or URL to the config file(s) for the Jenkins Configuration as Code plugin.
+  value: /opt/configuration-as-code
 - name: JENKINS_ADMIN_EMAIL_ADDRESS
   displayName: Jenkins administrator e-mail address
   description: E-mail address that appears in the FROM header in e-mails sent by Jenkins
