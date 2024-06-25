@@ -522,9 +522,10 @@ objects:
         }
 
         location /gretl-job-starter/ {
-            allow 10.36.0.0/16;
+          if ($http_hsp_client_addr !~ ^10\.36\.([0-9]{1,3})\.([0-9]{1,3})$ {
             deny all;
-            proxy_pass http://gretl-job-starter.agi-apps-${ENVIRONMENT}.svc/;
+          }
+          proxy_pass http://gretl-job-starter.agi-apps-${ENVIRONMENT}.svc/;
         }
 
         location /usabilityhub/ {
@@ -713,3 +714,5 @@ objects:
       name: api-gateway
       weight: 100
     wildcardPolicy: None
+
+
