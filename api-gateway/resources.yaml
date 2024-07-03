@@ -114,7 +114,7 @@ objects:
         }
 
         location /gretl-job-starter/ {
-            if ($http_hsp_client_addr !~ ^10\.36\.([0-9]{1,3})\.([0-9]{1,3})$)  {
+            if ($http_hsp_client_addr !~ ^10\.36\.([0-9]+)(.*)([0-9]+)$) {
                 return 403;
             }
             proxy_pass http://gretl-job-starter.agi-apps-${ENVIRONMENT}.svc/;
