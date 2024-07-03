@@ -113,13 +113,6 @@ objects:
             proxy_pass http://qwc-service.${NAMESPACE}.svc;
         }
 
-        location /gretl-job-starter/ {
-            if ($http_hsp_client_addr !~ ^10\.36\.([0-9]+)(.*)([0-9]+)$) {
-                return 403;
-            }
-            proxy_pass http://gretl-job-starter.agi-apps-${ENVIRONMENT}.svc/;
-        }
-
         location ~ /map/grundstuecksinformation {
             rewrite ^/map/grundstuecksinformation$ /map?realty= break;
             proxy_pass http://qwc-service.${NAMESPACE}.svc;
@@ -526,6 +519,13 @@ objects:
 
         location /models {
             proxy_pass http://interlis-repository.agi-apps-${ENVIRONMENT}.svc/;
+        }
+
+        location /gretl-job-starter/ {
+            if ($http_hsp_client_addr !~ ^10\.36\.([0-9]+)(.*)([0-9]+)$) {
+                return 403;
+            }
+            proxy_pass http://gretl-job-starter.agi-apps-${ENVIRONMENT}.svc/;
         }
 
         location /usabilityhub/ {
