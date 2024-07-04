@@ -1,6 +1,6 @@
 APPNAME=ili2gpkg-web-service
 IMAGENAME=sogis/ili2gpkg-web-service
-TAG=1.0.41
+TAG=1.0.43
 IMPORT_POLICY_SCHEDULED=false
 REPLICA_COUNT=1
 CPU_REQUEST=500m
