@@ -6,7 +6,7 @@ REPLICA_COUNT=1
 CPU_REQUEST=0
 CPU_LIMIT=0
 MEMORY_REQUEST=0
-MEMORY_LIMIT=0
+MEMORY_LIMIT=2Gi
 HOSTNAME=gretl-t.so.ch
 ENABLE_OAUTH=false
 # Set to true when installing/updating plugins, set to false for faster Jenkins startup:
