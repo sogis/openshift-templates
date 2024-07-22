@@ -13,5 +13,4 @@ CPU_REQUEST_WORKER=250m
 CPU_LIMIT_WORKER=4
 MEMORY_REQUEST_WORKER=0
 MEMORY_LIMIT_WORKER=0
-HPA_NAME_WORKER=hpailivalidatorworker
 HOSTNAME=ilivalidator-dashboard-test.apps.ocp.so.ch
