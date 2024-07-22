@@ -169,7 +169,7 @@ objects:
 - kind: HorizontalPodAutoscaler
   apiVersion: autoscaling/v2
   metadata:
-    name: ${HPA_NAME_WORKER}
+    name: hpailivalidatorworker
   spec:
     scaleTargetRef:
       kind: DeploymentConfig
