@@ -176,7 +176,7 @@ objects:
       name: ${APPNAME}-worker
       apiVersion: apps.openshift.io/v1
     minReplicas: 1
-    maxReplicas: 3
+    maxReplicas: 2
     metrics:
       - type: Resource
         resource:
