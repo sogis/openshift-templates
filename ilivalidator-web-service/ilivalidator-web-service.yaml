@@ -169,7 +169,7 @@ objects:
 - kind: HorizontalPodAutoscaler
   apiVersion: autoscaling/v2
   metadata:
-    name: hpailivalidatorworker
+    name: hpa-ilivalidator-worker
   spec:
     scaleTargetRef:
       kind: DeploymentConfig
@@ -183,7 +183,7 @@ objects:
           name: cpu
           target:
             type: Utilization
-            averageUtilization: 80
+            averageUtilization: 20
     behavior:
       scaleUp:
         stabilizationWindowSeconds: 0
@@ -193,7 +193,7 @@ objects:
             value: 1
             periodSeconds: 60
       scaleDown:
-        stabilizationWindowSeconds: 0
+        stabilizationWindowSeconds: 300
         selectPolicy: Max
         policies:
           - type: Percent
