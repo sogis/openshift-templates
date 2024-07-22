@@ -165,6 +165,40 @@ objects:
         from:
           kind: ImageStreamTag
           name: ${APPNAME}:${TAG}
+
+- kind: HorizontalPodAutoscaler
+  apiVersion: autoscaling/v2
+  metadata:
+    name: ${hpailivalidatorworker}
+  spec:
+    scaleTargetRef:
+      kind: DeploymentConfig
+      name: ${APPNAME}-worker
+      apiVersion: apps.openshift.io/v1
+    minReplicas: 1
+    maxReplicas: 3
+    metrics:
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 80
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 0
+        selectPolicy: Max
+        policies:
+          - type: Pods
+            value: 1
+            periodSeconds: 60
+      scaleDown:
+        stabilizationWindowSeconds: 0
+        selectPolicy: Max
+        policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 60
 - apiVersion: v1
   kind: Service
   metadata:
