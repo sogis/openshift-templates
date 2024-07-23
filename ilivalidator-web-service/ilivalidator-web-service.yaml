@@ -175,8 +175,8 @@ objects:
       kind: DeploymentConfig
       name: ${APPNAME}-worker
       apiVersion: apps.openshift.io/v1
-    minReplicas: 1
-    maxReplicas: 2
+    minReplicas: ${{REPLICA_COUNT_WORKER}}
+    maxReplicas: ${{REPLICA_COUNT_WORKER_MAX}}
     metrics:
       - type: Resource
         resource:
@@ -273,6 +273,9 @@ parameters:
 - name: REPLICA_COUNT_WORKER
   description: Number of replicas to run (worker)
   required: true
+- name: REPLICA_COUNT_WORKER_MAX
+  description: Number of max replicas to scale up to (worker)
+  required: true  
 - name: CPU_REQUEST_WORKER
   description: The minimum amount of CPU the container is guaranteed (worker).
   required: true
