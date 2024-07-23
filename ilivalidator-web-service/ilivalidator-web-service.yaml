@@ -169,7 +169,7 @@ objects:
 - kind: HorizontalPodAutoscaler
   apiVersion: autoscaling/v2
   metadata:
-    name: hpa-ilivalidator-worker
+    name: ${HPA_NAME_WORKER}
   spec:
     scaleTargetRef:
       kind: DeploymentConfig
@@ -285,6 +285,9 @@ parameters:
 - name: MEMORY_LIMIT_WORKER
   description: The maximum amount of memory the container is allowed to use when running (worker).
   required: true
+- name: HPA_NAME_WORKER
+  description: Name of the horizontal pod scaler for the workers.
+  required: true  
 - name: HOSTNAME
   description: The hostname for the route to the JobRunr dashboard
   required: true
