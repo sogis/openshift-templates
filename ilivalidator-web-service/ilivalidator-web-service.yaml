@@ -165,7 +165,6 @@ objects:
         from:
           kind: ImageStreamTag
           name: ${APPNAME}:${TAG}
-
 - kind: HorizontalPodAutoscaler
   apiVersion: autoscaling/v2
   metadata:
