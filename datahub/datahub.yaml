@@ -51,6 +51,8 @@ objects:
             value: 'true'
           - name: JOBRUNR_SKIP_CREATE
             value: 'true'
+          - name: HIKARI_MAX_POOL_SIZE
+            value: 3            
           - name: WORK_DIRECTORY
             value: /work/upload
           - name: TARGET_DIRECTORY
@@ -132,6 +134,8 @@ objects:
             value: Europe/Zurich
           - name: JOBRUNR_SKIP_CREATE
             value: 'true'
+          #- name: HIKARI_MAX_POOL_SIZE
+          #  value: 3                   
           - name: CLEANER_ENABLED
             value: 'false'
           - name: ADMIN_ACCOUNT_INIT
