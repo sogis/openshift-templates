@@ -364,12 +364,7 @@ objects:
 
         location /api/search/v2 {
             if ($http_hsp_client_addr ~ ^4\.226\.27\.128$) {
-                #Rate Limit fuer Massenabfrage
-                limit_req zone=ip burst=12 delay=9;
-                limit_req_status 429;
-                
-                error_page 429   /error.xml;
-                return 429;
+                deny all;
             }
             proxy_pass http://search-service.${NAMESPACE}.svc;
         }
