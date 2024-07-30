@@ -421,6 +421,11 @@ objects:
         }
 
         location /api/v1/plotinfo {
+            #Rate Limit fuer Massenabfrage
+            limit_req zone=ip burst=12 delay=9;
+            limit_req_status 429;
+
+            error_page 429   /error.xml;
             proxy_pass http://plotinfo-service.${NAMESPACE}.svc;
         }
 
