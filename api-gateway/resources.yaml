@@ -381,7 +381,6 @@ objects:
         location /api/search/v2 {
             #Rate Limit fuer Massenabfrage
             limit_req zone=req_zone burst=1 nodelay;
-            }
             proxy_pass http://search-service.${NAMESPACE}.svc;
         }
 
