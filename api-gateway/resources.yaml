@@ -58,8 +58,24 @@ objects:
           proxy_cache_path /cache levels=1:2 keys_zone=my_cache:30m max_size=5g
                  inactive=30m use_temp_path=off;
 
-          #Rate Limit for Oereb Massenabfrage
+          #Rate Limit for Oereb Plotowner Massenabfrage
           limit_req_zone $http_hsp_client_addr zone=ip:10m rate=6r/m;
+          
+          #Rate Limit for Oereb Plotinfo Massenabfrage
+          limit_req_zone $http_hsp_client_addr zone=ip_plotinfo:10m rate=20r/m;
+
+          #Rate Limit für dämlichen Search Requester
+          map $http_hsp_client_addr $limit {
+              default 0;
+              4.226.27.128 1;
+          }
+
+          map $limit $limit_key {
+              0 "";
+              1 $http_hsp_client_addr;
+          }
+
+          limit_req_zone $limit_key zone=req_zone:10m rate=1r/m;
 
           #gzip on;
 
@@ -363,12 +379,8 @@ objects:
         }
 
         location /api/search/v2 {
-            if ($http_hsp_client_addr ~ ^4\.226\.27\.128$) {
-                #Rate Limit fuer Massenabfrage
-                limit_req zone=ip burst=3 delay=1;
-                limit_req_status 429;
-                
-                error_page 429   /error.xml;
+            #Rate Limit fuer Massenabfrage
+            limit_req zone=req_zone burst=1 nodelay;
             }
             proxy_pass http://search-service.${NAMESPACE}.svc;
         }
@@ -420,7 +432,7 @@ objects:
 
         location /api/v1/plotinfo/plot_owner {
             #Rate Limit fuer Massenabfrage
-            limit_req zone=ip burst=12 delay=9;
+            limit_req zone=ip burst=12 nodelay;
             limit_req_status 429;
 
             error_page 429   /error.xml;
@@ -429,7 +441,7 @@ objects:
 
         location /api/v1/plotinfo {
             #Rate Limit fuer Massenabfrage
-            limit_req zone=ip burst=12 delay=9;
+            limit_req zone=ip_plotinfo burst=10 nodelay;
             limit_req_status 429;
 
             error_page 429   /error.xml;
