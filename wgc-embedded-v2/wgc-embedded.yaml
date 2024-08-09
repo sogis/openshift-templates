@@ -45,7 +45,7 @@ objects:
               value: ${SPRING_PROFILES_ACTIVE}
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/readinessState
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 15
@@ -53,7 +53,7 @@ objects:
             timeoutSeconds: 1
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/livenessState
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 15
@@ -118,4 +118,7 @@ parameters:
     required: true
   - description: Spring Profile
     name: SPRING_PROFILES_ACTIVE
+    required: true
+  - description: Config Resource
+    name: CONFIG_RESOURCE
     required: true
