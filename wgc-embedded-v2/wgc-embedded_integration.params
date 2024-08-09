@@ -1,4 +1,4 @@
-APPNAME=wgc-embedded
+APPNAME=wgc-embedded-v2
 IMAGENAME=sogis/wgc-embedded
 TAG=latest
 IMPORT_POLICY_SCHEDULED=true
@@ -8,3 +8,4 @@ CPU_LIMIT=200m
 MEMORY_REQUEST=100Mi
 MEMORY_LIMIT=200Mi
 SPRING_PROFILES_ACTIVE=int
+CONFIG_RESOURCE=classpath:/config-int.json

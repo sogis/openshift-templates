@@ -1,4 +1,4 @@
-# Deploying WGC Embedded App in OpenShift
+# Deploying WGC Embedded V2 App in OpenShift
 
 ## Create and configure project
 
@@ -30,5 +30,5 @@ oc policy add-role-to-user view ... -n my-namespace
 ## Apply template
 
 ```
-oc process -f wgc-embedded/wgc-embedded.yaml --param-file=wgc-embedded/wgc-embedded_test.params | oc apply -f - -n my-namespace
+oc process -f wgc-embedded-v2/wgc-embedded.yaml --param-file=wgc-embedded-v2/wgc-embedded_test.params | oc apply -f - -n my-namespace
 ```
