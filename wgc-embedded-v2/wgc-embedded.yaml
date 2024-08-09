@@ -43,6 +43,8 @@ objects:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: ${SPRING_PROFILES_ACTIVE}
+            - name: CONFIG_RESOURCE
+              value: ${CONFIG_RESOURCE}              
           readinessProbe:
             httpGet:
               path: /actuator/health/readinessState
